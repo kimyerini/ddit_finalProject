@@ -1,0 +1,215 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
+<sec:authentication property="principal.employee" var="empVO" />
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="/resources/js/jquery-3.6.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<title>발주내역</title>
+<style>
+.container-p-y {
+	display: flex;
+}
+#div1 {
+	margin: 11px 41px 0px 10px;
+}
+#div2 {
+	margin: 48px 0px 0px 0px;
+    width: 36vw;
+    height: 77vh;
+}
+.tab-content {
+	width: 58vw;
+	height: 77vh;
+}
+.card-header {
+	padding: 0px 0px 0px 0px;
+    font-weight: bolder;
+    margin: 5px 0px 25px 0px;
+}
+#mediTable, #equipTable {
+	overflow: auto;
+	height: 65vh;
+}
+#mediOrderTable, #equipOrderTable td {
+	font-size: 14px;
+}
+</style>
+</head>
+<body>
+	<div class="nav-align-top mb-4" id="div1">
+		<!-------------------- 탭 -------------------->
+		<ul class="nav nav-tabs" role="tablist">
+			<li class="nav-item">
+				<button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+					data-bs-target="#mediTab" aria-controls="navs-top-home"
+					aria-selected="true">약품</button>
+			</li>
+			<li class="nav-item">
+				<button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+					data-bs-target="#equipTab" aria-controls="navs-top-profile"
+					aria-selected="false">비품</button>
+			</li>
+		</ul>
+		
+		<div class="tab-content">
+			<!---------------------- 약품 상세 조회 ---------------------->
+			<div class="tab-pane fade active show" id="mediTab" role="tabpanel">
+				<div class="orderHeader">
+					<h4 class="card-header">약품 발주 내역</h4>
+				</div><!-- order header 끝 -->
+				<!-- 테이블 처리 -->
+				<div class="table-responsive text-nowrap" id="mediTable">
+				</div><!-- table div 끝 -->
+			</div>
+			<!---------------------- /약품 상세 조회 ---------------------->
+			
+			<!---------------------- 비품 상세 조회 ---------------------->
+			<div class="tab-pane" id="equipTab" role="tabpanel">
+				<div class="orderHeader">
+					<h4 class="card-header">비품 발주 내역</h4>
+				</div><!-- order header 끝 -->
+				<!-- 테이블 처리 -->
+				<div class="table-responsive text-nowrap" id="equipTable">
+				</div><!-- table div 끝 -->
+			</div>
+			<!---------------------- /비품 상세 조회 ---------------------->
+		</div>
+	</div>
+
+	<div class="card" id="div2">
+		<div class="col-sm-7">
+			<div class="card-body"></div>
+		</div>
+		<div class="col-sm-5 text-center text-sm-left">
+			<div class="card-body pb-0 px-0 px-md-4"></div>
+		</div>
+	</div>
+
+</body>
+<script>
+//-------------------- 웹소켓 ----------------------
+function fMessage() { // 받는 쪽에 작성
+	let serverMsg = JSON.parse(event.data);
+
+	if (serverMsg.cmd == "alarm") {
+		getNotiList();
+	}
+}
+//-------------------- /웹소켓 ----------------------
+
+$(function() {
+	getMediList(function() {
+		getEquipList();
+	});
+});
+
+const getMediList = (callback) => {
+	let xhr = new XMLHttpRequest();
+	xhr.open("get", "/order/mediOrderList", true);
+	xhr.onreadystatechange = function() {
+		if(xhr.readyState == 4 && xhr.status == 200) {
+			let result = JSON.parse(xhr.responseText);
+// 			console.log("받아온 약품 발주리스트", result);
+			
+			let tblStr = `<table class="table table-hover" id="mediOrderTable">
+				<thead>
+					<tr>
+						<th>발주번호</th>
+						<th>발주정보</th>
+						<th>발주일자</th>
+						<th>발주인</th>
+					</tr>
+				</thead>
+				<tbody>`;
+			if (result.length == 0 || result == null) {
+				tblStr += `<tr>
+								<td colspan="4">
+									<br><br><br>
+									조회할 약품 발주내역이 없습니다
+								</td>
+							</tr>`;
+			} else {
+				for(let i=0; i<result.length; i++) {
+					tblStr += `<tr>
+									<td>\${result[i].mediItemOrderNo}</td>`;
+
+					if(result[i].mediItemList.length > 1) {
+						tblStr += `<td>\${result[i].mediItemList[0].mediItemName} 외 \${result[i].mediItemList.length}건</td>`;
+					} else {
+						tblStr += `<td>\${result[i].mediItemList[0].mediItemName}</td>`;
+					}
+									
+					tblStr += `<td>\${result[i].mediItemOrderDate}</td>
+								<td>\${result[i].empNm}</td>
+						   </tr>`;
+				}
+			}
+			tblStr += `</tbody></table>`;
+			
+		//		console.log("tblStr" + tblStr);
+			$('#mediTable').html(tblStr);
+			
+			callback();
+		}
+	}
+	xhr.send();
+}
+
+const getEquipList = () => {
+	let xhr = new XMLHttpRequest();
+	xhr.open("get", "/order/equipOrderList", true);
+	xhr.onreadystatechange = function() {
+		if(xhr.readyState == 4 && xhr.status == 200) {
+			let result = JSON.parse(xhr.responseText);
+// 			console.log("받아온 비품 발주리스트", result);
+			
+			let tblStr = `<table class="table table-hover" id="equipOrderTable">
+				<thead>
+					<tr>
+						<th>발주번호</th>
+						<th>발주정보</th>
+						<th>발주일자</th>
+						<th>발주인</th>
+					</tr>
+				</thead>
+				<tbody>`;
+			if (result.length == 0 || result == null) {
+				tblStr += `<tr>
+								<td colspan="4">
+									<br><br><br>
+									조회할 비품 발주내역이 없습니다
+								</td>
+							</tr>`;
+			} else {
+				for(let i=0; i<result.length; i++) {
+					tblStr += `<tr>
+									<td>\${result[i].itemOrderNo}</td>`;
+									
+					if(result[i].itemList.length > 1) {
+						tblStr += `<td>\${result[i].itemList[0].itemName} 외 \${result[i].itemList.length}건</td>`;
+					} else {
+						tblStr += `<td>\${result[i].itemList[0].itemName}</td>`;
+					}
+									
+					tblStr += `<td>\${result[i].itemOrderDate}</td>
+								<td>\${result[i].empNm}</td>
+						   </tr>`;
+				}
+			}
+			tblStr += `</tbody></table>`;
+			
+		//		console.log("tblStr" + tblStr);
+			$('#equipTable').html(tblStr);
+		}
+	}
+	xhr.send();
+}
+
+
+</script>
+</html>

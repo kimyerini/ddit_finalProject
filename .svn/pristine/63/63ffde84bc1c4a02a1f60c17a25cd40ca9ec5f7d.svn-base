@@ -1,0 +1,124 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" isErrorPage="true"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<!doctype html>
+<body>
+
+  
+  <!-- ?PROD Only: Google Tag Manager (noscript) (Default ThemeSelection: GTM-5DDHKGP, PixInvent: GTM-5J3LMKC) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5DDHKGP" height="0" width="0" style="display: none; visibility: hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  
+  <!-- Content -->
+
+<!-- Error -->
+<div class="container-xxl container-p-y">
+  <div class="misc-wrapper">
+    <h2 class="mb-2 mx-2">Page Not Found :(</h2>
+    <p class="mb-4 mx-2">Oops! 😖 The requested URL was not found on this server.</p>
+    <a href="index.html" class="btn btn-primary">Back to home</a>
+    <div class="mt-3">
+      <img src="../assets/img/illustrations/page-misc-error-light.png" alt="page-misc-error-light" width="500" class="img-fluid" data-app-dark-img="illustrations/page-misc-error-dark.png" data-app-light-img="illustrations/page-misc-error-light.png">
+    </div>
+  </div>
+</div>
+<!-- /Error -->
+
+<!-- / Content -->
+
+  
+
+  
+  <div class="buy-now">
+    <a href="https://themeselection.com/item/sneat-bootstrap-html-admin-template/" target="_blank" class="btn btn-danger btn-buy-now">Upgrade to Pro</a>
+  </div>
+  
+
+  <!-- Core JS -->
+  <!-- build:js assets/vendor/js/core.js -->
+  
+  <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+  <script src="../assets/vendor/libs/popper/popper.js"></script>
+  <script src="../assets/vendor/js/bootstrap.js"></script>
+  <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="../assets/vendor/js/menu.js"></script>
+  
+  <!-- endbuild -->
+
+  <!-- Vendors JS -->
+  
+  
+
+  <!-- Main JS -->
+  <script src="../assets/js/main.js"></script>
+  
+
+  <!-- Page JS -->
+  
+  
+  
+  <!-- Place this tag in your head or just before your close body tag. -->
+  <script async="" defer="" src="https://buttons.github.io/buttons.js"></script>
+  
+
+
+
+
+
+
+<script type="text/javascript" id="">console.log("TS:GTM Worked!");</script>
+<script type="text/javascript" id="">(function(b,c,d){var a=b.createElement("script");a.type="text/javascript";a.src="https://a.omappapi.com/app/js/api.min.js";a.async=!0;a.dataset.user=c;a.dataset.account=d;b.getElementsByTagName("head")[0].appendChild(a)})(document,252882,269977);</script>
+<iframe id="_hjSafeContext_49608485" title="_hjSafeContext" tabindex="-1" aria-hidden="true" src="about:blank" style="display: none !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important;"></iframe><div id="om-mmosgju0tkru8ajiwhig-holder"></div></body>
+
+    <div class="auth-page-wrapper pt-5">
+
+        <!-- auth page content -->
+        <div class="auth-page-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="text-center pt-4">
+                            <div class="">
+                                <img src="${cPath }/resources/images/error.svg" alt="" class="error-basic-img move-animation">
+                            </div>
+                            <div class="mt-n4">
+                                <h1 class="display-1 fw-medium">404</h1>
+                                <h3 class="text-uppercase">요청하신 페이지를 찾을수 없습니다.😭</h3>
+                                <p class="text-muted mb-4"> 3초 후 이전화면으로 이동합니다...</p>
+                                <!-- <a href="index.html" class="btn btn-success"><i class="mdi mdi-home me-1"></i>Back to home</a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+
+            </div>
+            <!-- end container -->
+        </div>
+        <!-- end auth page content -->
+
+    </div>
+    <!-- end auth-page-wrapper -->
+
+<script>
+    setTimeout(() => {
+    	history.back();
+    }, 3000);
+
+</script>
+
+  <!-- JAVASCRIPT -->
+  <script src="${cPath }/resources/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="${cPath }/resources/libs/feather-icons/feather.min.js"></script>
+
+  <!-- particles js -->
+  <script src="${cPath }/resources/libs/particles.js/particles.js"></script>
+  <!-- particles app js -->
+  <script src="${cPath }/resources/js/pages/particles.app.js"></script>
+  <!-- password-addon init -->
+  <script src="${cPath }/resources/js/pages/password-addon.init.js"></script>
+
+</body>
+
+</html>

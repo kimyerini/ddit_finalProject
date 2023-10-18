@@ -1,0 +1,45 @@
+package kr.or.ddit.document.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.document.service.ProofService;
+import kr.or.ddit.document.vo.DocuWaitPatVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Controller
+@RequestMapping("/doctor")
+
+public class ProofController {
+
+	@Autowired
+	private ProofService proofSVC;
+	
+	@GetMapping("/proof")
+	public String getView() {
+		
+		log.info("proof 도착!");
+		return "clinic/proof";
+	}
+
+	// 제증명 대기 환자 목록 조회하기 (담당 환자만)	
+	@ResponseBody
+	@GetMapping(value="/proof/waitList/{empNo}",produces = "application/json;charset=utf-8")
+	public List<DocuWaitPatVO> docuWaitPat(@PathVariable String empNo) {
+		DocuWaitPatVO docuWaitPatVO = new DocuWaitPatVO();
+		docuWaitPatVO.setEmpNo(empNo);
+		
+		log.info("제증명대기 환자 목록 출력하깅");
+		log.info("제증명대기 환자 목록 출력하깅" + empNo);
+		return proofSVC.docuWaitPat(docuWaitPatVO);
+	}
+	
+	
+}

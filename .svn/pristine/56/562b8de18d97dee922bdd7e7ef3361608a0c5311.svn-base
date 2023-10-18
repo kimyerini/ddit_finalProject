@@ -1,0 +1,25 @@
+package kr.or.ddit.order.vo;
+
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class BedStatusVO {
+	private String physioCode;
+	private String physioContent;
+	private String detailNo;
+	private int bedNo;
+	private Date bedStatDate;
+	private String patCode;
+	
+	private String patName;
+	private String patBrthdy;
+	private String clnicSttusCode;
+	
+
+}

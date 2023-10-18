@@ -1,0 +1,10 @@
+package kr.or.ddit.hospitalization.service;
+
+import java.util.List;
+
+
+import kr.or.ddit.hospitalization.vo.hosptPatVO;
+
+public interface HospitalizationService {
+	public List<hosptPatVO> hosptPatWaitList();
+}

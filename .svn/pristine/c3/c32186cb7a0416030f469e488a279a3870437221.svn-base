@@ -1,0 +1,83 @@
+package kr.or.ddit.employee.service.serviceImpl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.employee.mapper.EmployeeMapper;
+import kr.or.ddit.employee.service.EmployeeService;
+import kr.or.ddit.employee.vo.EmployeeVO;
+import kr.or.ddit.employee.vo.UserAuthoritiesVO;
+
+@Service
+public class EmployeeServiceImpl implements EmployeeService {
+	
+	@Autowired
+	private EmployeeMapper employmapper;
+
+
+	@Override
+	public EmployeeVO selectEmployeeByNo(String empNo) {
+		return employmapper.selectEmployeeByNo(empNo);
+	}
+
+	@Override
+	public int delete(String empNo) {
+		return employmapper.delete(empNo);
+	}
+
+	// 회원가입 
+	@Override
+	public int insert(EmployeeVO employeeVO) {
+		return employmapper.insert(employeeVO);
+	}
+	
+	// 권한 insert
+	@Override
+	public int insertAuth(UserAuthoritiesVO userAuthoritiesVO) {
+		return employmapper.insertAuth(userAuthoritiesVO);
+	}
+
+
+	@Override
+	public List<EmployeeVO> listEmployee() {
+		return employmapper.listEmployee();
+	}
+
+	// 이메일 중복확인
+	@Override
+	public int check(String empEmail) {
+		return employmapper.check(empEmail);
+	}
+
+	// 비밀번호변경 : 비번up + 상태up
+	@Override
+	public int updatePwFrst(EmployeeVO employeeVO) {
+		return employmapper.updatePwFrst(employeeVO);
+	}
+
+	// 비밀번호찾기  (입력한 회원이 있는지 확인)
+	@Override
+	public int checkEmp(EmployeeVO employeeVO) {
+		return employmapper.checkEmp(employeeVO);
+	}
+
+	// 임시비밀번호 업데이트
+	@Override
+	public int updateimsiPw(EmployeeVO employeeVO) {
+		return employmapper.updateimsiPw(employeeVO);
+	}
+
+	// 정보수정
+	@Override
+	public int updatemyInfo(EmployeeVO employeeVO) {
+		return employmapper.updatemyInfo(employeeVO);
+	}
+
+
+
+
+
+
+}

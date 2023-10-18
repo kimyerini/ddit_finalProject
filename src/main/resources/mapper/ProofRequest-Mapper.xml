@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.document.mapper.ProofRequestMapper">
+	<insert id="insertDProofReq" parameterType="requestDocumentVO">
+		<selectKey resultType="String" order="BEFORE" keyProperty="reqDocumentNo">
+	         SELECT 
+	        	TO_CHAR(SYSDATE,'YYMM') 
+	        	|| '10' 
+	            || TRIM(TO_CHAR(NVL(
+	            (
+	            SELECT 
+	            	MAX(TO_NUMBER(SUBSTR(req_document_no,-3))) 
+	            FROM 
+	            	tb_request_document 
+	            WHERE req_document_no LIKE  TO_CHAR(sysdate,'YYMM')||'%'),0)+1, '000')
+	            ) 
+	        FROM 
+	        	dual
+	    </selectKey>
+	    /*insertProofReq*/
+		INSERT 
+			INTO
+				tb_request_document (
+					req_document_no
+					, detail_no
+					, req_document_reg_date
+					, req_document_status
+					, req_document_payment
+					, document_type
+				) VALUES (
+					#{reqDocumentNo}
+					, #{detailNo}
+					, TO_CHAR(sysdate,'YYYY-MM-DD hh:mm:ss')
+					, 'DOWT'
+					, 2000
+					, #{documentType}
+				)
+	</insert>
+	<insert id="insertOProofReq" parameterType="requestDocumentVO">
+		<selectKey resultType="String" order="BEFORE" keyProperty="reqDocumentNo">
+	         SELECT 
+	        	TO_CHAR(SYSDATE,'YYMM') 
+	        	|| '11' 
+	            || TRIM(TO_CHAR(NVL(
+	            (
+	            SELECT 
+	            	MAX(TO_NUMBER(SUBSTR(req_document_no,-3))) 
+	            FROM 
+	            	tb_request_document 
+	            WHERE req_document_no LIKE  TO_CHAR(sysdate,'YYMM')||'%'),0)+1, '000')
+	            ) 
+	        FROM 
+	        	dual
+	    </selectKey>
+	    /*insertProofReq*/
+		INSERT 
+			INTO
+				tb_request_document (
+					req_document_no
+					, detail_no
+					, req_document_reg_date
+					, req_document_status
+					, req_document_payment
+					, document_type
+				) VALUES (
+					#{reqDocumentNo}
+					, #{detailNo}
+					, TO_CHAR(sysdate,'YYYY-MM-DD hh:mm:ss')
+					, 'DOWT'
+					, 2000
+					, #{documentType}
+				)
+	</insert>
+	
+	<select id="getProofReqList" resultType="proofReqVO">
+	SELECT  
+		rd.req_document_no
+		, p.pat_code
+		, p.pat_name
+		, TO_CHAR(TO_DATE(p.pat_brthdy),'YYYY-MM-DD') as pat_brthdy
+		, e.emp_nm
+		, rd.req_document_payment
+		, rd.req_document_reg_date
+		, rd.req_document_status  
+		, af.file_web_path
+		, rd.document_type
+	FROM 
+		tb_request_document rd
+	INNER JOIN tb_chart_detail cd ON rd.detail_no = cd.detail_no
+	INNER JOIN tb_clinic c ON c.treat_no = cd.treat_no
+	INNER JOIN tb_receipt r ON c.rcept_no = r.rcept_no
+	INNER JOIN tb_patient p ON p.pat_code = r.pat_code
+	INNER JOIN tb_clinic_schedule cs ON cs.schd_no = r.schd_no
+	INNER JOIN tb_employee e ON e.emp_no = cs.emp_no
+	LEFT JOIN tb_attach_file af ON af.file_code = rd.req_document_no
+	WHERE rd.req_document_recept_yn = 'N'
+	ORDER BY rd.req_document_reg_date
+	</select>
+	
+	<select id="getFileByDocNo" parameterType="attachFileVO" resultType="attachFileVO">
+	SELECT 
+		af.file_code
+		, af.file_no
+		, af.file_web_path
+		, af.file_name
+	FROM 
+		tb_request_document rd
+		, tb_attach_file af
+	WHERE 
+		rd.req_document_no = af.file_code 
+	AND 
+		rd.req_document_no = #{fileCode}
+	</select>
+	
+	<select id="getOneProofRequest" parameterType="proofReqVO" resultType="proofReqVO">
+		SELECT  
+		rd.req_document_no
+		, p.pat_code
+		, p.pat_name
+		, TO_CHAR(TO_DATE(p.pat_brthdy),'YYYY-MM-DD') as pat_brthdy
+		, e.emp_nm
+		, rd.req_document_payment
+		, rd.req_document_reg_date
+		, rd.req_document_status  
+		, af.file_web_path
+		, rd.document_type
+	FROM 
+		tb_request_document rd
+	INNER JOIN tb_chart_detail cd ON rd.detail_no = cd.detail_no
+	INNER JOIN tb_clinic c ON c.treat_no = cd.treat_no
+	INNER JOIN tb_receipt r ON c.rcept_no = r.rcept_no
+	INNER JOIN tb_patient p ON p.pat_code = r.pat_code
+	INNER JOIN tb_clinic_schedule cs ON cs.schd_no = r.schd_no
+	INNER JOIN tb_employee e ON e.emp_no = cs.emp_no
+	LEFT JOIN tb_attach_file af ON af.file_code = rd.req_document_no
+	WHERE rd.req_document_recept_yn = 'N' and rd.req_document_no = #{reqDocumentNo}
+	ORDER BY rd.req_document_reg_date
+	</select>
+</mapper>

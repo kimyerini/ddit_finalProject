@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.employee.mapper.EmployeeManageMapper">
+
+	<select id="listEmp" resultType="employeeVO">
+		/* kr.or.ddit.employee.mapper.EmployeeManageMapper.listEmp */
+		SELECT
+			a.emp_no
+			, b.com_code_name
+			, a.emp_nm
+			, a.emp_telno
+			, a.emp_email
+			, to_char(a.emp_encpn,'yyyy-mm-dd') emp_encpn
+			, to_char(a.emp_rtcpn,'yyyy-mm-dd') emp_rtcpn
+		FROM
+			tb_employee a
+		JOIN
+			tb_common_code b
+		ON
+			a.dept_code = b.com_code
+	</select>
+	
+	<select id="detailEmp" resultType="employeeVO" parameterType="employeeVO">
+		/* kr.or.ddit.employee.mapper.EmployeeManageMapper.detailEmp */
+	    SELECT
+	        a.emp_nm
+	        , b.com_code_name
+	        , a.dept_code
+	        , a.emp_no
+	        , to_char(to_date(replace(a.emp_brthdy,'-',''),'yyyymmdd'),'yyyy-mm-dd') emp_brthdy
+	        , a.emp_addr
+	        , a.emp_dtl_addr
+	        , a.emp_zip
+	        , a.emp_telno
+	        , a.emp_email
+	        , to_char(a.emp_encpn,'yyyy-mm-dd') emp_encpn
+    		, to_char(a.emp_rtcpn,'yyyy-mm-dd') emp_rtcpn
+	    FROM
+	        tb_employee a
+	    JOIN
+	        tb_common_code b
+	    ON
+	        a.dept_code = b.com_code
+	    WHERE
+	        a.emp_no = #{empNo}
+	</select>
+	
+	<select id="findFileCode" resultType="attachFileVO" parameterType="String">
+		/* kr.or.ddit.employee.mapper.EmployeManageMapper.findFileCode */
+		SELECT
+			*
+		FROM
+			tb_attach_file
+		WHERE
+			file_code = #{fileCode}
+		ORDER BY
+			file_reg_date desc
+	</select>
+	
+	<!-- 
+	<update id="updateEmp" parameterType="employeeVO">
+		/* kr.or.ddit.employee.mapper.EmployeeManageMapper.updateEmp */
+		UPDATE
+			tb_employee
+		SET
+			EMP_EMAIL = #{empEmail}
+			, EMP_TELNO = #{empTelno}
+			, EMP_ADDR = #{empAddr}
+			, EMP_DTL_ADDR = #{empDtlAddr}
+			, EMP_ZIP = #{empZip}
+			, EMP_RTCPN = #{empRtcpn}
+		WHERE
+			EMP_NO = #{empNo}
+	</update>
+	-->	
+
+</mapper>

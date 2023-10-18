@@ -1,0 +1,26 @@
+package kr.or.ddit.document.vo;
+
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+
+public class DocumentVO {
+	private int documentNo;
+	private String reqDocumentNo;
+	private String documentDocNm;
+	private String documentSignImgPath;
+	private Date documentIsuDate;
+	private String documentDissCn;
+	private String documentDissClNo;
+	private String documentOpinion;
+	private String documentRm;
+	private String documentPrpos;
+	private String documentNote;
+	private String documentType;
+}

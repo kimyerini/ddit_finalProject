@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.item.mapper.ItemOrderMapper">
+		
+	<!-- select 약품리스트 -->
+	<select id="getMediItemList" resultType="mediItemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.getMediItemList */
+		SELECT
+			req.medi_item_req_no
+			, detail.medi_item_code
+			, item.medi_item_name
+			, item.medi_item_makr
+		    , item.medi_item_price
+		    , detail.medi_item_req_qy
+		    , detail.medi_item_req_total
+		    , to_char(req.medi_item_req_de, 'YYYY-MM-DD') AS mediItemReqDe
+		    , req.emp_no, emp.emp_nm
+		FROM
+			tb_medi_item_req_detail detail
+		JOIN
+			tb_medi_item_list item
+		ON
+			detail.medi_item_code = item.medi_item_code
+		JOIN
+			tb_medi_item_request req
+		ON
+			detail.medi_item_req_no = req.medi_item_req_no
+		JOIN
+			tb_employee emp
+		ON
+			req.emp_no = emp.emp_no
+		WHERE detail.medi_item_confirm_ysno = '0'
+		ORDER BY
+			req.medi_item_req_de DESC
+	</select>
+	
+	<!-- select 비품리스트 -->
+	<select id="getEquipItemList" resultType="itemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.getEquipItemList */
+		SELECT req.item_req_no
+			, detail.item_code
+			, item.item_name
+			, item.item_makr
+			, item.item_price
+		    , detail.item_req_qy
+		    , to_char(req.item_req_de, 'YYYY-MM-DD') as item_req_de
+		    , req.emp_no
+		    , emp.emp_nm
+		FROM
+			tb_item_req_detail detail
+		JOIN
+			tb_item_list item
+		ON
+			item.item_code = detail.item_code
+		JOIN
+			tb_item_req req
+		ON
+			detail.item_req_no = req.item_req_no
+		JOIN
+			tb_employee emp
+		ON
+			req.emp_no = emp.emp_no
+		WHERE
+			detail.item_confirm_ysno = '0'
+		ORDER BY
+			req.item_req_de DESC
+	</select>
+	
+	<!-- select 약품신청목록에 있는 거래처 -->
+	<select id="getMediCompanyName" resultType="mediItemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.getMediCompanyName */
+		SELECT item.medi_item_makr
+		FROM
+		    tb_medi_item_list item
+		JOIN
+		    tb_medi_item_req_detail detail
+		ON
+		    detail.medi_item_code = item.medi_item_code
+		JOIN
+		    tb_medi_item_request req
+		ON
+		    detail.medi_item_req_no = req.medi_item_req_no
+		JOIN
+		    tb_employee emp
+		ON
+		    req.emp_no = emp.emp_no
+		WHERE
+		    detail.medi_item_confirm_ysno = '0'
+		GROUP BY
+		    item.medi_item_makr
+	</select>
+	
+	<!-- select 비품신청목록에 있는 거래처 -->
+	<select id="getItemCompanyName" resultType="itemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.getItemCompanyName */
+		SELECT item.item_makr
+		FROM
+		    tb_item_list item
+		JOIN
+		    tb_item_req_detail detail
+		ON
+		    detail.item_code = item.item_code
+		JOIN
+		    tb_item_req req
+		ON
+		    detail.item_req_no = req.item_req_no
+		JOIN
+		    tb_employee emp
+		ON
+		    req.emp_no = emp.emp_no
+		WHERE
+			detail.item_confirm_ysno = '0'
+		GROUP BY
+		    item.item_makr
+	</select>
+		
+	<!-- select 거래처별 약품리스트 (발주모달) -->
+	<select id="mediItemByCompany" parameterType="String" resultType="mediItemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.mediItemByCompany */
+	SELECT
+		req.medi_item_req_no
+		, detail.medi_item_code
+		, item.medi_item_name
+		, item.medi_item_makr
+    	, item.medi_item_price
+    	, detail.medi_item_req_qy
+    	, detail.medi_item_req_total
+    	, to_char(req.medi_item_req_de, 'YYYY-MM-DD') AS mediItemReqDe
+    	, req.emp_no, emp.emp_nm
+	FROM
+		tb_medi_item_req_detail detail
+	JOIN
+		tb_medi_item_list item
+	ON
+		detail.medi_item_code = item.medi_item_code
+	JOIN
+		tb_medi_item_request req
+	ON
+		detail.medi_item_req_no = req.medi_item_req_no
+	JOIN
+		tb_employee emp
+	ON
+		req.emp_no = emp.emp_no
+	WHERE
+		item.medi_item_makr = #{mediItemMakr}
+	AND
+		detail.medi_item_confirm_ysno = '0'
+	</select>
+	
+	<!-- select 거래처별 비품리스트 (발주모달) -->
+	<select id="equipItemByCompany" parameterType="String" resultType="itemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.equipItemByCompany */
+	SELECT
+		req.item_req_no
+		, detail.item_code
+		, item.item_name
+		, item.item_makr
+    	, item.item_price
+    	, detail.item_req_qy
+    	, detail.item_req_total
+    	, to_char(req.item_req_de, 'YYYY-MM-DD') AS itemReqDe
+    	, req.emp_no, emp.emp_nm
+	FROM
+		tb_item_req_detail detail
+	JOIN
+		tb_item_list item
+	ON
+		detail.item_code = item.item_code
+	JOIN
+		tb_item_req req
+	ON
+		detail.item_req_no = req.item_req_no
+	JOIN
+		tb_employee emp
+	ON
+		req.emp_no = emp.emp_no
+	WHERE
+		item.item_makr = #{itemMakr}
+	AND
+		detail.item_confirm_ysno = '0'
+	</select>
+	
+	<!-- select 다음에 들어갈 약품 발주번호 -->
+	<select id="getMediOrderNum" resultType="String">
+	/* kr.or.item.mapper.ItemOrderMapper.getItemOrderNum */
+	SELECT
+		TO_CHAR(SYSDATE, 'YYMM')
+		|| '12'
+		|| TRIM(TO_CHAR
+			(NVL
+				(
+					(SELECT MAX(TO_NUMBER(SUBSTR(medi_item_order_no,-3)))
+					FROM tb_medi_item_order
+					WHERE medi_item_order_no LIKE TO_CHAR(sysdate,'YYMM') || '%')
+				, 0) + 1
+			, '000')
+		)
+	FROM DUAL
+	</select>
+	
+	<!-- select 다음에 들어갈 비품 발주번호 -->
+	<select id="getEquipOrderNum" resultType="String">
+	/* kr.or.item.mapper.ItemOrderMapper.getEquipOrderNum */
+	SELECT
+		TO_CHAR(SYSDATE, 'YYMM')
+		|| '12'
+		|| TRIM(TO_CHAR
+			(NVL
+				(
+					(SELECT MAX(TO_NUMBER(SUBSTR(item_order_no,-3)))
+					FROM tb_item_order
+					WHERE item_order_no LIKE TO_CHAR(sysdate,'YYMM') || '%')
+				, 0) + 1
+			, '000')
+		)
+	FROM DUAL
+	</select>
+	
+	<!-- update 약품 승인 -->
+	<update id="approveMedi" parameterType="mediItemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.approveMedi */
+	UPDATE
+	    tb_medi_item_req_detail
+	SET
+	    medi_item_confirm_ysno = '1'
+	    , medi_item_order_date = sysdate
+	    , medi_item_order_no = #{mediItemOrderNo}
+	WHERE
+	    medi_item_req_no = #{mediItemReqNo}
+	AND
+		medi_item_code = #{mediItemCode}
+	</update>
+	
+	<!-- update 약품 재고 늘리기 -->
+	<update id="addMediInventory" parameterType="mediItemReqDetailVO">
+	UPDATE
+		tb_medi_item_inventory
+	SET
+		medi_item_invr_qty = medi_item_invr_qty + (
+    		SELECT
+    			SUM(detail.medi_item_req_qy) AS mediItemreqqy
+    		FROM
+    			tb_medi_item_order odr
+		    JOIN
+		    	tb_medi_item_req_detail detail
+		    ON
+		    	odr.medi_item_order_no = detail.medi_item_order_no
+		    JOIN
+		    	tb_medi_item_list item
+		    ON
+		    	detail.medi_item_code = item.medi_item_code
+		    WHERE
+		    	odr.medi_item_order_no = #{mediItemOrderNo}
+		    AND
+		    	item.medi_item_code = #{mediItemCode}
+		)
+	WHERE
+		medi_item_code = #{mediItemCode}
+	</update>
+	
+	<!-- update 비품 승인 -->
+	<update id="approveEquip" parameterType="itemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.approveEquip */
+	UPDATE
+	    tb_item_req_detail
+	SET
+	    item_confirm_ysno = '1'
+	    , item_order_date = sysdate
+	    , item_order_no = #{itemOrderNo}
+	WHERE
+	    item_req_no = #{itemReqNo}
+	AND
+		item_code = #{itemCode}
+	</update>
+	
+	<!-- update 비품 재고 늘리기 -->
+	<update id="addEquipInventory" parameterType="itemReqDetailVO">
+	UPDATE
+		tb_item_inventory
+	SET
+		item_invr_qty = item_invr_qty + (
+    		SELECT
+    			SUM(detail.item_req_qy) AS itemreqqy
+    		FROM
+    			tb_item_order odr
+		    JOIN
+		    	tb_item_req_detail detail
+		    ON
+		    	odr.item_order_no = detail.item_order_no
+		    JOIN
+		    	tb_item_list item
+		    ON
+		    	detail.item_code = item.item_code
+		    WHERE
+		    	odr.item_order_no = #{itemOrderNo}
+		    AND
+		    	item.item_code = #{itemCode}
+		)
+	WHERE
+		item_code = #{itemCode}
+	</update>
+	
+	<!-- insert 약품 발주 정보 -->
+	<insert id="insertMediOrder" parameterType="mediItemOrderVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.insertMediOrder */
+	INSERT INTO tb_medi_item_order (
+		medi_item_order_no
+		, emp_no
+	)
+	VALUES (
+		#{mediItemOrderNo}
+		, #{empNo}
+	)
+	</insert>
+	
+	<!-- insert 비품 발주 정보 -->
+	<insert id="insertEquipOrder" parameterType="itemOrderVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.insertEquipOrder */
+	INSERT INTO tb_item_order (
+		item_order_no
+		, emp_no
+	)
+	VALUES (
+		#{itemOrderNo}
+		, #{empNo}
+	)
+	</insert>
+	
+	<!-- select 약품 반려 리스트 -->
+	<select id="rejectMediList" parameterType="mediItemReqDetailVO" resultType="mediItemReqDetailVO">
+	/* kr.or.ddit.item.mapper.rejectMediList.rejectMediList */
+	SELECT
+	    detail.medi_item_req_no
+	    , detail.medi_item_code
+	    , item.medi_item_name
+	    , item.medi_item_price
+	    , detail.medi_item_req_qy
+	    , detail.medi_item_req_total
+	    , req.emp_no
+	    , emp.emp_nm AS empNm
+	    , to_char(req.medi_item_req_de, 'YYYY-MM-DD') AS mediItemReqDe
+	    , item.medi_item_makr
+	FROM
+		tb_medi_item_req_detail detail
+	JOIN
+		tb_medi_item_list item
+	ON
+		detail.medi_item_code = item.medi_item_code
+	JOIN
+		tb_medi_item_request req
+	ON
+		detail.medi_item_req_no = req.medi_item_req_no
+	JOIN
+		tb_employee emp	
+	ON
+		req.emp_no = emp.emp_no
+	WHERE
+		detail.medi_item_req_no = #{mediItemReqNo}
+	AND
+		detail.medi_item_code = #{mediItemCode}
+	</select>
+	
+	<!-- select 비품 반려 리스트 -->
+	<select id="rejectEquipList" parameterType="itemReqDetailVO" resultType="itemReqDetailVO">
+	/* kr.or.ddit.item.mapper.rejectMediList.rejectEquipList */
+	SELECT
+	    detail.item_req_no
+	    , detail.item_code
+	    , item.item_name
+	    , item.item_price
+	    , detail.item_req_qy
+	    , detail.item_req_total
+	    , req.emp_no
+	    , emp.emp_nm AS empNm
+	    , to_char(req.item_req_de, 'YYYY-MM-DD') AS itemReqDe
+	    , item.item_makr
+	FROM
+		tb_item_req_detail detail
+	JOIN
+		tb_item_list item
+	ON
+		detail.item_code = item.item_code
+	JOIN
+		tb_item_req req
+	ON
+		detail.item_req_no = req.item_req_no
+	JOIN
+		tb_employee emp
+	ON
+		req.emp_no = emp.emp_no
+	WHERE
+		detail.item_req_no = #{itemReqNo}
+	AND
+		detail.item_code = #{itemCode}
+	</select>
+
+	<!-- update 반려사유인 약품만 -->
+	<update id="rejectReasonMedi" parameterType="mediItemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.rejectReasonMedi */
+	UPDATE
+		tb_medi_item_req_detail
+	SET
+		medi_item_return_why = '반려'
+	WHERE
+		medi_item_req_no = #{mediItemReqNo}
+	AND
+		medi_item_code = #{mediItemCode}
+	</update>
+	
+	<!-- update 약품 반려 -->
+	<update id="rejectMedi" parameterType="mediItemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.rejectMedi */
+	UPDATE
+	    tb_medi_item_req_detail detail
+	SET
+	    medi_item_confirm_ysno = '2'
+	WHERE
+	    medi_item_req_no = #{mediItemReqNo}
+	</update>
+	
+	<!-- update 반려사유인 비품만 -->
+	<update id="rejectReasonEquip" parameterType="mediItemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.rejectReasonEquip */
+	UPDATE
+		tb_item_req_detail
+	SET
+		item_return_why = '반려'
+	WHERE
+		item_req_no = #{itemReqNo}
+	AND
+		item_code = #{itemCode}
+	</update>
+	
+	<!-- update 비품 반려 -->
+	<update id="rejectEquip" parameterType="itemReqDetailVO">
+	/* kr.or.ddit.item.mapper.itemOrderMapper.rejectEquip */
+	UPDATE
+	    tb_item_req_detail detail
+	SET
+	    item_confirm_ysno = '2'
+	WHERE
+	    item_req_no = #{itemReqNo}
+	</update>
+	
+	<resultMap type="mediItemOrderVO" id="mediItemOrderMap">
+		<id property="mediItemOrderNo" column="MEDI_ITEM_ORDER_NO" />
+		<result property="empNo" column="EMP_NO" />
+		<result property="empNm" column="empNm" />
+		<result property="mediItemOrderDate" column="mediItemOrderDate" />
+		<collection property="mediItemList" resultMap="mediItemListMap" />
+	</resultMap>
+	
+	<resultMap type="mediItemListVO" id="mediItemListMap">
+		<result property="mediItemCode" column="MEDI_ITEM_CODE" />
+		<result property="mediItemName" column="MEDI_ITEM_NAME" />
+		<result property="mediItemMakr" column="MEDI_ITEM_MAKR" />
+		<result property="mediItemUnit" column="MEDI_ITEM_UNIT" />
+		<result property="mediItemUsage" column="MEDI_ITEM_USAGE" />
+		<result property="narcoticYn" column="NARCOTIC_YN" />
+		<result property="mediItemPrice" column="MEDI_ITEM_PRICE" />
+		<result property="mediItemReqQy" column="mediItemReqQy" />
+		<result property="mediItemReqTotal" column="mediItemReqTotal" />
+		<result property="mediItemReqNo" column="mediItemReqNo" />
+	</resultMap>
+	
+	<!-- select 약품 발주리스트 -->
+	<select id="getMediOrderList" parameterType="hashMap" resultMap="mediItemOrderMap">
+	/* kr.or.ddit.item.mapper.itemOrderMapper.getMediOrderList */
+	SELECT
+		odr.medi_item_order_no
+		, odr.emp_no
+		, emp.emp_nm AS empNm
+		, TO_CHAR(detail.medi_item_order_date, 'YYYY-MM-DD') AS
+	mediItemOrderDate
+		, item.medi_item_code
+		, item.medi_item_name
+		, item.medi_item_makr
+		, item.medi_item_unit
+		, item.medi_item_price
+		, SUM(detail.medi_item_req_qy) AS mediItemReqQy
+		, SUM(detail.medi_item_req_total) AS mediItemReqTotal
+	FROM
+		tb_medi_item_order odr
+	JOIN
+		tb_medi_item_req_detail detail
+	ON
+		odr.medi_item_order_no = detail.medi_item_order_no
+	JOIN
+		tb_medi_item_list item
+	ON
+		detail.medi_item_code = item.medi_item_code
+	JOIN
+		tb_employee emp
+	ON
+		emp.emp_no = odr.emp_no
+	GROUP BY
+		odr.medi_item_order_no,
+		odr.emp_no,
+		emp.emp_nm,
+	TO_CHAR(detail.medi_item_order_date, 'YYYY-MM-DD'),
+		item.medi_item_code
+		, item.medi_item_name
+		, item.medi_item_makr
+		, item.medi_item_unit
+		, item.medi_item_price
+	ORDER BY
+		odr.medi_item_order_no DESC
+
+	</select>
+	
+	<!-- select 약품 발주 상세보기 -->
+	<select id="getMediOrderDetail" parameterType="String" resultMap="mediItemOrderMap">
+	/* kr.or.ddit.mapper.ItemOrderMapper.getMediOrderDetail */
+	SELECT
+		odr.medi_item_order_no
+		, odr.emp_no
+		, emp.emp_nm AS empNm
+		, TO_CHAR(detail.medi_item_order_date, 'YYYY-MM-DD') AS
+	mediItemOrderDate
+		, item.medi_item_code
+		, item.medi_item_name
+		, item.medi_item_makr
+		, item.medi_item_unit
+		, item.medi_item_price
+		, SUM(detail.medi_item_req_qy) AS mediItemReqQy
+		, SUM(detail.medi_item_req_total) AS mediItemReqTotal
+	FROM
+		tb_medi_item_order odr
+	JOIN
+		tb_medi_item_req_detail detail
+	ON
+		odr.medi_item_order_no = detail.medi_item_order_no
+	JOIN
+		tb_medi_item_list item
+	ON
+		detail.medi_item_code = item.medi_item_code
+	JOIN
+		tb_employee emp
+	ON
+		emp.emp_no = odr.emp_no
+	WHERE
+		odr.medi_item_order_no = #{mediItemOrderNo}
+	GROUP BY
+		odr.medi_item_order_no,
+		odr.emp_no,
+		emp.emp_nm,
+	TO_CHAR(detail.medi_item_order_date, 'YYYY-MM-DD'),
+		item.medi_item_code
+		, item.medi_item_name
+		, item.medi_item_makr
+		, item.medi_item_unit
+		, item.medi_item_price
+	ORDER BY
+		odr.medi_item_order_no DESC
+	</select>
+	
+	
+	
+	<resultMap type="itemOrderVO" id="itemOrderMap">
+		<id property="itemOrderNo" column="ITEM_ORDER_NO" />
+		<result property="empNo" column="EMP_NO" />
+		<result property="empNm" column="empNm" />
+		<result property="itemOrderDate" column="itemOrderDate" />
+		<collection property="itemList" resultMap="itemListMap" />
+	</resultMap>
+	
+	<resultMap type="itemListVO" id="itemListMap">
+		<result property="itemCode" column="ITEM_CODE" />
+		<result property="itemName" column="ITEM_NAME" />
+		<result property="itemMakr" column="ITEM_MAKR" />
+		<result property="itemUsage" column="ITEM_USAGE" />
+		<result property="itemPrice" column="ITEM_PRICE" />
+		<result property="itemReqNo" column="itemReqNo" />
+		<result property="itemReqQy" column="itemReqQy" />
+		<result property="itemReqTotal" column="itemReqTotal" />
+	</resultMap>
+	
+	<!-- select 비품 발주리스트 -->
+	<select id="getEquipOrderList" parameterType="hashMap" resultMap="itemOrderMap">
+	/* kr.or.ddit.item.mapper.itemOrderMapper.getEquipOrderList */
+	SELECT
+		odr.item_order_no
+		, odr.emp_no
+		, emp.emp_nm AS empNm
+		, TO_CHAR(detail.item_order_date, 'YYYY-MM-DD') AS itemOrderDate
+		, item.item_code
+		, item.item_name
+		, item.item_makr
+		, item.item_price
+		, SUM(detail.item_req_qy) AS itemReqQy
+		, SUM(detail.item_req_total) AS itemReqTotal
+	FROM
+		tb_item_order odr
+	JOIN
+		tb_item_req_detail detail
+	ON
+		odr.item_order_no = detail.item_order_no
+	JOIN
+		tb_item_list item
+	ON
+		detail.item_code = item.item_code
+	JOIN
+		tb_employee emp
+	ON
+		emp.emp_no = odr.emp_no
+	GROUP BY
+		odr.item_order_no,
+		odr.emp_no,
+		emp.emp_nm,
+	TO_CHAR(detail.item_order_date, 'YYYY-MM-DD'),
+		item.item_code
+		, item.item_name
+		, item.item_makr
+		, item.item_price
+	ORDER BY
+	    odr.item_order_no DESC
+	</select>
+	
+	<!-- select 비품 발주 상세 -->
+	<select id="getEquipOrderDetail" parameterType="String" resultMap="itemOrderMap">
+	/* kr.or.ddit.item.mapper.itemOrderMapper.getEquipOrderDetail */
+	SELECT
+		odr.item_order_no
+		, odr.emp_no
+		, emp.emp_nm AS empNm
+		, TO_CHAR(detail.item_order_date, 'YYYY-MM-DD') AS itemOrderDate
+		, item.item_code
+		, item.item_name
+		, item.item_makr
+		, item.item_price
+		, SUM(detail.item_req_qy) AS itemReqQy
+		, SUM(detail.item_req_total) AS itemReqTotal
+	FROM
+		tb_item_order odr
+	JOIN
+		tb_item_req_detail detail
+	ON
+		odr.item_order_no = detail.item_order_no
+	JOIN
+		tb_item_list item
+	ON
+		detail.item_code = item.item_code
+	JOIN
+		tb_employee emp
+	ON
+		emp.emp_no = odr.emp_no
+	WHERE
+		odr.item_order_no = #{itemOrderNo}
+	GROUP BY
+		odr.item_order_no,
+		odr.emp_no,
+		emp.emp_nm,
+	TO_CHAR(detail.item_order_date, 'YYYY-MM-DD'),
+		item.item_code
+		, item.item_name
+		, item.item_makr
+		, item.item_price
+	ORDER BY
+		odr.item_order_no DESC
+	</select>
+	
+</mapper>

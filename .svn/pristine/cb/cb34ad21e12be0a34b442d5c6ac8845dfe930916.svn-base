@@ -1,0 +1,76 @@
+package kr.or.ddit.security;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import kr.or.ddit.common.vo.AttachFileVO;
+import kr.or.ddit.employee.vo.EmployeeVO;
+import kr.or.ddit.employee.vo.UserAuthoritiesVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+
+public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
+	
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res, Authentication auth)
+			throws IOException, ServletException {
+		log.info("auth success");
+		log.info(auth.getName());
+		log.info(auth.getAuthorities().toString());
+		
+		
+		String referer = req.getHeader("Referer");  // 로그인 전  URL이 오뎅인강?
+		log.debug("경민:" + referer);
+		
+		CustomUser customUser = (CustomUser) auth.getPrincipal();
+		EmployeeVO employeeVO = customUser.getEmployee();
+		
+		String isFirst = employeeVO.getFirstLogin();   // Y or N
+		List<UserAuthoritiesVO> authList = employeeVO.getUserAuthList();  // 현재는 모두 1개만 있음, 향후는?
+		String authCode = authList.get(0).getAuthGrpCode();
+		
+		
+		log.debug("경민인 연예인:" + isFirst + "야홍");
+		String redirectURL = "/home";
+		
+		if(isFirst.equals("Y")) {
+			redirectURL ="/emp/updatePwForm";
+		}else {
+			switch (authCode) {
+		        case "ROLE_ADMIN":
+		        	redirectURL ="/admin";
+		            break;
+		        case "ROLE_DOCTOR":
+		        	redirectURL ="/doctor/clinic";
+		            break;
+		        case "ROLE_NURSE":
+		        	redirectURL ="/item/itemOrder";
+		            break;
+		        case "ROLE_OFFICE":           
+		        	redirectURL ="/office/main";
+		            break;
+		        case "ROLE_HRD":           
+		        	redirectURL ="/board/notice";
+		            break;
+		        case "ROLE_PHYSIO":           
+		        	redirectURL ="/emp/updatePwForm";
+		            break;
+		        case "ROLE_RADIO":           
+		        	redirectURL ="/emp/updatePwForm";
+		            break;
+		        default:        
+		        	redirectURL ="/emp/updatePwForm";
+		            break;    
+		    }
+		}
+		res.sendRedirect(redirectURL);
+	}
+}

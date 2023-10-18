@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.board.mapper.ChartMapper">
+
+<!-- 	<select id="femaleCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.femaleCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_PATIENT -->
+<!-- 	WHERE -->
+<!-- 	    PAT_GEN_CODE = 'F' -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="maleCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.maleCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_PATIENT -->
+<!-- 	WHERE -->
+<!-- 	    PAT_GEN_CODE = 'M' -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="headCodeCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.headCodeCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_CHART_DETAIL -->
+<!-- 	WHERE -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) >= 00 -->
+<!-- 	AND  -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) <= 09 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="neckCodeCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.neckCodeCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_CHART_DETAIL -->
+<!-- 	WHERE -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) >= 10 -->
+<!-- 	AND  -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) <= 19 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="ribCodeCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.ribCodeCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_CHART_DETAIL -->
+<!-- 	WHERE -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) >= 20 -->
+<!-- 	AND  -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) <= 29 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="coreCodeCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.coreCodeCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_CHART_DETAIL -->
+<!-- 	WHERE -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) >= 30 -->
+<!-- 	AND  -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) <= 39 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="shoulderCodeCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.shoulderCodeCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_CHART_DETAIL -->
+<!-- 	WHERE -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) >= 40 -->
+<!-- 	AND  -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) <= 49	 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="armCodeCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.armCodeCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_CHART_DETAIL -->
+<!-- 	WHERE -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) >= 50 -->
+<!-- 	AND  -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) <=59	 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="wristCodeCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.wristCodeCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_CHART_DETAIL -->
+<!-- 	WHERE -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) >= 60 -->
+<!-- 	AND  -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) <= 69	 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="hipCodeCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.hipCodeCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_CHART_DETAIL -->
+<!-- 	WHERE -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) >= 70 -->
+<!-- 	AND  -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) <= 79	 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="legCodeCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.legCodeCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_CHART_DETAIL -->
+<!-- 	WHERE -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) >= 80 -->
+<!-- 	AND  -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) <= 89	 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="ankleCodeCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.ankleCodeCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_CHART_DETAIL -->
+<!-- 	WHERE -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) >= 90 -->
+<!-- 	AND  -->
+<!-- 	    SUBSTR(DISS_CODE_NO, -2) <= 99	 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="childCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.childCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_PATIENT -->
+<!-- 	WHERE -->
+<!-- 	    TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) < 10 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="teesnCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.teesnCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_PATIENT -->
+<!-- 	WHERE -->
+<!-- 	    TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 10 AND 19 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="twentysCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.twentysCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_PATIENT -->
+<!-- 	WHERE -->
+<!-- 	    TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 20 AND 29 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="thirtysCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.thirtysCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_PATIENT -->
+<!-- 	WHERE -->
+<!-- 	    TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 30 AND 39 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="fourtysCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.fourtysCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_PATIENT -->
+<!-- 	WHERE -->
+<!-- 	    TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 40 AND 49 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="fiftysCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.fiftysCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_PATIENT -->
+<!-- 	WHERE -->
+<!-- 	    TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 50 AND 59 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="sixtysCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.sixtysCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_PATIENT -->
+<!-- 	WHERE -->
+<!-- 	    TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 60 AND 69 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="oldAgeCount" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.oldAgeCount */ -->
+<!-- 	SELECT -->
+<!-- 	    COUNT(*) -->
+<!-- 	FROM -->
+<!-- 	    TB_PATIENT -->
+<!-- 	WHERE -->
+<!-- 	    TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) >= 70 -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="monthlySales" resultType="int"> -->
+<!-- 	/* kr.or.ddit.board.mapper.ChartMapper.monthlySales */ -->
+<!-- 	SELECT -->
+<!-- 	    SUM(RCIV_PAYMENT) -->
+<!-- 	FROM -->
+<!-- 	    TB_RECEIPTION -->
+<!-- 	WHERE -->
+<!-- 	    TO_DATE(RCIV_DE, 'YYYY-MM-DD') >= TO_DATE(#{startDate}, 'YYYY-MM-DD') -->
+<!-- 	AND -->
+<!-- 	    TO_DATE(RCIV_DE, 'YYYY-MM-DD') <= TO_DATE(#{endDate}, 'YYYY-MM-DD') -->
+<!-- 	</select> -->
+
+</mapper>

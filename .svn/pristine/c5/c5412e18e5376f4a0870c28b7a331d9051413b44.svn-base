@@ -1,0 +1,48 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack-all.min.js"></script>
+<script type="text/javascript" src="/resources/js/jquery-3.6.0.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack.min.css" rel="stylesheet"/> 
+
+<link href="../resources/css/demo.css" rel="stylesheet"/> 
+<style>
+.mygrid{
+	border : 1px solid black;
+}
+.mygrid-title{
+	text-align : right;
+	font-size : 0.8 rem;
+}
+</style>
+<div class="grid-stack"></div> 
+<script>
+const gr1 = 
+	`
+	<div style="padding : 30px;">
+		<table class="table table-hover">
+		      <thead>
+		         <tr>
+		            <th>번호</th>
+		            <th>이름</th>
+		            <th>내용</th>
+		            <th>수정</th>
+		            <th>삭제</th>
+		         </tr>
+		      </thead>
+		      <tbody class="table-border-bottom-0">
+		         <tr>
+		            <td></td>
+		            <td></td>
+		            <td></td>
+		            <td></td>
+		            <td></td>
+		         </tr>
+		      </tbody>
+		</table>
+	</div>
+	`;
+var items = [ 
+	   {w: 12, h:5, x:0, y:0, content: gr1}
+];
+
+    var grid = GridStack.init(); grid.load(items);
+</script>

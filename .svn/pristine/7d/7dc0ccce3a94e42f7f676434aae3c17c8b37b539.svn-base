@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.common.mapper.TbAttachFileMapper">
+	
+	<!-- 단일업로드 처리(전사적 코드 + 파일객체) insert -->
+	<insert id="attachFileregist" parameterType="AttachFileVO">
+		INSERT INTO TB_ATTACH_FILE(FILE_CODE, FILE_NO, FILE_NAME, FILE_SAVE_NAME, FILE_PHYSIC_PATH
+								 , FILE_WEB_PATH, FILE_SIZE, FILE_DOWN_CNT, FILE_CONT_TYPE, FILE_REG_DATE
+								 , REG_USER_ID, FILE_UPD_DATE, UPD_USER_ID)
+		VALUES(#{fileCode},
+			(SELECT NVL(MAX(FILE_NO),0)+1 FROM TB_ATTACH_FILE),
+			#{fileName},#{fileSaveName},#{filePhysicPath},
+			#{fileWebPath},#{fileSize},0,#{fileContType},SYSDATE,
+			#{regUserId},NULL,NULL
+		)
+	</insert>
+	
+	
+</mapper>

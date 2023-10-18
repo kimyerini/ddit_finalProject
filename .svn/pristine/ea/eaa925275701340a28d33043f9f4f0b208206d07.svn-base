@@ -1,0 +1,10 @@
+package kr.or.ddit.common.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import kr.or.ddit.common.vo.SmsHistoryVO;
+
+@Mapper
+public interface SmsHistoryMapper {
+	public int insertSMSHis(SmsHistoryVO smsHisVO);
+}

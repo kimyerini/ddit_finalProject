@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.common.mapper.SmsHistoryMapper">
+	<insert id="insertSMSHis" parameterType="smsHistoryVO">
+		<selectKey resultType="String" order="BEFORE" keyProperty="smsHisNo">
+		 SELECT 
+	            'SMS'
+	        	|| TO_CHAR(SYSDATE,'MM') 
+	            || TRIM(TO_CHAR(NVL(
+	            (
+	            SELECT 
+	            	MAX(TO_NUMBER(SUBSTR(SMS_HIS_NO,-4))) 
+	            FROM 
+	            	tb_sms_history
+	            WHERE SMS_HIS_NO LIKE 'SMS'|| TO_CHAR(sysdate,'MM')||'%'),0)+1, '0000')
+	            ) 
+	        FROM 
+	        	dual
+		</selectKey>
+		INSERT INTO 
+			tb_sms_history (
+				sms_his_no
+				, sms_nm
+				, sms_cn
+				, sms_sender
+				, sms_receiver
+				, sms_send_date
+			)
+		VALUES
+			(
+				#{smsHisNo}
+				, #{smsNm}
+				, #{smsCn}
+				, #{smsSender}
+				, #{smsReceiver}
+				, TO_CHAR(sysdate,'YYYY-MM-DD hh:mm')
+			)
+	</insert>
+</mapper>

@@ -1,0 +1,599 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack-all.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack.min.css" rel="stylesheet"/> 
+<link href="../resources/css/demo.css" rel="stylesheet"/> 
+<link href="../resources/css/hospitalization.css" rel="stylesheet"/>
+<style>
+.mygrid{
+	border : 1px solid black;
+}
+.mygrid-title{
+	text-align : right;
+	font-size : 0.8 rem;
+}
+.gs-id-0 > .grid-stack-item[gs-h="5"] {
+    height: 108%;
+}
+.gs-id-0 > .grid-stack-item[gs-x="6"] {
+    left: 930px;
+}
+.gs-id-0 > .grid-stack-item[gs-y="0"] {
+    top: -10px;
+}
+.gs-id-0 > .grid-stack-item[gs-x="0"] {
+    left : -27px;
+}
+.gs-12>.grid-stack-item[gs-w="6"] {
+     width: 52%; 
+} 
+</style>
+<div class="grid-stack"></div>
+<script>
+const gr1 = 
+	`
+	<div style="padding : 30px; height : 100%;">
+		<div style="text-align : left; margin-bottom : 20px;">
+			<h5>입/퇴원 관리</h5>
+			<hr>
+		</div>
+		<div style="height : 93%;">
+			<div class="nav-align-top mb-4" style="height : 100%;">
+		      <ul class="nav nav-tabs" role="tablist">
+		        <li class="nav-item" role="presentation">
+		          <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#inHosptailzation" aria-controls="navs-top-home" aria-selected="true">입원</button>
+		        </li>
+		        <li class="nav-item" role="presentation">
+		          <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#outHosptailzation" aria-controls="navs-top-profile" aria-selected="false" tabindex="-1">퇴원</button>
+		        </li>
+		
+		      </ul>
+		      <div class="tab-content" style="height : 100%;">
+		        <div class="tab-pane fade show active" id="inHosptailzation" role="tabpanel">
+		            <table class="table table-hover">
+			            <thead>
+			               <tr>
+			                  <th>순번</th>
+			                  <th>입원코드</th>
+			                  <th>환자코드</th>
+			                  <th>환자명</th>
+			                  <th>퇴원예정일</th>
+			                  <th>수속</th>
+			               </tr>
+			            </thead>
+			            <tbody class="table-border-bottom-0" id="inHosBody">
+			               <tr>
+			                  <td></td>
+			                  <td></td>
+			                  <td></td>
+			                  <td></td>
+			                  <td></td>
+			                  <td></td>
+			               </tr>
+			            </tbody>
+		         	</table>
+		        </div>
+		        <div class="tab-pane fade" id="outHosptailzation" role="tabpanel">
+		            <table class="table table-hover">
+			            <thead>
+			               <tr>
+			                  <th>순번</th>
+			                  <th>입원코드</th>
+			                  <th>환자코드</th>
+			                  <th>환자명</th>
+			                  <th>입원일자</th>
+			                  <th>퇴원</th>
+			               </tr>
+			            </thead>
+			            <tbody class="table-border-bottom-0" id="outHosBody">
+			               <tr>
+			                  <td></td>
+			                  <td></td>
+			                  <td></td>
+			                  <td></td>
+			                  <td></td>
+			                  <td></td>
+			               </tr>
+			            </tbody>
+	         		</table>		          
+		        </div>
+		       
+		      </div>
+		    </div>
+		</div>
+	</div>
+	`;
+const gr2 = 
+	`
+	<div id="gr2Div" style="padding : 30px; height : 100%;">
+		<div style="text-align : left; margin-bottom : 20px;">
+			<h5>입/퇴원 제증명</h5>
+			<hr>
+		</div>
+		<div class="hpa" id="inHosDocument" style="width: 210mm; height: 297mm;">
+			<div class="hcD" style="left: 15mm; top: 10mm;">
+				<div class="hcI">
+					<div class="hls ps0"
+						style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 0mm;"></div>
+					<div class="hls ps4"
+						style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: 234.77mm; height: 3.53mm; width: 180mm;"></div>
+					<div class="hls ps5"
+						style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: 240.42mm; height: 3.53mm; width: 180mm;">
+						<span class="hrt cs2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;신청일
+							:
+							<span id="hosReqDate"></span></span>
+					</div>
+					<div class="hls ps5"
+						style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: 246.06mm; height: 3.53mm; width: 180mm;">
+						<span class="hrt cs2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+					</div>
+					<div class="hls ps5"
+						style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: 251.71mm; height: 3.53mm; width: 180mm;">
+						<span class="hrt cs2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;서약인(인)
+							: <span id="hosReqPerson"></span></span>
+					</div>
+					<div class="hls ps5"
+						style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: 257.35mm; height: 3.53mm; width: 180mm;"></div>
+					<div class="hls ps6"
+						style="line-height: 4.44mm; white-space: nowrap; left: 0mm; top: 262.91mm; height: 5.29mm; width: 180mm;">
+						<span class="hrt cs19">대덕 아작(나)스 병원</span>
+					</div>
+				</div>
+			</div>
+			<div class="htb"
+				style="left: 16.01mm; width: 180.69mm; top: 11.01mm; height: 234.95mm;">
+				<svg class="hs" viewBox="-2.50 -2.50 185.69 239.95"
+					style="left: -2.50mm; top: -2.50mm; width: 185.69mm; height: 239.95mm;">
+					<path d="M0,0 L0,232.94"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M21.66,43.14 L21.66,79.18"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M46.23,43.14 L46.23,55.16"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M64.98,43.14 L64.98,55.16"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M97.70,43.14 L97.70,79.18"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M123.33,43.14 L123.33,79.18"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M178.68,0 L178.68,232.94"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M-0.15,0 L178.83,0"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M-0.15,43.14 L178.83,43.14"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M-0.15,55.16 L178.83,55.16"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M21.51,67.17 L178.83,67.17"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M-0.15,79.18 L178.83,79.18"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M-0.15,232.94 L178.83,232.94"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M178.68,0 L178.68,232.94"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M0,0 L0,232.94"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M-0.15,232.94 L178.83,232.94"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path>
+					<path d="M-0.15,0 L178.83,0"
+						style="stroke:#000000;stroke-linecap:butt;stroke-width:0.30;"></path></svg>
+				<div class="hce"
+					style="left: 0mm; top: 0mm; width: 178.68mm; height: 43.14mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 8.77mm;">
+							<div class="hls ps3"
+								style="line-height: 3.10mm; white-space: nowrap; left: 0mm; top: -0.19mm; height: 3.88mm; width: 175.08mm;"></div>
+							<div class="hls ps3"
+								style="line-height: 4.80mm; white-space: nowrap; left: 0mm; top: 5.93mm; height: 5.64mm; width: 175.08mm;">
+								<span class="hrt cs4">입 원 서 약 서</span>
+							</div>
+							<div class="hls ps3"
+								style="line-height: 3.10mm; white-space: nowrap; left: 0mm; top: 15.05mm; height: 3.88mm; width: 175.08mm;"></div>
+							<div class="hls ps1"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 21.29mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;입원일자
+									: &nbsp;</span><span class="hrt cs1" id="inHosDate">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+									class="hrt cs6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 0mm; top: 43.14mm; width: 21.66mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 3.92mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 18.06mm;">
+								<span class="hrt cs6">성 명</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 21.66mm; top: 43.14mm; width: 24.57mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 3.92mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 20.97mm;">
+								<span id="inHosName"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 46.23mm; top: 43.14mm; width: 18.75mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 1.38mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 15.14mm;">
+								<span class="hrt cs6">입원</span>
+							</div>
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 4.92mm; height: 3.17mm; width: 15.14mm;">
+								<span class="hrt cs6">등록번호</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 64.98mm; top: 43.14mm; width: 32.72mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 3.92mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 29.11mm;">
+								<span id="inHosNo"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 97.70mm; top: 43.14mm; width: 25.63mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 3.92mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 22.03mm;">
+								<span class="hrt cs6">담당의</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 123.33mm; top: 43.14mm; width: 55.35mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 3.92mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 51.75mm;">
+								<span id="inHosDoctor"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 0mm; top: 55.16mm; width: 21.66mm; height: 24.02mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 9.93mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 18.06mm;">
+								<span class="hrt cs6">주 소</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 21.66mm; top: 55.16mm; width: 76.04mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 3.92mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 72.43mm;">
+								<span id="inHosAddr"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 97.70mm; top: 55.16mm; width: 25.63mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 3.92mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 22.03mm;">
+								<span class="hrt cs6">주민등록번호</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 123.33mm; top: 55.16mm; width: 55.35mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 3.92mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 51.75mm;">
+								<span id="inHosIhid"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 21.66mm; top: 67.17mm; width: 76.04mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 3.92mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 72.43mm;">
+								<span id="inHosDtlAddr"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 97.70mm; top: 67.17mm; width: 25.63mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 3.92mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 22.03mm;">
+								<span class="hrt cs6">연락처</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 123.33mm; top: 67.17mm; width: 55.35mm; height: 12.01mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 3.92mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 51.75mm;">
+								<span id="inHosTel"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hce"
+					style="left: 0mm; top: 79.18mm; width: 178.68mm; height: 153.76mm;">
+					<div class="hcD" style="left: 1.80mm; top: 0.49mm;">
+						<div class="hcI" style="top: 11.58mm;">
+							<div class="hls ps3"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: -0.16mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs18">본인은 귀원에 입원함에 있어서 아래 사항을 엄수하며,&nbsp;</span>
+							</div>
+							<div class="hls ps3"
+								style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: 4.90mm; height: 3.53mm; width: 175.08mm;">
+								<span class="hrt cs18">이를 위배 할 때에는 귀원의 어떠한 조치에도 이의를 제기하지
+									않음을 서약합니다. &nbsp;</span><span class="hrt cs7">&nbsp;&nbsp;</span><span
+									class="hrt cs8">&nbsp;&nbsp;&nbsp;</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 10.57mm; height: 3.17mm; width: 175.08mm;"></div>
+							<div class="hls ps2"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 15.65mm; height: 3.17mm; width: 175.08mm;">
+								<div class="hhe"
+									style="display: inline-block; margin-left: 0mm; width: 3.17mm; height: 3.17mm;">
+									<span class="hrt cs8" style="font-size: 9pt;">-</span>
+								</div>
+								<span class="hrt cs8">&nbsp;&nbsp;&nbsp;아
+									&nbsp;&nbsp;&nbsp;래 &nbsp;&nbsp;-</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 20.73mm; height: 3.17mm; width: 175.08mm;"></div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 25.81mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs9">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.
+									입원 기간 중 의료기관에서 제시한 제반 규칙을 준수함은 물론, 치료와 퇴원 등 의료진(또는 직원)</span><span
+									class="hrt cs10">의</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 30.89mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs11">&nbsp;&nbsp;</span><span class="hrt cs12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+									class="hrt cs11">&nbsp;&nbsp;</span><span class="hrt cs13">&nbsp;</span><span
+									class="hrt cs8">정당한 지시에 따르겠습니다.</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 1.31mm; white-space: nowrap; left: 0mm; top: 36.04mm; height: 1.76mm; width: 175.08mm;"></div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 38.79mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+									class="hrt cs15">2. 의료기관의 정당한 진료지침이나 교육에 반하는 무단외출, 외박으로
+									인하여 발생하는 환자의 손해에</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 43.87mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs8">&nbsp;&nbsp;</span><span class="hrt cs11">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+									class="hrt cs8">대한 책임은 원칙적으로 환자에게 있습니다.</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 1.31mm; white-space: nowrap; left: 0mm; top: 49.02mm; height: 1.76mm; width: 175.08mm;"></div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 51.77mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.
+									입원료 및 기타 입원기간 동안 발생하는 진료비는 의료기관에서 정하는 납부기한 내에 환자와 연대보증인이</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 56.85mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs8">&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+									class="hrt cs16">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+									class="hrt cs8">연대하여 납부해야 하며, 정당한 이유 없이 체납될 때에는 채권확보를 위한
+									법적 조치를 취하겠습니다.</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 1.31mm; white-space: nowrap; left: 0mm; top: 62mm; height: 1.76mm; width: 175.08mm;"></div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 64.75mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs10">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.
+									입원 기간 중 환자와 보호자는 의료기관의 비품 및 기물을 고의 또는 과실로 망실, 훼손한 때에는 이를</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 69.83mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;변상합니다.</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 1.31mm; white-space: nowrap; left: 0mm; top: 74.98mm; height: 1.76mm; width: 175.08mm;"></div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 77.73mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs9">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.
+									입원 기간 중 환자 또는 보호자가 병원에 보관을 의뢰하지 않은 현금 및 기타 귀중품의 분실, 훼손에&nbsp;</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 82.81mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;대하여
+									병원은 배상책임이 없습니다.</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 1.31mm; white-space: nowrap; left: 0mm; top: 87.97mm; height: 1.76mm; width: 175.08mm;"></div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 90.72mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs17">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.
+									진료상 발생하는 문제에 분쟁이 생겼을 때에는 의료법에 따라 원인이 발생한 날로부터 1년 이내에</span><span
+									class="hrt cs10">&nbsp;</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 95.80mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs16">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+									class="hrt cs8">시·도지사에게 의료심사조정위원회의 조정을 신청할 수 있습니다.</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 100.88mm; height: 3.17mm; width: 175.08mm;"></div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 105.96mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7.
+									음주 및 가무시에 임의 퇴원 시켜도 이의를 제기 하지 않겠습니다.</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 111.04mm; height: 3.17mm; width: 175.08mm;"></div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 116.12mm; height: 3.17mm; width: 175.08mm;">
+								<span class="hrt cs8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.
+									환자의 안정을 위하여 방문객의 오후 10시 30분 이후 출입을 금하겠습니다.</span>
+							</div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 121.20mm; height: 3.17mm; width: 175.08mm;"></div>
+							<div class="hls ps0"
+								style="line-height: 2.48mm; white-space: nowrap; left: 0mm; top: 126.28mm; height: 3.17mm; width: 175.08mm;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	`;
+
+var items = [ 
+	   {w: 6, h:5, x:0, y:0, content: gr1, noResize : true, noMove : true, locked : true},
+	   {w: 6, h:5, x:7, y:0, content: gr2, noResize : true, noMove : true, locked : true}
+];
+
+var grid = GridStack.init(); grid.load(items);
+
+
+$(function(){
+	fHospitalizationList();
+});
+const outHosBody = $('#outHosBody');
+const inHosBody = $('#inHosBody');
+const inHosDate = $('#inHosDate');
+const hosReqDate = $('#hosReqDate');
+const hosReqPerson = $('#hosReqPerson');
+const inHosName = $('#inHosName');
+const inHosNo = $('#inHosNo');
+const inHosDoctor = $('#inHosDoctor');
+const inHosAddr = $('#inHosAddr');
+const inHosIhid = $('#inHosIhid');
+const inHosDtlAddr = $('#inHosDtlAddr');
+const inHosTel = $('#inHosTel');
+const inHosDocument = $ ('#inHosDocument');
+function fHospitalizationList(){
+	$.ajax({
+		url : "/reqHospitalizaton/list",
+		type : "get",
+		dataType : "json",
+		success : function(result){
+			console.log(result);
+			let inTxt = ""; 
+			let outTxt = "";
+			let inIndex = 1;
+			let outIndex = 1;
+			for(let i=0; i<result.length; i++){
+				let r = result[i];
+				if(r.patHsptlzStatus == '2'){
+					inTxt +=
+						`
+						<tr>
+		                    <td>\${inIndex}</td>
+		                    <td>\${r.hsptlzNo}</td>
+		                    <td>\${r.patCode}</td>
+		                    <td>\${r.patName}</td>
+		                    <td>\${r.patHsptlzOutPlan}</td>
+		                    <td><button class="btn btn-sm btn-primary" onclick="fCheckIn('\${r.hsptlzNo}','\${r.patCode}')">수속</button></td>
+			            </tr>
+						`;
+					inIndex++;
+				}else if(r.patHsptlzStatus == '5'){
+					outTxt +=
+						`
+						<tr>
+		                    <td>\${outIndex}</td>
+		                    <td>\${r.hsptlzNo}</td>
+		                    <td>\${r.patCode}</td>
+		                    <td>\${r.patName}</td>
+		                    <td>\${r.hsptlzInDate}</td>
+		                    <td><button class="btn btn-sm btn-primary" onclick="fCheckOut('\${r.patCode}')">퇴원</button></td>
+			            </tr>						
+						`;
+					outIndex++;
+				}
+			}
+			inHosBody.html(inTxt);
+			outHosBody.html(outTxt);
+		}
+	});
+}
+
+function fCheckIn(hsptlzNo,patCode){
+	inHosDocument.css("display","block");
+	
+	$.ajax({
+		url :"/reqHospitalizaton/get/"+hsptlzNo,
+		type : "get",
+		dataType : "json",
+		success : function(r){
+			console.log(r);
+			
+			hosReqDate.html(r.hsptlzInDate);
+			inHosDate.html(r.hsptlzInDate);
+			hosReqPerson.html(r.patName);
+			inHosName.html(r.patName);
+			inHosNo.html(r.hsptlzNo);
+			inHosDoctor.html(r.empNm);
+			inHosAddr.html(r.patAddr);
+			inHosDtlAddr.html(r.patDtlAddr);
+			inHosIhid.html(r.patIhidnum);
+			inHosTel.html(r.patTel);
+		}
+	});
+}
+
+function fCheckOut(patCode){
+	fCleanCheckIn();
+}
+
+function fCleanCheckIn(){
+	inHosDate.html("");
+	hosReqDate.html("");
+	hosReqPerson.html("");
+	inHosName.html("");
+	inHosNo.html("");
+	inHosDoctor.html("");
+	inHosAddr.html("");
+	inHosIhid.html("");
+	inHosDtlAddr.html("");
+	inHosTel.html("");
+}
+
+//--------------------------- 웹소켓-------------------------------------
+
+function fMessage(){ // 받는쪽에 작성
+	let serverMsg = JSON.parse(event.data);
+
+	if(serverMsg.cmd =="alarm"){
+		getNotiList();
+	}
+	
+}
+// --------------------------- /웹소켓 ------------------------------------- 
+</script>

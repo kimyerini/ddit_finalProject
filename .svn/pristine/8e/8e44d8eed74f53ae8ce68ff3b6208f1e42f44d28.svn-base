@@ -1,0 +1,23 @@
+package kr.or.ddit.item.service;
+
+import java.util.List;
+
+import kr.or.ddit.item.vo.ItemOrderVO;
+import kr.or.ddit.item.vo.ItemReqDetailVO;
+import kr.or.ddit.item.vo.MediItemOrderVO;
+import kr.or.ddit.item.vo.MediItemReqDetailVO;
+
+public interface itemOrderService {
+	
+	// select 약품리스트
+	public List<MediItemReqDetailVO> getMediItemList();
+	
+	// select 약품리스트에 있는 거래처명
+	public List<MediItemReqDetailVO> getCompanyName();
+	
+	// select 거래처별 약품리스트
+	public List<MediItemReqDetailVO> mediItemByCompany(String companyName);
+	
+	// select 비품리스트
+	public List<ItemReqDetailVO> getEquipItemList();
+}

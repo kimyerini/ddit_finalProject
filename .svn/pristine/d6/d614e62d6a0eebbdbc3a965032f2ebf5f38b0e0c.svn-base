@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.hospitalization.mapper.HospitalizationMapper">
+
+<select id="hosptPatWaitList" resultType="kr.or.ddit.hospitalization.vo.hosptPatVO">
+	SELECT 
+		A.HSPTLZ_NO,
+		A.HSPTLZ_IN_DATE,
+		A.HSPTLZ_OUT_DATE,
+		A.PAT_CODE,
+		A.TREAT_NO,
+		P.PAT_CODE,
+		P.PAT_NAME,
+		P.PAT_BRTHDY,
+		P.PAT_GEN_CODE,
+		P.PAT_HSPTLZ_STATUS
+	FROM TB_HOSPITALIZATION A 
+	INNER JOIN TB_PATIENT P ON A.PAT_CODE= P.PAT_CODE
+	WHERE P.PAT_HSPTLZ_STATUS ='2' and P.PAT_CODE = #{patCode};
+</select>
+</mapper>

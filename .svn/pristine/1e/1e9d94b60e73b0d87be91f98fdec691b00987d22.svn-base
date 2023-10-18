@@ -1,0 +1,13 @@
+package kr.or.ddit.common.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import kr.or.ddit.common.vo.AttachFileVO;
+
+@Mapper
+public interface TbAttachFileMapper {
+	
+	//TB_ATTACH_FILE 테이블에 insert
+	//<insert id="attachFileregist" parameterType="AttachFileVO">
+	public int attachFileregist(AttachFileVO attachFileVO);
+}

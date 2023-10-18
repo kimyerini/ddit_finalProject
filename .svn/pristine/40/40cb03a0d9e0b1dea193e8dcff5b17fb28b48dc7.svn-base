@@ -1,0 +1,81 @@
+package kr.or.ddit.order.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.order.service.TreatmentService;
+import kr.or.ddit.order.vo.TreatmentListVO;
+import kr.or.ddit.order.vo.TreatmentMediVO;
+import kr.or.ddit.patient.vo.PatientVO;
+import kr.or.ddit.receipt.vo.WaitPatVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+@RequestMapping("/nurse")
+public class TreatmentController {
+	@Autowired
+	private TreatmentService treatmentService;
+	
+	
+	
+	@GetMapping("/treatment")
+	public String getInventory() {
+		return "nurse/treatment";
+	}
+	@GetMapping(value = "/treatmentWait",produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public List<WaitPatVO> selectWaitTreatment(){
+		log.info("뭐라도 좀 나와봐");
+		return treatmentService.selectWaitTreatment();
+	}
+	
+	@ResponseBody
+	@GetMapping(value="/waitpatClick/{patCode}/{treatNo}/{detailNo}")
+	public Map<String, Object> selectWaitPatInfo(@PathVariable(value="patCode") String patCode ,@PathVariable(value="treatNo",required = false) String treatNo, @PathVariable(value="detailNo") String detailNo) {
+		Map<String,Object> patMap = new HashMap<String, Object>();
+		
+		PatientVO patientVO = new PatientVO();
+		
+		
+		TreatmentMediVO treatmentMediVO = new TreatmentMediVO();
+		TreatmentListVO treatmentListVO = new TreatmentListVO();
+		
+		List<TreatmentMediVO> treatmentMediVOList = new ArrayList<TreatmentMediVO>();
+		List<TreatmentListVO> treatmentListVOList = new ArrayList<TreatmentListVO>();
+		
+		patientVO.setPatCode(patCode);
+		treatmentMediVO.setTreatNo(treatNo);
+		treatmentMediVO.setDetailNo(detailNo);
+		treatmentListVO.setDetailNo(detailNo);
+		treatmentListVO.setTreatNo(treatNo);
+		
+		treatmentMediVOList =treatmentService.midePat(treatmentMediVO);
+		
+		treatmentListVOList=treatmentService.treatmentPatList(treatmentListVO);
+		
+		log.info("야야야야"+patCode);
+		log.info("뭐야아아아" + treatNo);
+		log.info("차트차트" + detailNo);
+		
+		patientVO=treatmentService.selectWaitPatInfo(patientVO);
+		log.info("patientVO : "+patientVO.toString());
+		log.info("treatmentMediVO : "+treatmentMediVOList.toString());
+		log.info("treatmentListVOList 나오자 : "+treatmentListVOList.toString());
+		
+		patMap.put("patientVO", patientVO);
+		patMap.put("treatmentMediVOList", treatmentMediVOList);
+		
+		patMap.put("treatmentListVOList", treatmentListVOList);
+		return patMap;
+	}
+}

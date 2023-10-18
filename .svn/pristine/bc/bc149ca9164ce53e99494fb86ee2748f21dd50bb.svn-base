@@ -1,0 +1,19 @@
+package kr.or.ddit.document.service.serviceImpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.document.mapper.ProofRequestMapper;
+import kr.or.ddit.document.service.ProofRequestService;
+import kr.or.ddit.document.vo.RequestDocumentVO;
+
+@Service
+public class ProofRequestServiceImpl implements ProofRequestService{
+	@Autowired
+	ProofRequestMapper proofRequestMapper;
+		
+	@Override
+	public int insertProofReq(RequestDocumentVO requestDocumentVO) {
+		return proofRequestMapper.insertProofReq(requestDocumentVO);
+	}
+}

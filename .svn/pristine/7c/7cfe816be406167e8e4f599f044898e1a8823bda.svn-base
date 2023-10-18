@@ -1,0 +1,131 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
+<sec:authentication property="principal.employee" var="empVO" />
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="/resources/js/jquery-3.6.0.js"></script>
+<title>Insert title here</title>
+<style>
+.card {
+	width: 70vw;
+	height:79vh;
+	margin: 27px 0px 0px 265px;
+}
+#orderHeader {
+	display:flex;
+	width:81.6vw;
+	margin:0px 0px 25px 0px;
+}
+.card-header {
+	margin: 17px 0px 0px 5px;
+	font-weight:bolder;
+}
+#orderBtn {
+    width: 4vw;
+    height: 4vh;
+    margin-top: 35px;
+}
+.table-hover {
+    margin-left: 18px;
+    width: 68vw;
+}
+.text-nowrap {
+	height: 57vh;
+}
+#rejectBtn {
+	width: 4vw;
+    height: 4vh;
+    padding: 3px 0px 0px 0px!important;
+    margin: 14px 0px -2px 1245px;
+}
+a, a:active {
+	color: inherit;
+	text-decoration: none;
+}
+#myTable {
+	overflow: auto;
+}
+</style>
+</head>
+<body>
+	<div class="card">
+		<div id="wrapper">
+			<div id="orderHeader">
+				<div>
+					<div style="display:flex;">
+						<h4 class="card-header">약품 신청 조회</h4>
+						<button class="btn btn-primary" type="button" id="orderBtn">발주</button>
+					</div>
+					<p style="margin:8px 0px -10px 25px;"></p>
+				</div>
+			</div><!-- notice header 끝 -->
+			
+			<!-- 테이블 처리 -->
+			<div class="table-responsive text-nowrap">
+			<div id="myTable">
+			</div>
+			</div><!-- table div 끝 -->
+			
+			<button type="button" class="btn btn-secondary" id="rejectBtn">반려</button>
+			
+		</div><!-- wrapper 끝 -->
+	</div><!-- card 끝 -->
+</body>
+<script>
+$(function(){
+	getMediItemList();
+});
+
+// 약품 신청 조회 리스트 뿌리기
+const getMediItemList = function() {
+	console.log("여기는 getMediItemList");
+	let xhr = new XMLHttpRequest();
+	xhr.open("get", "/order/mediList", true);
+	xhr.onreadystatechange = function() {
+		if(xhr.readyState == 4 && xhr.status == 200) {
+			let result = JSON.parse(xhr.responseText);
+			console.log("받아온 약품 신청 조회 리스트", result);
+			
+			$('#orderHeader p').text("🔔 총 " + result.length + "개의 약품신청내역이 있습니다.");
+			
+			let tblStr = `<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>반려체크</th>
+								<th>약품코드</th>
+								<th>약품명</th>
+								<th>거래처</th>
+								<th>금액</th>
+								<th>신청수량</th>
+								<th>신청일자</th>
+								<th>신청인</th> 
+							</tr>
+						</thead>
+						<tbody>`;
+			for(let i=0; i<result.length; i++) {
+				tblStr += `<tr>`;
+				tblStr += `<td><input class="form-check-input" type="checkbox" id="defaultCheck3"></td>`;
+				tblStr += `<td>\${result[i].mediItemCode}</td>`;
+				tblStr += `<td>\${result[i].mediItemName}</td>`;
+				tblStr += `<td>\${result[i].mediItemMakr}</td>`;
+				tblStr += `<td>\${result[i].mediItemPrice}</td>`;
+				tblStr += `<td>\${result[i].mediItemReqQy}</td>`;
+				tblStr += `<td>\${result[i].mediItemReqDe}</td>`;
+				tblStr += `<td>\${result[i].empNm}</td>`;
+				tblStr += `</tr>`;
+			}
+			tblStr += `</tbody></table>`;
+			
+// 			console.log("tblStr" + tblStr);
+			$('#myTable').html(tblStr);
+		} 
+	}
+	xhr.send();
+}
+
+</script>
+</html>

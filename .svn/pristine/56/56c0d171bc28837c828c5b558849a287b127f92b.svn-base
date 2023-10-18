@@ -1,0 +1,293 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack-all.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack.min.css" rel="stylesheet"/> 
+<link href="/resources/css/demo.css" rel="stylesheet"/> 
+
+<!-- 환자 검색 모달 시작 -->
+<div class="modal-content" id="searchPatModal">
+		<div class="modal-header">
+			<h3 class="modal-title" >환자검색</h3>
+		</div>
+		<div class="col mb-3" style="text-align : right;">
+			<input type="text" id="searchPatValue" class="form-control">
+			<button type="button" class="btn btn-primary me-3" onclick="searchPat()">검색</button>
+		</div>
+		<div id="patList" style="width : 100%; height : 75%;">
+	 	<h5 class="pb-2 border-bottom mb-4"  style="font-weight: bold;">검색결과</h5>
+        <table class="table table-hover">
+	        <thead>
+		        <tr>
+		        <th>번호</th>
+		        <th>환자코드</th>
+		        <th>환자명</th>
+				<th>생년월일</th>
+		        </tr>
+	        </thead>
+	        <tbody class="table-border-bottom-0" id="sResultTbody">
+	        
+			</tbody>
+	    </table>
+		</div>
+		<!--  //modal-body끝 -->
+		<div class="modal-footer" style="text-align : right; padding : 15px 0px;">
+			<button type="button" class="btn btn-secondary me-3"
+				data-bs-dismiss="modal" style="margin : 0px !important;" onclick="modalClose()">닫기</button>
+		</div>
+	</div>
+<!-- 환자 검색 모달 끝 -->
+	<div class="grid-stack"></div>
+ <style>
+ .smsPat{
+ 	color : black;
+ 	padding : 0 0 0 3px;
+ }
+ #searchPatModal{
+ 	position: fixed;
+	width: 500px;
+	height: 800px;
+	background-color: white;
+	display: none;
+	z-index: 9999;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border: 1px solid black;
+	overflow: auto;
+ }
+ </style>
+  <script>
+  $(function(){
+	  getSmsList(); 
+  });
+      const searchPatModal = $('#searchPatModal');
+      const patList = $('#patList');
+      const searchPatValue = $('#searchPatValue');
+      const sResultTbody = $('#sResultTbody');
+  	  var gr1 = 
+  		  `
+    	  <div>
+  	  			<div style="text-align : left; margin : 20px; margin-bottom : 0px;">
+  	  				<div>
+  	  					<div style="display : inline-block;">
+  	  						<p style="margin-bottom : 0px; font-size : 1.5rem;"><strong>문자 매크로</strong></p>
+	  	  				</div>
+  	  					<div style="float : right; display : inline-block;">
+		  					<button class="btn btn-primary" style="text-align : right;">추가</button>
+		  				</div>
+  	  				</div>
+  	  				<hr style="color : lightgray;">
+  	  			</div>
+  	  	  </div>
+  		  `;
+  		  
+      var gr2 =
+    	  `
+
+    	  `;
+  	  var gr3 = 
+  		  `
+  			<div>
+  	  			<div style="text-align : left; margin : 20px; margin-bottom : 0px;">
+  	  				<p style="margin-bottom : 0px; font-size : 1.5rem;"><strong>내용</strong></p>
+  	  				<hr style="color : lightgray;">
+  	  			</div>
+  	  			<div style="width : 100%; margin-top : 0px;">
+  	  				<p style="text-align : left; margin : 20px; margin-bottom : 0px; font-size : 1.1rem;">내용 입력</p>
+  	  				<div style="display : flex; height : auto;">
+	  	  				<div style="margin : 20px;">
+	  	  					<textarea id="smsCn" name="smsCn" cols ="75", rows ="18" placeholder="[Web발신]\n내용을 입력하세요."></textarea>
+	  	  				</div>
+	  	  				<div style="margin : 20px;">
+	  	  					<a class="btn btn-sm btn-primary" style="margin-bottom : 10px; width : 150px; height : 40px; font-size : 1.2rem; color : white;"><strong>건강검진</strong></a><br>
+	  	  					<a class="btn btn-sm btn-primary" style="margin-bottom : 10px; width : 150px; height : 40px; font-size : 1.2rem; color : white;"><strong>건강검진</strong></a><br>
+	  	  					<a class="btn btn-sm btn-primary" style="margin-bottom : 10px; width : 150px; height : 40px; font-size : 1.2rem; color : white;"><strong>건강검진</strong></a><br>
+	  	  					<a class="btn btn-sm btn-primary" style="margin-bottom : 10px; width : 150px; height : 40px; font-size : 1.2rem; color : white;"><strong>건강검진</strong></a><br>
+	  	  					<a class="btn btn-sm btn-primary" style="margin-bottom : 10px; width : 150px; height : 40px; font-size : 1.2rem; color : white;"><strong>건강검진</strong></a><br>
+	  	  				</div>
+  	  				</div>
+  	  			</div>
+  	  		</div>
+  	  		<div style="text-align : left; margin : 20px; margin-bottom : 0px;">
+				<p style="margin-bottom : 0px; font-size : 1.5rem;"><strong>발송</strong></p>
+				<hr style="color : lightgray; margin-bottom : 0px;">
+			</div>
+  	  		<div style="display : flex; width: 100%;">
+  	  			<div style="width : 659px; margin : 0px 20px 20px 20px;">
+		  	  		<div class="input-group" style="margin : 20px 0px;  width : 100%;">
+				        <span onclick="test()" class="input-group-text" style="background : #696cff; color : white;">검색</span>
+				        <div id="selectedPatDiv" class="form-control" style="display : flex; text-align : left; margin-right : 0px">
+				        </div>
+		     		</div>
+	     		</div>
+		        <div style="margin : 20px;">
+		        	<button class="btn btn-primary" onclick="sendSMS()" style="width : 150px; height : 40px;  font-size : 1.2rem;"><strong>전송</strong></button>
+		        </div>
+	     	</div>
+  	  		
+  		  `;
+      var items = [ 
+	   {w: 6, h:3, x:0, y:0, content: gr1}, 
+	   {w: 6, h:3, x:0, y:3, content: gr2}, 
+	   {w: 6, h:6, x:6, y:0, content: gr3},
+  		];
+  
+    var grid = GridStack.init(); grid.load(items);
+
+
+
+
+	function sendSMS(){
+		let smsReceiver = [];
+		$('input[name="smsReceiver"]').each(function() {
+			smsReceiver.push($(this).val());
+		});
+	
+		let smsCn = $('#smsCn');
+		console.log("받는사람:"+smsReceiver);
+		console.log("내용:" + smsCn);
+	   let data = [];
+	   for(let i = 0; i< smsReceiver.length; i++){
+	   		data.push({
+			"smsReceiver" : smsReceiver[i],
+			"smsCn" : smsCn.val()
+		});
+		   
+	   }
+	   console.log("마!!!!!이야!" + JSON.stringify(data));
+	   
+ 	   	$.ajax({
+ 	   		url : "/sms/send",
+ 	   		dataType : "text",
+ 	   		contentType : 'application/json; charset=utf-8',
+	   		type : "post",
+ 	   		data : JSON.stringify(data),
+ 	   		success : function(result){
+ 	   			if(result == 'SUCCESS'){
+ 	   				Swal.fire({
+					   icon: 'success',
+					   title: '성공!',
+					   text: '문자 전송 완료.'
+					});
+ 	   				smsCn.val("");
+ 	   				selectedPatDiv.empty();
+ 	   			}else{
+	 	   			Swal.fire({
+					   icon: 'error',
+					   title: '실패!',
+					   text: '문자 전송 실패.'
+					});
+ 	   			}
+ 	   		}
+ 	   	})
+   }
+   
+   function test(){
+	   searchPatModal.css("display","block");
+   }
+   
+	function delSmsPat(patCode){
+		console.log("파라미터는",patCode);
+		// 클릭된 요소를 찾아 삭제
+	    let $clickedElement = $('div.smsP input[name="smsPatCode"][value="' + patCode + '"]').closest('div.smsP');
+	    $clickedElement.remove();
+		let index = selectedPatCodes.indexOf(patCode);
+		console.log("인덱스는",index);
+		if (index !== -1) {
+   			selectedPatCodes.splice(index, 1);
+   			Swal.fire({
+				   icon: 'success',
+				   title: '성공!',
+				   text: '삭제 완료.'
+			});
+		}
+		console.log("제거된 후 :",selectedPatCodes);
+		}
+   
+   function modalClose(){
+	   searchPatModal.css("display","none");
+	   sResultTbody.empty();
+	   searchPatValue.val("");
+   }
+   function searchPat(){
+	   let patName = searchPatValue.val();
+	   $.ajax({
+		 url : "/office/searchPat/"+patName,
+		 type : "get",
+		 success : function(result){
+			 console.log(result);
+				let txt = "";
+			 	
+	            for (let i = 0; i < result.length; i++) {
+	            	let r = result[i];
+	            	let no = i + 1;
+	                txt += `<tr onclick="selectPat(\${r.patCode})">`;
+	                txt += `<td>\${no}</td>`;
+	                txt += `<td>\${r.patCode}</td>`;
+	                txt += `<td>\${r.patName}</td>`;
+	                txt += `<td>\${r.patBrthdy}</td>`;
+	                txt += `</tr>`;
+	            }
+	          
+	            sResultTbody.html(txt);
+		 }
+		   
+	   })
+   }
+   
+   const selectedPatDiv = $('#selectedPatDiv');
+   
+   // 이미 선택된 환자를 저장할 배열
+   let selectedPatCodes = [];
+   function selectPat(patCode){
+	  
+	  console.log("현재:",selectedPatCodes);
+	  $.ajax({
+		url : "/office/getPat/"+patCode,
+		type : "get",
+		success : function(result){
+			console.log(result);
+			let tel = result.patTel.replace(/-/g, '');
+			 // 중복 체크
+            if (!selectedPatCodes.includes(result.patCode)) {
+            	selectedPatCodes.push(result.patCode);
+				console.log(tel);
+				let txt = 
+					`
+					<div style="display : flex;" class="smsP">
+						<input type="hidden" name="smsPatCode" value="\${result.patCode}"/>
+			        	<input type="hidden" name="smsReceiver" value="\${tel}"/>
+				        <p class="smsPat btn btn-xs" style="margin-bottom : 0px;">
+				        	 \${result.patName}
+				        </p>
+			        	<a onclick="delSmsPat('\${result.patCode}')" style="margin-left : 5px; color : red;"class="btn-close">
+			        	</a>
+			        	&nbsp
+					</div>
+					`;
+				selectedPatDiv.append(txt);
+				Swal.fire({
+					   icon: 'success',
+					   title: '성공!',
+					   text: '환자 선택 완료.'
+				});
+				modalClose();
+			} else {
+				Swal.fire({
+					   icon: 'error',
+					   title: '실패!',
+					   text: '이미 선택된 환자입니다.'
+				});
+            }
+		}
+	  });
+   }
+   function getSmsList(){
+	   $.ajax({
+		   url : "/sms/list",
+		   type : "get",
+		   success : function(result){
+			   console.log(result);
+		   }
+	   });
+   }
+ </script>

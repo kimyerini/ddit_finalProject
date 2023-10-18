@@ -1,0 +1,37 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<form id="smsForm">
+   <ul>
+     <li>보낼사람 : <input type="text" id="smsSender" name="smsSender"/></li>
+     <li>받는사람 : <input type="text" id="smsReceiver" name="smsReceiver"/></li>
+     <li>내용 : <textarea id="smsCn" name="smsCn"></textarea></li>
+     <li><input type="button" onclick="sendSMS()" value="전송하기" /></li>
+   </ul>
+ </form>
+ 
+  <script>
+   function sendSMS(){
+	let smsSender = $('#smsSender').val();
+	let smsReceiver = $('#smsReceiver').val();
+	let smsCn = $('#smsCn').val();
+	
+	
+	   
+   let data = {
+		"smsSender" : smsSender,
+		"smsReceiver" : smsReceiver,
+		"smsCn" : smsCn
+	}
+   console.log("마!!!!!이야!" + JSON.stringify(data));
+   
+   	$.ajax({
+   		url : "/sms/send",
+   		dataType : "json",
+   		contentType : 'application/json; charset=utf-8',
+   		type : "post",
+   		data : JSON.stringify(data),
+   		success : function(result){
+   			console.log(result);
+   		}
+   	})
+   }
+ </script>

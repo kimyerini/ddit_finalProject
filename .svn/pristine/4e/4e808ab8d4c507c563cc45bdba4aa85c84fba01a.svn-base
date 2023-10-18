@@ -1,0 +1,30 @@
+package kr.or.ddit.board.service;
+
+import java.util.List;
+
+import kr.or.ddit.board.vo.NoticeBoardVO;
+import kr.or.ddit.common.vo.AttachFileVO;
+
+public interface NoticeService {
+
+	// select List
+	public List<NoticeBoardVO> noticeList();
+	
+	// select one
+	public NoticeBoardVO oneNotice(String ntbdCode);
+	
+	// insert
+	public int insertNotice(NoticeBoardVO noticeBoardVO);
+	
+	// update
+	public int updateNotice(NoticeBoardVO noticeBoardVO);
+	
+	// 조회수 증가
+	public int updateHit(NoticeBoardVO noticeBoardVO);
+	
+	// delete
+	public int deleteNotice(String ntbdCode);
+	
+	// 파일 개수 세리기
+	public List<Integer> fileCountList();
+}

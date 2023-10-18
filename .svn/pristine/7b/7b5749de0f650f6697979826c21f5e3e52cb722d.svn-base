@@ -1,0 +1,28 @@
+package kr.or.ddit.common.service.serviceImpl;
+
+import java.util.List;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.common.mapper.SmsHistoryMapper;
+import kr.or.ddit.common.service.SmsHistoryService;
+import kr.or.ddit.common.vo.SmsHistoryVO;
+
+@Service
+public class SmsHistoryServiceImpl implements SmsHistoryService{
+	@Autowired
+	SmsHistoryMapper smsHistoryMapper;
+	
+	@Override
+	public int insertSMSHis(SmsHistoryVO smsHisVO) {
+		
+		return smsHistoryMapper.insertSMSHis(smsHisVO);
+	}
+	
+	@Override
+	public List<SmsHistoryVO> getSMSHisList() {
+		return smsHistoryMapper.getSMSHisList();
+	}
+}

@@ -1,0 +1,104 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="/resources/ckeditor/ckeditor.js"></script>
+<script src="/resources/js/jquery-3.6.0.js"></script>
+<title>Insert title here</title>
+<style>
+.card {
+	width: 82vw;
+	height:79vh;
+	margin:23px 0px 0px 144px
+}
+.noticeHeader {
+	display: flex;
+	width: 81.6vw;
+	margin: 10px 0px 0px 0px;
+}
+.card-header {
+	font-weight:bolder;
+	margin: 3px 0px -5px 5px;
+}
+a, a:active {
+	color: inherit;
+	text-decoration: none;
+}
+.noticeBody {
+	width: 81vw;
+	margin: -5px 0px 22px 20px;	
+}
+.flex {
+	display: flex;
+    justify-content: space-between;
+    margin: 1.5rem;
+}
+.writeInput-long {
+	width: 79vw!important;
+}
+.writeInput-short {
+	width: 21.8vw!important;
+}
+#noticeBody textarea {
+	width: 75.2vw;
+}
+.noticeFooter {
+	display: flex;
+	justify-content: end;
+	margin: 0px 39px 0px 0px;
+}
+#insertBtn, #updateBtn {
+	width: 4vw;
+	height: 4vh;
+}
+#iCancelBtn, #uCancelBtn {
+	width: 4vw;
+	height: 4vh;
+	margin-left: 15px;
+}
+
+</style>
+</head>
+<body>
+	<div class="card">
+		<div id="wrapper">
+			<div class="noticeHeader">
+				<h4 class="card-header">공지사항</h4>
+			</div><!-- notice header 끝 -->
+	
+			<div class="noticeBody">
+			</div>
+			
+			<div class="noticeFooter">
+				<button type="button" class="btn btn-primary" id="insertBtn">등록</button>
+				<button type="button" class="btn btn-secondary" id="iCancelBtn" onclick="location.href='/board/notice'">취소</button>
+			</div><!-- noticeFooter 끝 -->
+			<div class="noticeFooter">
+				<button type="button" class="btn btn-primary" id="updateBtn">수정</button>
+				<button type="button" class="btn btn-secondary" id="uCancelBtn" onclick="location.href='/board/notice'">취소</button>
+			</div>
+		</div><!-- wrapper 끝 -->
+	</div><!-- card 끝 -->
+</body>
+<script>
+
+	// CKEDITOR 설정
+	CKEDITOR.replace("ntbdContent", {
+		height: 280, width: 1431
+	});
+
+	$(function() {
+		// 공지사항 글 등록 성공 시 alert
+		if("${param.result}" == "1") {
+			Swal.fire({
+				icon: 'success',
+				text: '공지사항 게시글이 정상적으로 등록되었습니다.'
+			})
+		}
+	})
+
+	
+</script>
+</html>

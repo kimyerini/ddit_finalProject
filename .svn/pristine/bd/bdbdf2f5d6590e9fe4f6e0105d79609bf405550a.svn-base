@@ -1,0 +1,48 @@
+package kr.or.ddit.hospitalization.service.serviceImpl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.hospitalization.mapper.HospitalizationMapper;
+import kr.or.ddit.hospitalization.service.HospitalizationService;
+import kr.or.ddit.hospitalization.vo.SickRoomTypeVO;
+import kr.or.ddit.hospitalization.vo.hosptPatVO;
+import kr.or.ddit.order.vo.HospitalizationVO;
+import kr.or.ddit.patient.vo.PatientVO;
+import kr.or.ddit.receipt.vo.WaitPatVO;
+
+@Service
+public class HospitalizationServiceImpl implements HospitalizationService{
+	@Autowired
+	private HospitalizationMapper hospMapper;
+	
+	
+	@Override
+	public List<WaitPatVO> hosptPatWaitList() {
+		return hospMapper.hosptPatWaitList();
+	}
+
+
+	@Override
+	public List<SickRoomTypeVO> selectRoomData() {
+		return hospMapper.selectRoomData();
+	}
+
+//-------------------------------------------------
+	@Override
+	public int updateHsptlzStatus(PatientVO patientVO,HospitalizationVO hospitalizationVO) {
+		int cnt = hospMapper.updateHsptlzStatus(patientVO);
+		cnt += hospMapper.updateHsptlzRoom(hospitalizationVO);
+		return cnt;
+	}
+
+
+	@Override
+	public List<HospitalizationVO> selectHsptlzstatus() {
+		return hospMapper.selectHsptlzstatus();
+	}
+
+	
+}

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.item.mapper.ItemRequestMapper">
+<!-- <resultMap id="mediItemWaitingUpdateResultMap" type="MediItemWaitingUpdateVO"> -->
+<!--     <id property="mediItemReqNo" column="MEDI_ITEM_REQ_NO"/> -->
+<!--     <result property="mediItemReqDe" column="MEDI_ITEM_REQ_DE"/> -->
+<!--     <result property="mediItemReqQy" column="MEDI_ITEM_REQ_QY"/> -->
+<!--     <result property="mediItemCode" column="MEDI_ITEM_CODE"/> -->
+<!--     <result property="mediItemName" column="MEDI_ITEM_NAME"/> -->
+<!--     <result property="empNm" column="EMP_NM"/> -->
+    
+<!-- </resultMap> -->
+
+
+	<!-- 1) 들어와 : mediItemRequestVO[mediItemReqNo=0,...] 나감 : mediItemRequestVO[mediItemReqNo=3,...] -->
+<insert id="insertMediItemRequest" parameterType="mediItemRequestVO">
+   <selectKey resultType="int" order="BEFORE" keyProperty="mediItemReqNo">
+      SELECT SEQ_MEDI_ITEM_REQ.NEXTVAL FROM DUAL
+   </selectKey>
+   /*insertMediItemRequest*/
+   insert into TB_MEDI_ITEM_REQUEST(MEDI_ITEM_REQ_NO, MEDI_ITEM_REQ_DE, EMP_NO) 
+   values (#{mediItemReqNo}, sysdate,#{empNo})
+</insert>
+
+	<!-- 2) 파일 다중 입력 다중입력을 할때는 insert이지만 update를 사용한다. List<MediItemReqDetailVO> 
+		mediItemReqDetailVOList //[MediItemReqDetailVO(mediItemReqNo=37, mediItemCode=641602350, 
+		mediItemReqQy=53, mediItemReqTotal=0), //MediItemReqDetailVO(mediItemReqNo=37, 
+		mediItemCode=641602350, mediItemReqQy=33, mediItemReqTotal=0)] -->
+ <update id="insertMediItemReqDetail" parameterType="java.util.List"> 
+   
+    <foreach collection="list" item="mediItemReqDetailVO"
+      open="INSERT ALL" close="SELECT * FROM DUAL" separator=" " index="idx">
+  INTO TB_MEDI_ITEM_REQ_DETAIL
+   (
+   MEDI_ITEM_REQ_NO
+   , MEDI_ITEM_CODE
+   , MEDI_ITEM_REQ_QY
+   , MEDI_ITEM_REQ_TOTAL
+   ) 
+   values (
+   #{mediItemReqDetailVO.mediItemReqNo},
+   #{mediItemReqDetailVO.mediItemCode},
+   #{mediItemReqDetailVO.mediItemReqQy}, 
+   (SELECT MEDI_ITEM_PRICE * #{mediItemReqDetailVO.mediItemReqQy} 
+   FROM TB_MEDI_ITEM_LIST WHERE MEDI_ITEM_CODE = #{mediItemReqDetailVO.mediItemCode}))
+   </foreach>
+
+</update>
+
+
+<insert id="insertItemRequest" parameterType="itemReqVO">
+   <selectKey resultType="int" order="BEFORE" keyProperty="itemReqNo">
+      SELECT SEQ_ITEM_REQ.NEXTVAL FROM DUAL
+   </selectKey>
+   /*insertItemRequest*/
+   insert into TB_ITEM_REQ(ITEM_REQ_NO, ITEM_REQ_DE, EMP_NO) 
+   values (#{itemReqNo}, sysdate, #{empNo})
+</insert>
+
+<update id="insertItemReqDetail" parameterType="java.util.List"> 
+    <foreach collection="list" item="itemReqDetailVO"
+        open="INSERT ALL" close="SELECT * FROM DUAL" separator=" " index="idx">
+    INTO TB_ITEM_REQ_DETAIL 
+   (
+  		ITEM_REQ_NO
+  		, ITEM_CODE
+  		, ITEM_REQ_QY
+  		, ITEM_REQ_TOTAL 
+  	) 
+  VALUES(
+    #{itemReqDetailVO.itemReqNo},
+	#{itemReqDetailVO.itemCode},
+	#{itemReqDetailVO.itemReqQy}, 
+	(SELECT ITEM_PRICE * #{itemReqDetailVO.itemReqQy} 
+    FROM TB_ITEM_LIST WHERE ITEM_CODE = #{itemReqDetailVO.itemCode})) 
+    </foreach>
+</update>
+
+
+
+
+<select id="selectWaitingmediList" resultType="mediItemWaitingListVO" parameterType="mediItemWaitingListVO">
+SELECT a.*
+		FROM (
+		  SELECT 
+		    a.MEDI_ITEM_REQ_NO,
+		    b.MEDI_ITEM_NAME,
+		    a.MEDI_ITEM_REQ_DE, TO_CHAR(a.MEDI_ITEM_REQ_DE,'YYYY-MM-DD') MEDI_ITEM_REQ_DE_STR,
+		    d.EMP_NM,
+		    c.MEDI_ITEM_CONFIRM_YSNO,
+		    COUNT(*) OVER (PARTITION BY a.MEDI_ITEM_REQ_NO) AS COUNT_MEDI_ITEM
+            
+		  FROM TB_MEDI_ITEM_REQUEST a
+		  INNER JOIN TB_MEDI_ITEM_REQ_DETAIL c ON a.MEDI_ITEM_REQ_NO = c.MEDI_ITEM_REQ_NO
+		  INNER JOIN TB_MEDI_ITEM_LIST b ON b.MEDI_ITEM_CODE = c.MEDI_ITEM_CODE
+		  INNER JOIN TB_EMPLOYEE d ON a.EMP_NO = d.EMP_NO
+		) a	
+	
+		<if test="searchType == null or keyword == null">
+        </if>
+        
+            <if test="searchType.equals('약품신청코드')">
+                WHERE a.MEDI_ITEM_REQ_NO LIKE '%'||#{keyword}||'%'
+            </if>
+            <if test="searchType.equals('약품명')">
+                WHERE a.MEDI_ITEM_NAME LIKE '%'||#{keyword}||'%'
+            </if>
+            <if test="searchType.equals('약품신청자')">
+                WHERE a.EMP_NM LIKE '%'||#{keyword}||'%'
+            </if>
+        
+ 
+    ORDER BY a.MEDI_ITEM_REQ_NO DESC
+  
+</select>
+<select id="selectWatitingItemList" resultType="itemWaitingListVO" parameterType="itemWaitingListVO">
+	SELECT a.*
+	FROM (
+	  SELECT 
+	    a.ITEM_REQ_NO,
+	    b.ITEM_NAME,
+	    a.ITEM_REQ_DE,  TO_CHAR(a.ITEM_REQ_DE,'YYYY-MM-DD') ITEM_REQ_DE_STR,
+	    d.EMP_NM,
+	    c.ITEM_CONFIRM_YSNO,
+	    COUNT(*) OVER (PARTITION BY a.ITEM_REQ_NO) AS COUNT_ITEM
+	  FROM TB_ITEM_REQ a
+	  INNER JOIN TB_ITEM_REQ_DETAIL c ON a.ITEM_REQ_NO = c.ITEM_REQ_NO
+	  INNER JOIN TB_ITEM_LIST b ON b.ITEM_CODE = c.ITEM_CODE
+	  INNER JOIN TB_EMPLOYEE d ON a.EMP_NO = d.EMP_NO
+	) a
+	<if test="searchType == null or keyword == null">
+	</if>
+	
+	<if test="searchType.equals('비품신청코드')">
+		WHERE a.ITEM_REQ_NO LIKE '%'||#{keyword}||'%'
+	</if>
+	<if test="searchType.equals('비품명')">
+		WHERE a.ITEM_NAME LIKE '%'||#{keyword}||'%'
+	</if>
+	<if test="searchType.equals('비품신청자')">
+		WHERE a.EMP_NM LIKE '%'||#{keyword}||'%'
+	</if>
+	
+	ORDER BY a.ITEM_REQ_NO DESC
+</select>
+
+
+<!-- MediItemWaitingUpdateVO -->
+
+<resultMap type="mediItemRequestVO" id="MediItemWaitingUpdateListMap">
+	<result property="mediItemReqNo" column="MEDI_ITEM_REQ_NO" />
+	<result property="mediItemReqDe" column="MEDI_ITEM_REQ_DE" />
+	<result property="mediItemReqDeStr" column="MEDI_ITEM_REQ_DE_STR" />
+	<result property="mediItemReqSt" column="MEDI_ITEM_REQ_ST" />
+	<result property="empNo" column="EMP_NO" />
+	<result property="empNm" column="EMP_NM" />
+	<result property="mediItemName" column="MEDI_ITEM_NAME" />
+	<collection property="mediItemReqDetailVOList" resultMap="mediItemReqDetailMap"></collection>	
+</resultMap>
+
+<resultMap type="mediItemReqDetailVO" id="mediItemReqDetailMap">
+	<result property="mediItemReqNo" column="MEDI_ITEM_REQ_NO" />
+	<result property="mediItemCode" column="MEDI_ITEM_CODE" />
+	<result property="mediItemReqQy" column="MEDI_ITEM_REQ_QY" />
+	<result property="mediItemReqTotal" column="MEDI_ITEM_REQ_TOTAL" />
+	<result property="mediItemConfirmYsno" column="MEDI_ITEM_CONFIRM_YSNO" />
+	<result property="mediItemReturnWhy" column="MEDI_ITEM_RETURN_WHY" />
+</resultMap>
+
+<!-- 약품 수정 폼에 리스트 띄우기 -->
+<select id="selectWaitingUpdateList" resultMap="MediItemWaitingUpdateListMap" parameterType="mediItemRequestVO">
+	SELECT 
+	    A.MEDI_ITEM_REQ_NO,
+	    A.MEDI_ITEM_REQ_DE,
+	    TO_CHAR(A.MEDI_ITEM_REQ_DE,'YYYY-MM-DD') as MEDI_ITEM_REQ_DE_STR,
+	    B.MEDI_ITEM_REQ_QY,
+	    B.MEDI_ITEM_CODE,
+	    B.MEDI_ITEM_CONFIRM_YSNO,
+        B.MEDI_ITEM_RETURN_WHY,
+	    (SELECT C.MEDI_ITEM_NAME FROM TB_MEDI_ITEM_LIST C WHERE C.MEDI_ITEM_CODE = B.MEDI_ITEM_CODE) MEDI_ITEM_NAME,
+	    (SELECT D.EMP_NM FROM TB_EMPLOYEE D WHERE D.EMP_NO = A.EMP_NO) EMP_NM
+	FROM TB_MEDI_ITEM_REQUEST A
+	INNER JOIN TB_MEDI_ITEM_REQ_DETAIL B ON A.MEDI_ITEM_REQ_NO=B.MEDI_ITEM_REQ_NO
+	WHERE A.MEDI_ITEM_REQ_NO = #{mediItemReqNo}
+</select>
+
+<!-- 비퓸 수정 폼에 리스트 띄우기 -->
+
+
+<resultMap type="ItemReqVO" id="itemWaitingUpdateListMap">
+	<result property="itemReqNo" column="ITEM_REQ_NO" />
+	<result property="itemReqDe" column="ITEM_REQ_DE" />
+	<result property="itemReqDeStr" column="ITEM_REQ_DE_STR" />
+	<result property="itemReqSt" column="ITEM_REQ_ST" />
+	<result property="empNo" column="EMP_NO" />
+	<result property="empNm" column="EMP_NM" />
+	<result property="itemName" column="ITEM_NAME" />
+	<collection property="itemReqDetailVOList" resultMap="itemReqDetailMap"></collection>	
+</resultMap>
+
+<resultMap type="ItemReqDetailVO" id="itemReqDetailMap">
+	<result property="itemReqNo" column="ITEM_REQ_NO" />
+	<result property="itemCode" column="ITEM_CODE" />
+	<result property="itemReqQy" column="ITEM_REQ_QY" />
+	<result property="itemReqTotal" column="ITEM_REQ_TOTAL" />
+	<result property="itemConfirmYsno" column="ITEM_CONFIRM_YSNO" />
+	<result property="itemReturnWhy" column="ITEM_RETURN_WHY" />
+</resultMap>
+
+<select id="selectWaitingUpdateItemList" resultMap="itemWaitingUpdateListMap" parameterType="itemReqVO">
+	SELECT     
+    A.ITEM_REQ_NO,
+    A.ITEM_REQ_DE,
+    TO_CHAR(A.ITEM_REQ_DE,'YYYY-MM-DD') as ITEM_REQ_DE_STR,
+    B.ITEM_REQ_QY,
+    B.ITEM_CODE,
+    B.ITEM_CONFIRM_YSNO,
+    B.ITEM_RETURN_WHY,
+    (SELECT C.ITEM_NAME FROM TB_ITEM_LIST C WHERE C.ITEM_CODE = B.ITEM_CODE) ITEM_NAME,
+    (SELECT D.EMP_NM FROM TB_EMPLOYEE D WHERE D.EMP_NO = A.EMP_NO) EMP_NM
+FROM TB_ITEM_REQ A
+INNER JOIN TB_ITEM_REQ_DETAIL B ON A.ITEM_REQ_NO = B.ITEM_REQ_NO
+WHERE A.ITEM_REQ_NO = #{itemReqNo}
+</select>
+
+
+
+
+
+
+
+<!-- 약품 수량 update -->
+<update id="updateMediItemQy" parameterType="mediItemReqDetailVO">
+UPDATE TB_MEDI_ITEM_REQ_DETAIL 
+SET  MEDI_ITEM_REQ_QY = #{mediItemReqQy}
+WHERE MEDI_ITEM_REQ_NO= #{mediItemReqNo} AND MEDI_ITEM_CODE = #{mediItemCode}
+</update>
+
+<!-- 비품 수량 update -->
+<update id="updateItemQy" parameterType="ItemReqDetailVO">
+UPDATE TB_ITEM_REQ_DETAIL 
+SET  ITEM_REQ_QY = #{itemReqQy}
+WHERE ITEM_REQ_NO= #{itemReqNo} AND ITEM_CODE = #{itemCode}
+</update>
+
+
+
+
+<!-- 신청 수정 목록에서 삭제 (자식테이블이 다 지워졌을때 부모테이블도 함께 지워져야 한다.) -->
+<select id="selectCountMediItemDatail" resultType="int" parameterType="mediItemReqDetailVO">
+
+SELECT COUNT(*) FROM TB_MEDI_ITEM_REQ_DETAIL
+WHERE MEDI_ITEM_REQ_NO=#{mediItemReqNo}
+
+</select>
+
+<delete id="deleteMediItemDatail" parameterType="mediItemReqDetailVO">
+    DELETE FROM TB_MEDI_ITEM_REQ_DETAIL
+    WHERE MEDI_ITEM_REQ_NO = #{mediItemReqNo} AND MEDI_ITEM_CODE = #{mediItemCode}
+</delete>
+
+<delete id="deleteMediItemRequest" parameterType="mediItemRequestVO">
+	DELETE FROM TB_MEDI_ITEM_REQUEST
+    WHERE MEDI_ITEM_REQ_NO = #{mediItemReqNo}
+</delete>
+
+
+
+
+<select id="selectCountItemDatail" resultType="int" parameterType="itemReqDetailVO">
+
+SELECT COUNT(*) FROM TB_ITEM_REQ_DETAIL
+WHERE ITEM_REQ_NO=#{itemReqNo}
+
+</select>
+
+<delete id="deleteItemDatail" parameterType="itemReqDetailVO">
+    DELETE FROM TB_ITEM_REQ_DETAIL
+    WHERE ITEM_REQ_NO = #{itemReqNo} AND ITEM_CODE = #{itemCode}
+</delete>
+
+<delete id="deleteItemRequest" parameterType="itemReqVO">
+	DELETE FROM TB_ITEM_REQUEST
+    WHERE ITEM_REQ_NO = #{itemReqNo}
+</delete>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+</mapper>

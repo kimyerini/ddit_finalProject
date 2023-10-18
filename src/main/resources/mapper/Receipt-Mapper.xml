@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.receipt.mapper.ReceiptMapper">
+	<select id="getCSchedule" resultType="cScheduleVO">
+		/* getCSchedule */
+		SELECT 
+			c.schd_no
+			, h.hos_fc_name
+			, e.emp_nm
+		FROM 
+            tb_clinic_schedule c
+			LEFT JOIN tb_employee e 
+            	ON c.emp_no = e.emp_no
+            LEFT JOIN tb_hospital_facility h
+            	ON c.hos_fc_no = h.hos_fc_no 
+        ORDER BY c.hos_fc_no
+	</select>
+	
+	<select id="getRcepNo" resultType="String">
+		/* getRcepNo */
+		SELECT 
+			TO_CHAR(SYSDATE,'YYMM') 
+			|| '02' 
+            || TRIM(TO_CHAR(NVL(
+            	(SELECT 
+            		MAX(TO_NUMBER(SUBSTR(r.rcept_no,-3))) 
+            	FROM 
+            		tb_receipt r WHERE rcept_no LIKE  TO_CHAR(SYSDATE,'YYMM')||'%')
+            	,0)+1, '000')) AS rcept_no
+        FROM dual
+	</select>
+	
+	<insert id="insertReceipt" parameterType="receiptVO">
+		/* insertReceipt */
+		INSERT INTO 
+			tb_receipt 
+			(
+				RCEPT_NO
+				, PAT_CODE
+				, RCEPT_PATH_CODE
+				, RCEPT_FIRST_EXAM_CODE
+				, RCEPT_DAY_CODE
+				, RCEPT_MEMO
+				, SCHD_NO
+				, RECEPT_TIME
+			)
+		VALUES
+			(
+				#{rceptNo}
+				, #{patCode}
+				, #{rceptPathCode}
+				, #{rceptFirstExamCode}
+				, #{rceptDayCode}
+				, #{rceptMemo}
+				, #{schdNo}
+				, #{receptTime}
+			)
+	</insert>
+	<select id="selectPVST" resultType="commonCodeVO">
+	    /* selectPVST */
+		SELECT
+			com_code
+			, com_code_grp
+			, com_code_name 
+		FROM 
+			tb_common_code
+		WHERE 
+			com_code_grp = 'PVST'
+	</select>
+	
+	<insert id="insertClinic" parameterType="kr.or.ddit.clinic.vo.ClinicVO">
+		/*insertClinic*/
+	<selectKey resultType="String" order="BEFORE" keyProperty="treatNo">
+        SELECT 
+	        TO_CHAR(sysdate,'YYMM') 
+	        || '05' 
+	        || TRIM(TO_CHAR(NVL(
+   					(SELECT 
+    					MAX(TO_NUMBER(SUBSTR(treat_no,-3))) 
+      				FROM 
+      					tb_clinic 
+      				WHERE treat_no LIKE TO_CHAR(sysdate,'YYMM')||'%')
+      					,0)+1, '000')) as treat_no
+        FROM dual
+    </selectKey>
+    	INSERT INTO 
+    		TB_CLINIC 
+    		(
+    		treat_no
+    		,rcept_no
+    		) 
+    	VALUES 
+    		(
+    		#{treatNo}
+    		,#{rceptNo}
+    		)
+	</insert>
+	
+	
+	<select id="selectWaitPat" resultType="waitPatVO">
+	/* selectWaitPat */
+	    SELECT 
+	        c.treat_no
+	        , r.rcept_no as rcept_no
+	        , p.pat_name  as pat_name
+	        , p.pat_code as pat_code
+	        , TO_CHAR(sysdate,'YYYY') - SUBSTR(p.pat_brthdy,0,4) as pat_age
+	        , c2.com_code_name as pat_gen
+	        , c1.com_code_name as pat_wait
+	        , c3.com_code_name as pat_path
+	        , c4.com_code_name as pat_first
+	        , c5.com_code_name as pat_day
+	        , e.emp_nm as emp_nm
+        	, hf.hos_fc_name as hos_fc_name
+        	
+        FROM tb_clinic c
+        INNER JOIN tb_receipt r 
+            INNER JOIN tb_patient p 
+                    INNER JOIN tb_common_code c2 
+                    ON p.pat_gen_code = c2.com_code 
+                    AND c2.com_code_grp = 'GEND'
+            ON r.pat_code = p.pat_code
+            INNER JOIN tb_common_code c3
+            ON r.rcept_path_code = c3.com_code  
+            AND c3.com_code_grp = 'PVST'
+            INNER JOIN tb_common_code c4
+            ON r.rcept_first_exam_code = c4.com_code 
+            AND c4.com_code_grp = 'FEXM'
+            INNER JOIN tb_common_code c5
+            ON r.rcept_day_code = c5.com_code 
+            AND c5.com_code_grp = 'DAYN'
+         ON c.rcept_no = r.rcept_no
+         INNER JOIN tb_clinic_schedule cs
+             INNER JOIN tb_hospital_facility hf 
+             ON hf.HOS_FC_NO = cs.HOS_FC_NO
+             INNER JOIN tb_employee e
+             ON e.emp_no = cs.emp_no
+         ON r.schd_no = cs.schd_no
+         INNER JOIN tb_common_code c1 
+         ON c.clnic_sttus_code = c1.com_code 
+         AND c1.com_code_grp = 'STAT'
+         WHERE c.clnic_sttus_code = 'WAIT'
+	</select>
+	<update id="delWait" parameterType="String">
+	/* delWait */
+		UPDATE 
+			tb_clinic 
+		SET 
+			clnic_sttus_code = 'FAIL' 
+		WHERE treat_no = #{treatNo}
+	</update>
+	
+	<select id="selectOneWaitPat" parameterType="waitPatVO" resultType="waitPatVO">
+	/* selectOneWaitPat */
+		SELECT 
+            c.treat_no
+            , r.rcept_memo as rcept_memo
+	        , r.rcept_no as rcept_no
+	        , p.pat_name  as pat_name
+	        , p.pat_code as pat_code
+	        , TO_CHAR(sysdate,'YYYY') - SUBSTR(p.pat_brthdy,0,4) as pat_age
+	        , c2.com_code_name as pat_gen
+	        , c1.com_code_name as pat_wait
+	        , c3.com_code_name as pat_path
+	        , c4.com_code_name as pat_first
+	        , c5.com_code_name as pat_day
+	        , e.emp_nm as emp_nm
+	        , e.emp_no as empNo
+        	, hf.hos_fc_name as hos_fc_name
+        	, TO_CHAR(r.recept_time,'YYYY-MM-DD') as recept_time
+        FROM tb_clinic c
+        INNER JOIN tb_receipt r 
+            INNER JOIN tb_patient p 
+                    INNER JOIN tb_common_code c2 
+                    ON p.pat_gen_code = c2.com_code 
+                    AND c2.com_code_grp = 'GEND'
+            ON r.pat_code = p.pat_code
+            INNER JOIN tb_common_code c3
+            ON r.rcept_path_code = c3.com_code  
+            AND c3.com_code_grp = 'PVST'
+            INNER JOIN tb_common_code c4
+            ON r.rcept_first_exam_code = c4.com_code 
+            AND c4.com_code_grp = 'FEXM'
+            INNER JOIN tb_common_code c5
+            ON r.rcept_day_code = c5.com_code 
+            AND c5.com_code_grp = 'DAYN'
+         ON c.rcept_no = r.rcept_no
+         INNER JOIN tb_clinic_schedule cs
+             INNER JOIN tb_hospital_facility hf 
+             ON hf.HOS_FC_NO = cs.HOS_FC_NO
+             INNER JOIN tb_employee e
+             ON e.emp_no = cs.emp_no
+         ON r.schd_no = cs.schd_no
+         INNER JOIN tb_common_code c1 
+         ON c.clnic_sttus_code = c1.com_code 
+         AND c1.com_code_grp = 'STAT'
+         WHERE c.treat_no = #{treatNo}
+	</select>
+	
+	<select id="getReceiptDate" parameterType="receiptDateVO" resultType="receiptDateVO">
+	 SELECT 
+        TO_CHAR(A.detail_reg_date, 'YYYY-MM-DD') AS detail_reg_date,
+        c.rcept_first_exam_code,
+        TO_CHAR(c.recept_time,'YYYY-MM-DD') AS recept_time,
+        E.emp_nm,
+        DI.diss_kor_name,
+        B.treat_no,
+        D.pat_code
+        FROM tb_chart_detail A
+        INNER JOIN TB_CLINIC B ON B.TREAT_NO = A.TREAT_NO
+        INNER JOIN TB_RECEIPT C  ON C.RCEPT_NO = B.RCEPT_NO
+        INNER JOIN TB_CLINIC_SCHEDULE CS ON C.SCHD_NO = CS.SCHD_NO
+        INNER JOIN TB_EMPLOYEE E ON CS.EMP_NO = E.EMP_NO 
+        INNER JOIN TB_PATIENT D ON D.PAT_CODE = C.PAT_CODE
+        INNER JOIN TB_DISEASE DI ON DI.DISS_CODE_NO = A.DISS_CODE_NO
+        WHERE D.PAT_CODE = #{patCode} and A.DISS_CODE_NO IS NOT NULL
+        ORDER BY treat_no DESC
+	</select>
+	
+	<select id="getAllByDateAndPatCode" parameterType="chartDetailByDateVO" resultType="chartDetailByDateVO">
+	/*getAllByDateAndPatCode*/
+	SELECT 
+		CD.DETAIL_NO
+        , TO_CHAR(CD.DETAIL_REG_DATE, 'YYYYMMDD') AS DETAIL_REG_DATE
+        , (SELECT  CC1.COM_CODE_NAME FROM TB_COMMON_CODE CC1 WHERE CC1.COM_CODE_GRP = 'FEXM' AND  R.RCEPT_FIRST_EXAM_CODE = CC1.COM_CODE) AS RCEPT_FIRST_EXAM_CODE
+        , (SELECT  CC1.COM_CODE_NAME FROM TB_COMMON_CODE CC1 WHERE CC1.COM_CODE_GRP = 'DAYN' AND  R.RCEPT_DAY_CODE = CC1.COM_CODE) AS RCEPT_DAY_CODE
+        , (SELECT  CC1.COM_CODE_NAME FROM TB_COMMON_CODE CC1 WHERE CC1.COM_CODE_GRP = 'HSPT' AND  P.PAT_HSPTLZ_STATUS = CC1.COM_CODE) AS PAT_HSPTLZ_STATUS
+        , D.DISS_CODE_NO
+        , D.DISS_ENG_NAME
+        , D.DISS_KOR_NAME
+        , SUBSTR(REGEXP_REPLACE(LISTAGG( T.TRE_CONTENT || ',' ) WITHIN GROUP ( ORDER BY T.TRE_CONTENT), '([^,]+)(,\1)*(,|$)', '\1\3'),1,LENGTH(REGEXP_REPLACE(LISTAGG( T.TRE_CONTENT || ',' ) WITHIN GROUP ( ORDER BY T.TRE_CONTENT), '([^,]+)(,\1)*(,|$)', '\1\3'))-1) TRE_CONTENT
+        , SUBSTR(REGEXP_REPLACE(LISTAGG( P.PHYSIO_CONTENT || ',' ) WITHIN GROUP ( ORDER BY P.PHYSIO_CONTENT), '([^,]+)(,\1)*(,|$)', '\1\3'),1,LENGTH(REGEXP_REPLACE(LISTAGG( P.PHYSIO_CONTENT || ',' ) WITHIN GROUP ( ORDER BY P.PHYSIO_CONTENT), '([^,]+)(,\1)*(,|$)', '\1\3'))-1) PHYSIO_CONTENT
+        , SUBSTR(REGEXP_REPLACE(LISTAGG( I.INSPC_TYPE || ',' ) WITHIN GROUP ( ORDER BY I.INSPC_TYPE), '([^,]+)(,\1)*(,|$)', '\1\3'),1,LENGTH(REGEXP_REPLACE(LISTAGG( I.INSPC_TYPE || ',' ) WITHIN GROUP ( ORDER BY I.INSPC_TYPE), '([^,]+)(,\1)*(,|$)', '\1\3'))-1)  INSPC_TYPE
+        , SUBSTR(REGEXP_REPLACE(LISTAGG( MIL.MEDI_ITEM_NAME || ',' ) WITHIN GROUP ( ORDER BY MIL.MEDI_ITEM_NAME), '([^,]+)(,\1)*(,|$)', '\1\3'),1,LENGTH(REGEXP_REPLACE(LISTAGG( MIL.MEDI_ITEM_NAME || ',' ) WITHIN GROUP ( ORDER BY MIL.MEDI_ITEM_NAME), '([^,]+)(,\1)*(,|$)', '\1\3'))-1)  MEDI_ITEM_NAME
+        , E.EMP_NM
+   FROM TB_CHART_DETAIL CD
+   INNER JOIN TB_CLINIC C ON CD.TREAT_NO = C.TREAT_NO 
+   INNER JOIN TB_RECEIPT R ON C.RCEPT_NO = R.RCEPT_NO 
+   INNER JOIN TB_PATIENT P   ON R.PAT_CODE = P.PAT_CODE
+   INNER JOIN TB_DISEASE D ON CD.DISS_CODE_NO = D.DISS_CODE_NO 
+   INNER JOIN TB_TREATMENT_LIST TL ON CD.DETAIL_NO = TL.DETAIL_NO
+   INNER JOIN TB_TREATMENT T ON TL.TRE_CODE = T.TRE_CODE          
+   INNER JOIN TB_PHYSIOTHERAPY_LIST PL ON CD.DETAIL_NO = PL.DETAIL_NO  
+   INNER JOIN TB_PHYSIOTHERAPY P ON PL.PHYSIO_CODE = P.PHYSIO_CODE
+   INNER JOIN TB_INSPECTION_LIST IL ON CD.DETAIL_NO = IL.DETAIL_NO   
+   INNER JOIN TB_INSPECTION I ON IL.INSPC_CODE = I.INSPC_CODE          
+   INNER JOIN TB_PRESCRIPTION PR ON CD.DETAIL_NO = PR.DETAIL_NO 
+   INNER JOIN TB_MEDI_ITEM_LIST MIL ON PR.MEDI_ITEM_CODE = MIL.MEDI_ITEM_CODE   
+   INNER JOIN TB_CLINIC_SCHEDULE CS ON CS.SCHD_NO = R.SCHD_NO
+   INNER JOIN TB_EMPLOYEE E ON CS.EMP_NO = E.EMP_NO
+   WHERE TO_CHAR(CD.DETAIL_REG_DATE,'YYYY-MM-DD') = #{detailRegDate} AND P.PAT_CODE = #{patCode} AND CD.TREAT_NO = #{treatNo}
+   GROUP BY 
+     CD.DETAIL_NO
+     , DETAIL_REG_DATE
+     , RCEPT_FIRST_EXAM_CODE
+     , RCEPT_DAY_CODE
+     , PAT_HSPTLZ_STATUS
+     , D.DISS_CODE_NO
+     , D.DISS_ENG_NAME
+     , D.DISS_KOR_NAME
+     , E.EMP_NM
+	</select>
+</mapper>

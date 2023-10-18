@@ -1,0 +1,117 @@
+package kr.or.ddit.board.controller;
+
+import java.security.Principal;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.board.service.NoticeService;
+import kr.or.ddit.board.vo.NoticeBoardVO;
+import kr.or.ddit.common.vo.AttachFileVO;
+import kr.or.ddit.employee.service.EmployeeManageService;
+import kr.or.ddit.employee.vo.EmployeeVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Controller
+@RequestMapping("/board")
+public class NoticeController {
+
+	@Autowired
+	NoticeService noticeService;
+	
+	// [VIEW/select] 공지사항 list (공지사항 메인)
+	@GetMapping("/notice")
+	public String getListView(Model model) {
+		log.info("<<< 여기는 getListView >>>");
+		
+		List<NoticeBoardVO> noticeBoardVO = noticeService.noticeList();
+		model.addAttribute("noticeBoardVO", noticeBoardVO);
+		
+		return "board/noticeList";
+	}
+	
+	// [VIEW/select] 공지사항 1개 조회
+	@GetMapping("/detail/{ntbdCode}")
+	public String getDetailView(@PathVariable String ntbdCode, Model model) {
+		log.info("<<< 여기는 getDetailView >>>");
+		
+		NoticeBoardVO noticeBoardVO = new NoticeBoardVO();
+		noticeBoardVO.setNtbdCode(ntbdCode);
+		
+		// 조회수 증가
+		noticeService.updateHit(noticeBoardVO);
+		
+		// get one notice
+		noticeBoardVO = noticeService.oneNotice(ntbdCode);
+		log.info("getDetailView->noticeBoardVO : " + noticeBoardVO);
+		
+		model.addAttribute("noticeBoardVO", noticeBoardVO);
+		
+		return "board/noticeDetail";
+	}
+
+	// [VIEW] 공지사항 작성 폼
+	@GetMapping("/write")
+	public String getWriteView() {
+		log.info("<<< 여기는 getWriteView >>> ");
+		
+		return "board/noticeWrite";
+	}
+	
+	// insert 공지사항
+	@PostMapping("/write")
+	public String insertNotice(NoticeBoardVO noticeBoardVO) {
+		log.info("<<< 여기는 insertNotice >>>");
+		
+		noticeService.insertNotice(noticeBoardVO);
+		log.info("insertNotice의 result: " + noticeBoardVO);
+		
+		// redirect
+		return "redirect:/board/notice";
+	}
+	
+	// delete 공지사항
+	@DeleteMapping("/delete/{ntbdCode}")
+	public int deleteNotice(@PathVariable String ntbdCode) {
+		log.info("<<< 여기는 deleteNotice >>>");
+		
+		return noticeService.deleteNotice(ntbdCode);
+	}
+	
+	// [VIEW/update] 공지사항 수정
+	@GetMapping("/update/{ntbdCode}")
+	public String getUpdateView(@PathVariable String ntbdCode, Model model) {
+		log.info("<<< 여기는 getUpdateView >>>");
+		
+		NoticeBoardVO noticeBoardVO = new NoticeBoardVO();
+		noticeBoardVO.setNtbdCode(ntbdCode);
+		
+		noticeBoardVO = noticeService.oneNotice(ntbdCode);
+		model.addAttribute("noticeBoardVO", noticeBoardVO);
+		
+		return "board/noticeModify";
+	}
+	
+	// update 공지사항
+	@PutMapping("/update")
+	public String updateNotice(NoticeBoardVO noticeBoardVO) {
+		log.info("<<< 여기는 updateNotice >>>");
+		
+		noticeService.updateNotice(noticeBoardVO);
+		log.info("noticeBoardVO: " + noticeBoardVO);
+		
+		return "redirect:/board/notice";
+	}
+	
+}

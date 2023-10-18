@@ -1,0 +1,126 @@
+package kr.or.ddit.item.service.serviceImpl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.or.ddit.item.mapper.ItemOrderMapper;
+import kr.or.ddit.item.service.itemOrderService;
+import kr.or.ddit.item.vo.ItemOrderVO;
+import kr.or.ddit.item.vo.ItemReqDetailVO;
+import kr.or.ddit.item.vo.MediItemOrderVO;
+import kr.or.ddit.item.vo.MediItemReqDetailVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class itemOrderServiceImpl implements itemOrderService {
+
+	@Autowired
+	private ItemOrderMapper mapper;
+	
+	@Override
+	public List<MediItemReqDetailVO> getMediItemList() {
+		return mapper.getMediItemList();
+	}
+	
+	@Override
+	public List<ItemReqDetailVO> getEquipItemList() {
+		return mapper.getEquipItemList();
+	}
+
+	@Override
+	public List<MediItemReqDetailVO> getMediCompanyName() {
+		return mapper.getMediCompanyName();
+	}
+	
+	@Override
+	public List<ItemReqDetailVO> getItemCompanyName() {
+		return mapper.getItemCompanyName();
+	}
+	
+	@Override
+	public List<MediItemReqDetailVO> mediItemByCompany(String companyName) {
+		return mapper.mediItemByCompany(companyName);
+	}
+
+	@Override
+	public List<ItemReqDetailVO> equipItemByCompany(String companyName) {
+		return mapper.equipItemByCompany(companyName);
+	}
+
+	@Override
+	@Transactional
+	public int approveMedi(MediItemReqDetailVO mediItemReqDetailVO) {
+		int result = 0;
+		
+		String nextNo = mapper.getMediOrderNum();
+		mediItemReqDetailVO.setMediItemOrderNo(nextNo);
+		log.info("orderNo set해준 vo: " + mediItemReqDetailVO);
+		
+		result += mapper.insertMediOrder(mediItemReqDetailVO);
+		result += mapper.approveMedi(mediItemReqDetailVO);
+		
+		return result;
+	}
+
+	@Override
+	@Transactional
+	public int approveEquip(ItemReqDetailVO itemReqDetailVO) {
+		int result = 0;
+		
+		String nextNo = mapper.getEquipOrderNum();
+		itemReqDetailVO.setItemOrderNo(nextNo);
+		log.info("orderNo set해준 vo: " + itemReqDetailVO);
+		
+		result += mapper.insertEquipOrder(itemReqDetailVO);
+		result += mapper.approveEquip(itemReqDetailVO);
+		
+		return result;
+	}
+
+	@Override
+	public int rejectMedi(MediItemReqDetailVO mediItemReqDetailVO) {
+		return mapper.rejectMedi(mediItemReqDetailVO);
+	}
+
+	@Override
+	public int rejectEquip(ItemReqDetailVO itemReqDetailVO) {
+		return mapper.rejectEquip(itemReqDetailVO);
+	}
+
+	@Override
+	public MediItemReqDetailVO rejectMediList(MediItemReqDetailVO mediItemReqDetailVO) {
+		return mapper.rejectMediList(mediItemReqDetailVO);
+	}
+
+	@Override
+	public ItemReqDetailVO rejectEquipList(ItemReqDetailVO itemReqDetailVO) {
+		return mapper.rejectEquipList(itemReqDetailVO);
+	}
+
+	@Override
+	public String getMediOrderNum() {
+		return mapper.getMediOrderNum();
+	}
+
+	@Override
+	public String getEquipOrderNum() {
+		return mapper.getEquipOrderNum();
+	}
+
+	@Override
+	public int insertMediOrder(MediItemReqDetailVO mediItemReqDetailVO) {
+		return mapper.insertMediOrder(mediItemReqDetailVO);
+	}
+
+	@Override
+	public int insertEquipOrder(ItemReqDetailVO itemReqDetailVO) {
+		return mapper.insertEquipOrder(itemReqDetailVO);
+	}
+	
+	
+
+}

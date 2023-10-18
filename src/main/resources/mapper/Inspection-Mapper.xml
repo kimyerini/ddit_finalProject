@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.order.mapper.InspectionMapper">
+
+<select id="selectWaitInspection" resultType="kr.or.ddit.receipt.vo.WaitPatVO">
+SELECT 
+	    	c.treat_no as treat_no
+	    	, r.rcept_no as rcept_no
+	        , p.pat_name  as pat_name
+	        , p.pat_code as pat_code
+	        , TO_CHAR(sysdate,'YYYY') - SUBSTR(p.pat_brthdy,0,4) as pat_age
+	        , TO_CHAR(TO_DATE(p.pat_brthdy),'YYYY-MM-DD') as pat_brthdy
+	        , c2.com_code_name as pat_gen
+	        , c1.com_code_name as pat_wait
+	        , c3.com_code_name as pat_path
+	        , c4.com_code_name as pat_first
+	        , c5.com_code_name as pat_day
+        	, c6.com_code_name as pat_hsptlz_status
+	        , e.emp_nm as emp_nm
+        	, hf.hos_fc_name as hos_fc_name
+        	,d.detail_no
+        	, r.recept_time
+        FROM tb_clinic c
+        INNER JOIN tb_receipt r 
+            INNER JOIN tb_patient p 
+                    INNER JOIN tb_common_code c2 
+                    ON p.pat_gen_code = c2.com_code 
+                    AND c2.com_code_grp = 'GEND'
+            ON r.pat_code = p.pat_code
+            INNER JOIN tb_common_code c3
+            ON r.rcept_path_code = c3.com_code  
+            AND c3.com_code_grp = 'PVST'
+            INNER JOIN tb_common_code c4
+            ON r.rcept_first_exam_code = c4.com_code 
+            AND c4.com_code_grp = 'FEXM'
+            INNER JOIN tb_common_code c5
+            ON r.rcept_day_code = c5.com_code 
+            AND c5.com_code_grp = 'DAYN'
+            INNER JOIN tb_common_code c6
+            on p.PAT_HSPTLZ_STATUS = c6.com_code
+            AND c6.com_code_grp = 'HSPT'
+         ON c.rcept_no = r.rcept_no
+         INNER JOIN tb_clinic_schedule cs
+             INNER JOIN tb_hospital_facility hf 
+             ON hf.HOS_FC_NO = cs.HOS_FC_NO
+             INNER JOIN tb_employee e
+             ON e.emp_no = cs.emp_no
+         ON r.schd_no = cs.schd_no
+         INNER JOIN tb_common_code c1 
+         ON c.clnic_sttus_code = c1.com_code 
+         AND c1.com_code_grp = 'STAT'
+         INNER JOIN tb_chart_detail d ON d.TREAT_NO = c.TREAT_NO
+         WHERE c.clnic_sttus_code = 'INWT'  OR  c.clnic_sttus_code = 'IING'   
+</select>
+
+<select id="selectWaitPatInfo" parameterType="kr.or.ddit.patient.vo.PatientVO" resultType="kr.or.ddit.patient.vo.PatientVO">
+SELECT 
+			P.PAT_CODE      , 
+			P.PAT_NAME      , 
+			P.PAT_TEL       , 
+			P.PAT_IHIDNUM   , 
+			to_char(to_date(PAT_BRTHDY),'yyyy-mm-dd') as  PAT_BRTHDY,
+		   (SELECT C1.COM_CODE_NAME FROM TB_PATIENT P1, TB_COMMON_CODE C1 
+         	WHERE P1.PAT_GEN_CODE = C1.COM_CODE AND P1.PAT_CODE =  #{patCode} AND C1.COM_CODE_GRP = 'GEND') AS PAT_GEN_CODE , 
+	    	P.PAT_ADDR      , 
+	    	P.PAT_DTL_ADDR, 
+	    	P.PAT_ZIP, 
+	    	to_char(PAT_FIRST_DATE,'yyyy-mm-dd') AS PAT_FIRST_DATE,
+	    	to_char(PAT_LAST_DATE,'yyyy-mm-dd') AS PAT_LAST_DATE ,     
+		 (SELECT C3.COM_CODE_NAME FROM TB_PATIENT P3, TB_COMMON_CODE C3
+         WHERE P3.PAT_FRGNR_YN = C3.COM_CODE AND P3.PAT_CODE = #{patCode} AND C3.COM_CODE_GRP = 'YSNO') AS PAT_FRGNR_YN ,		    
+		 (SELECT C2.COM_CODE_NAME FROM TB_PATIENT P2, TB_COMMON_CODE C2 
+         WHERE P2.PAT_HSPTLZ_STATUS = C2.COM_CODE AND P2.PAT_CODE =  #{patCode} AND C2.COM_CODE_GRP = 'HSPT') AS PAT_HSPTLZ_STATUS  
+		FROM TB_PATIENT P
+		WHERE PAT_CODE = #{patCode}
+</select>
+
+<select id="inspectionDetail" resultType="inspectionListVO" parameterType="inspectionListVO" >
+SELECT
+	    CD.DETAIL_NO,
+	    I.INSPC_CODE,
+	    I.INSPC_TYPE,
+	    IL.INSPC_MEMO
+	FROM TB_INSPECTION_LIST IL
+	INNER JOIN TB_CHART_DETAIL CD ON CD.DETAIL_NO = IL.DETAIL_NO
+	INNER JOIN TB_INSPECTION I ON I.INSPC_CODE = IL.INSPC_CODE
+	INNER JOIN TB_CLINIC C ON C.TREAT_NO = CD.TREAT_NO
+	WHERE CD.TREAT_NO = #{treatNo} AND CD.DETAIL_NO= #{detailNo}
+</select>
+
+<resultMap type="InspectionVO" id="inspectionMap">
+	<result property="inspcCode" column="INSPC_CODE" />
+	<result property="inspcCost" column="INSPC_COST" />
+	<result property="inspcType" column="INSPC_TYPE" />
+	<collection property="inspectionListVOList" resultMap="inspectionListMap"></collection>
+</resultMap>
+
+<resultMap type="InspectionListVO" id="inspectionListMap">
+	<result property="detailNo" column="DETAIL_NO" />
+	<result property="inspcCode" column="INSPC_CODE" />
+	<result property="inspcStatus" column="INSPC_STATUS" />
+	<result property="empNo" column="EMP_NO" />
+	<result property="inspcMemo" column="INSPC_MEMO" />
+	<result property="comFileCode" column="COM_FILE_CODE" />
+	<result property="inspcDate" column="INSPC_DATE" />
+	<result property="inspcCost" column="INSPC_COST" />
+	<collection property="fileList" resultMap="attachFileMap"></collection>
+</resultMap>
+
+<resultMap type="AttachFileVO" id="attachFileMap">
+	<result property="fileCode" column="FILE_CODE" />
+	<result property="fileNo" column="FILE_NO" />
+	<result property="fileName" column="FILE_NAME" />
+	<result property="fileSaveName" column="FILE_SAVE_NAME" />
+	<result property="filePhysicPath" column="FILE_PHYSIC_PATH" />
+	<result property="fileWebPath" column="FILE_WEB_PATH" />
+	<result property="fileSize" column="FILE_SIZE" />
+	<result property="fileDownCnt" column="FILE_DOWN_CNT" />
+	<result property="fileContType" column="FILE_CONT_TYPE" />
+	<result property="fileRegDate" column="FILE_REG_DATE" />
+	<result property="regUserId" column="REG_USER_ID" />
+	<result property="fileUpdDate" column="FILE_UPD_DATE" />
+	<result property="updUserId" column="UPD_USER_ID" />
+	<result property="fileDeleteYn" column="FILE_DELETE_YN" />
+</resultMap>
+
+<select id="selectFile" parameterType="kr.or.ddit.order.vo.InspectionListVO" resultMap="inspectionMap">
+SELECT   
+	IL.DETAIL_NO,
+	I.INSPC_TYPE,
+	I.INSPC_CODE,
+	IL.INSPC_DATE,
+	F.FILE_NAME,
+	F.FILE_WEB_PATH
+FROM TB_INSPECTION_LIST IL
+INNER JOIN TB_INSPECTION I ON I.INSPC_CODE = IL.INSPC_CODE
+INNER JOIN TB_ATTACH_FILE F on F.FILE_CODE = IL.DETAIL_NO || IL.INSPC_CODE
+WHERE IL.DETAIL_NO=#{detailNo}
+</select>
+<update id="updateInspSttusIng" parameterType="InspectionListVO">
+ update TB_CLINIC cl
+	set cl.CLNIC_STTUS_CODE = 'IING'
+	where cl.TREAT_NO =#{treatNo}
+	and EXISTS (
+	SELECT 1
+	FROM TB_CHART_DETAIL cd
+	INNER JOIN TB_INSPECTION_LIST il on cd.DETAIL_NO = il.DETAIL_NO
+	where cd.TREAT_NO = cl.TREAT_NO)   
+</update>
+
+<update id="updateInspSttusEnd" parameterType="InspectionListVO">
+      update TB_CLINIC cl
+		set cl.CLNIC_STTUS_CODE = 'IEND'
+		where cl.TREAT_NO =#{treatNo}
+		and EXISTS (
+		SELECT 1
+         FROM TB_CHART_DETAIL cd
+        INNER JOIN TB_INSPECTION_LIST il on cd.DETAIL_NO = il.DETAIL_NO
+        where cd.TREAT_NO = cl.TREAT_NO)    
+</update>
+</mapper>

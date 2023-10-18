@@ -1,0 +1,198 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Insert title here</title>
+<style>
+.card-header {
+	width: 10vw;
+	padding: 1.5rem 1.5rem 0 1.5rem;
+}
+#div1 {
+	display: flex;
+	margin: 40px 0;
+}
+#div2 {
+	display: flex;
+	margin: 45px 0;
+}
+.short {
+	width: 29vw;
+	height: 30vh;
+	margin-left: 40px;
+	margin-right: 40px;
+}
+.long {
+	width: 45vw;
+	height: 41vh;
+	margin-left: 40px;
+	margin-right: 40px;
+}
+.card-body {
+	display: flex;
+	padding: 0;
+}
+.total-div {
+	margin: 50px 100px 0px 34px;
+}
+.total-count {
+	margin: 0;
+}
+.total-text {
+	margin: 0;
+	color: grey;
+}
+.chart-div {
+    margin-top: -35px;
+    width: 15vw;
+    height: 25vh;
+    margin-left: 37px;
+}
+</style>
+</head>
+<body>
+	<div id="div1">
+		<div class="card short" id="genderChartDiv">
+			<div class="card-header">
+				<h5>성별 환자 수</h5>
+			</div>
+			<div class="card-body">
+				<div class="total-div">
+					<h1 class="total-count">8,256</h1>
+					<h5 class="total-text">Total</h5>
+				</div>
+				<div class="chart-div">
+					<canvas id="genderChart"></canvas>
+				</div>
+			</div>
+		</div>
+		
+		<div class="card short" id="ageChartDiv">
+			<div class="card-header">
+				<h5>연령대별 환자 수</h5>
+			</div>
+			<div class="card-body">
+				<div class="total-div">
+					<h1 class="total-count">8,256</h1>
+					<h5 class="total-text">Total</h5>
+				</div>
+				<div class="chart-div">
+					<canvas id="ageChart"></canvas>
+				</div>
+			</div>
+		</div>
+		
+		<div class="card short" id="diseaseChartDiv">
+			<div class="card-header">
+				<h5>질병별 환자 수</h5>
+			</div>
+			<div class="card-body">
+				<div class="total-div">
+					<h1 class="total-count">8,256</h1>
+					<h5 class="total-text">Total</h5>
+				</div>
+				<div class="chart-div">
+					<canvas id="diseaseChart"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="div2">
+		<div class="card long" id="treatChartDiv">
+			<div class="card-header">
+				<h5>진료실별 진료 현황</h5>
+			</div>
+			<div class="card-body">
+				<canvas id="treatChart"></canvas>
+			</div>
+		</div>
+		
+		<div class="card long" id="salesChartDiv">
+			<div class="card-header">
+				<h5>월별 매출</h5>
+			</div>
+			<div class="card-body">
+				<canvas id="salesChart"></canvas>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+//-------------------- 웹소켓 ----------------------
+function fMessage() { // 받는 쪽에 작성
+	let serverMsg = JSON.parse(event.data);
+
+	if(serverMsg.cmd == "alarm") {
+		getNotiList();
+	}
+}
+//-------------------- /웹소켓 ----------------------
+
+$(function() {
+	const genderChart = document.querySelector('#genderChart');
+	const ageChart = document.querySelector('#ageChart');
+	const diseaseChart = document.querySelector('#diseaseChart');
+	const treatChart = document.querySelector('#treatChart');
+	const salesChart = document.querySelector('#salesChart');
+	
+	getGenderData();
+	getAgeData();
+	
+	new Chart(genderChart, {
+		type: 'pie',
+		data: {
+			labels: ['Female', 'Male'],
+			datasets: [{
+				label: "누적 환자 수",
+				data: [44320,5350],
+				backgroundColor: [
+					'#C2DEDC',
+					'#CDC2AE'
+				]
+			}]
+		},
+		options: {
+			scales: {
+				x: {
+					beginAtZero: true,
+					display: false
+				},
+				y: {
+					beginAtZero: true,
+					display: false
+				}
+			}
+		}	
+	});
+	
+});
+
+const getGenderData = () => {
+	let xhr = new XMLHttpRequest();
+	xhr.open("get", "/chart/gender", true);
+	xhr.onreadystatechange = function() {
+		if(xhr.readyState == 4 && xhr.status == 200) {
+			let result = JSON.parse(xhr.responseText);
+			console.log("가져온 성별 데이터", result);
+		}
+	}
+	xhr.send();
+}
+	
+const getAgeData = () => {
+	let xhr = new XMLHttpRequest();
+	xhr.open("get", "/chart/age", true);
+	xhr.onreadystatechange = function() {
+		if(xhr.readyState == 4 && xhr.status == 200) {
+			let result = JSON.parse(xhr.responseText);
+			console.log("가져온 연령대 데이터", result);
+		}
+	}
+}
+
+
+</script>
+</html>

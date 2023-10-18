@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.hospitalization.mapper.HospitalizationChartDetailMapper">
+<select id="getHosRInspcList" parameterType="String" resultType="hosRInspcVO">
+	/*getHosRInspcList*/
+	SELECT 
+		il.inspc_code
+		, i.inspc_type
+		, il.inspc_cost
+		, cd.detail_no 
+		, to_char(cd.detail_reg_date,'YYYY-MM-DD') detail_reg_date
+	FROM 
+		tb_clinic c
+	INNER JOIN tb_chart_detail cd ON c.treat_no = cd.treat_no
+	INNER JOIN tb_inspection_list il ON cd.detail_no = il.detail_no
+	INNER JOIN tb_inspection i ON i.inspc_code = il.inspc_code
+	INNER JOIN tb_receipt r ON r.rcept_no = c.rcept_no
+	INNER JOIN tb_hospitalization h ON h.pat_code = r.pat_code
+	WHERE  
+		TO_CHAR(cd.detail_reg_date,'YYYY-MM-DD') 
+		BETWEEN 
+			h.HSPTLZ_IN_DATE  
+		AND 
+			h.hsptlz_out_date 
+	AND 
+		cd.detail_no = #{detailNo}
+</select>
+
+<select id="getHosRPhysioList" parameterType="String" resultType="hosRPhysioVO">
+	/*getHosRPhysioList*/
+	SELECT 
+		pl.physio_code
+		, ph.physio_content
+		, ph.physio_cost
+		, cd.detail_no 
+		, to_char(cd.detail_reg_date,'YYYY-MM-DD') detail_reg_date
+	FROM 
+		tb_clinic c
+	INNER JOIN tb_chart_detail cd ON c.treat_no = cd.treat_no
+	INNER JOIN tb_physiotherapy_list pl ON pl.detail_no = cd.detail_no
+	INNER JOIN tb_physiotherapy ph ON pl.physio_code = ph.physio_code
+	INNER JOIN tb_receipt r ON r.rcept_no = c.rcept_no
+	INNER JOIN tb_hospitalization h ON h.pat_code = r.pat_code
+	WHERE  
+		TO_CHAR(cd.detail_reg_date,'YYYY-MM-DD') 
+		BETWEEN 
+			h.HSPTLZ_IN_DATE 
+		AND 
+			h.hsptlz_out_date 
+	AND 
+		cd.detail_no = #{detailNo}
+</select>
+
+<select id="getHosRPrescriptionList" parameterType="String" resultType="hosRPrescriptionVO">
+	/*getHosRPrescriptionList*/
+	SELECT 
+		pr.medi_item_code
+		, mil.medi_item_name
+		, pr.medi_item_price*pr.prscrptn_amount*pr.prscrptn_count*pr.prscrptn_days AS medi_total
+		, cd.detail_no
+		, to_char(cd.detail_reg_date,'YYYY-MM-DD') detail_reg_date
+	FROM 
+		tb_clinic c
+	INNER JOIN tb_chart_detail cd ON c.treat_no = cd.treat_no
+	INNER JOIN tb_prescription pr ON pr.detail_no = cd.detail_no
+	INNER JOIN tb_medi_item_list mil ON mil.medi_item_code = pr.medi_item_code
+	INNER JOIN tb_receipt r ON r.rcept_no = c.rcept_no
+	INNER JOIN tb_hospitalization h ON h.pat_code = r.pat_code
+	WHERE  
+		TO_CHAR(cd.detail_reg_date,'YYYY-MM-DD') 
+		BETWEEN 
+			h.HSPTLZ_IN_DATE 
+		AND 
+			h.hsptlz_out_date 
+	AND 
+		cd.detail_no = #{detailNo}
+</select>
+
+<select id="getHosRTreatList" parameterType="String" resultType="hosRTreatVO">
+	/*getHosRTreatList*/
+	SELECT 
+		t.tre_code
+		, t.tre_content
+		, t.tre_costs
+		, cd.detail_no 
+		, to_char(cd.detail_reg_date,'YYYY-MM-DD') detail_reg_date
+	FROM 
+		tb_clinic c
+	INNER JOIN tb_chart_detail cd ON c.treat_no = cd.treat_no
+	INNER JOIN tb_treatment_list tl ON cd.detail_no = tl.detail_no
+	INNER JOIN tb_treatment t ON t.tre_code = tl.tre_code
+	INNER JOIN tb_receipt r ON r.rcept_no = c.rcept_no
+	INNER JOIN tb_hospitalization h ON h.pat_code = r.pat_code
+	WHERE  
+		TO_CHAR(cd.detail_reg_date,'YYYY-MM-DD') 
+		BETWEEN 
+			h.hsptlz_in_date 
+		AND 
+			h.hsptlz_out_date 
+	AND 
+		cd.detail_no = #{detailNo}
+</select>
+</mapper>

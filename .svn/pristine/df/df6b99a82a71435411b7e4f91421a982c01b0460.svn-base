@@ -1,0 +1,62 @@
+package kr.or.ddit.handler;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Configuration
+@EnableWebSocket
+public class SocketHandler extends TextWebSocketHandler {
+	   //private static List<WebSocketSession> list = new ArrayList<WebSocketSession>();
+	  // sessionid로는 구분이 어려우닝, 사용자로그인 ID와 sessionID를 map을 이용해서 연결
+	   private static Map<String, WebSocketSession> loginMap = new HashMap<String, WebSocketSession>();
+	   
+	   
+	   @Override
+	   public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+	      log.info("## 누군가 접속" + session);
+	   }
+
+	   @Override
+	   protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+	      String uMsg = message.getPayload();
+	      log.debug("체킁:"+uMsg);
+	      log.debug("ID: " + uMsg.split(",")[0]);
+	      log.debug("FROM: " + uMsg.split(",")[1]);
+	      
+	      loginMap.put(uMsg.split(",")[0], session);
+	      log.debug("체킁2:{}",loginMap);
+	      
+	      
+//	      if(loginMap.get("원무과") != null) {
+//	    	    log.debug("잘 실행되었낭?");
+//	    	  	loginMap.get("원무과").sendMessage(new TextMessage("호출"));
+//	      }
+	      
+		   
+	      for (WebSocketSession webSocketSession : loginMap.values()) {
+	         webSocketSession.sendMessage(message);
+	      }
+	      
+	   }
+	   
+	   @Override
+	   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+	      log.info("## 누군가 떠남");
+	     // list.remove(session);
+	   }
+}
+

@@ -1,0 +1,29 @@
+package kr.or.ddit.item.service.serviceImpl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.item.mapper.ItemOrderMapper;
+import kr.or.ddit.item.service.itemOrderService;
+import kr.or.ddit.item.vo.ItemReqDetailVO;
+import kr.or.ddit.item.vo.MediItemReqDetailVO;
+
+@Service
+public class itemOrderServiceImpl implements itemOrderService {
+
+	@Autowired
+	private ItemOrderMapper mapper;
+	
+	@Override
+	public List<MediItemReqDetailVO> getMediItemList() {
+		return mapper.getMediItemList();
+	}
+
+	@Override
+	public List<ItemReqDetailVO> getEquipItemList() {
+		return mapper.getEquipItemList();
+	}
+
+}

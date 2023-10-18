@@ -1,0 +1,26 @@
+package kr.or.ddit.board.service;
+
+import java.util.List;
+
+import kr.or.ddit.board.vo.NoticeBoardVO;
+
+public interface NoticeService {
+
+	// select List
+	public List<NoticeBoardVO> noticeList();
+	
+	// select one
+	public NoticeBoardVO oneNotice();
+	
+	// insert
+	public int insertNotice(NoticeBoardVO noticeBoardVO);
+	
+	// update
+	public int updateNotice(NoticeBoardVO noticeBoardVO);
+	
+	// delete
+	public int deleteNoticeVO(NoticeBoardVO noticeBoardVO);
+	
+	// get emp info
+	public NoticeBoardVO getEmpInfo(String writerEmpNo);
+}

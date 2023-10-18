@@ -1,0 +1,49 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="/resources/js/jquery-3.6.0.js"></script>
+<title>Insert title here</title>
+<style>
+.card {
+	width: 82vw;
+	height:79vh;
+	margin:23px 0px 0px 144px
+}
+#noticeHeader {
+	display:flex;
+	width:81.6vw;
+	margin:0px 0px 25px 0px;
+}
+.card-header {
+	margin: 17px 1121px 0px 5px;
+	font-weight:bolder;
+}
+a, a:active {
+	color: inherit;
+	text-decoration: none;
+}
+#noticeFooter {
+	display: flex;
+	justify-content: center;
+}
+
+</style>
+</head>
+<body>
+	<div class="card">
+		<div id="wrapper">
+			<div id="noticeHeader">
+				<h4 class="card-header">공지사항</h4>
+			</div><!-- notice header 끝 -->
+			
+			
+			<div id="noticeFooter">
+			
+			</div><!-- noticeFooter 끝 -->
+		</div><!-- wrapper 끝 -->
+	</div><!-- card 끝 -->
+</body>
+</html>

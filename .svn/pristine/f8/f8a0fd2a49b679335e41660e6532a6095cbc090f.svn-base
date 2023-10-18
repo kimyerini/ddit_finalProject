@@ -1,0 +1,308 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<script type="text/javascript" src="/resources/js/jquery-3.6.0.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack-all.min.js"></script>
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack.min.css"
+	rel="stylesheet" />
+
+<link href="/resources/css/demo.css" rel="stylesheet" />
+
+<style>
+.reqQy {
+	float: left;
+	margin-bottom: 0;
+}
+
+#buttons {
+	display: flex;
+	align-items: center;
+}
+
+#searchBar {
+	float: right;
+	width: 30%;
+}
+
+
+#ii {
+	width: 100%;
+	height: 48%;
+	margin-bottom: px;
+}
+
+#dd {
+	width: 100%;
+	height: 49%;
+	margin-bottom: 10px;
+}
+
+.card-header {
+	font-weight: bold;
+	text-align: left;
+}
+
+.left-align {
+	text-align: left;
+	margin: 5px;
+}
+
+
+</style>
+<script>
+$(function() {
+	$(document).ready(function() {
+		mediItemWaitingList();
+		});
+	
+	// 약품탭 클릭시 약품리스트 함수 호출
+	$("#mediItem").on("click",function(){
+		mediItemWaitingList();	
+		mediwaitingUpdata();
+		
+	});
+	
+	$("#item").on("click", function() {
+		itemWaitingList();
+		itemwaitingUpdata();
+	});
+	
+	// 현재 활성화된 탭에 따라 검색 함수 호출
+	
+    $("#waitingList").on("click", "td span", function() {
+    if ($("#mediItem").hasClass("active")) {
+        searchMediItem(); // 약품 탭이 활성화되었을 때 약품 검색 함수 호출
+    } else if ($("#item").hasClass("active")) {
+        searchItem(); // 비품 탭이 활성화되었을 때 비품 검색 함수 호출
+    }
+	});
+	
+	// 상세보기 클릭시  뜨고 alert 비품 수정 폼에 data뜨기
+	function itemwaitingUpdata(){
+		$("#waitingList").on("click", "td span", function() {
+			var parentRow = $(this).closest("tr");
+		    var mediNoValue = parentRow.find("td:first a").text();
+		    let data = {"mediItemReqNo":mediNoValue};
+		    console.log("첫 번째 TD 값: " + mediNoValue);
+		    alert("클릭한 행의 NO : " + mediNoValue);
+		    
+		});
+	}
+	// 상세보기 클릭시  뜨고 alert 약품 수정 폼에 data뜨기
+	function mediwaitingUpdata(){
+		$("#waitingList").on("click", "td span", function() {
+		    var parentRow = $(this).closest("tr");
+		    var mediNoValue = parentRow.find("td:first a").text();
+		    let data = {"mediItemReqNo":mediNoValue};
+		    console.log("첫 번째 TD 값: " + mediNoValue);
+		    alert("클릭한 행의 NO : " + mediNoValue);
+		    $.ajax({
+		    	type:"post",
+		    	data : JSON.stringify(data),
+		    	url : "/item/selectWaitingUpdate",
+		    	dataType : "json",
+		    	contentType:"application/json;charset=utf-8",
+		    	success : function(rslt){
+		    		console.log("데이터 가져오기: ",rslt);
+		    		 console.log("rslt.mediItemReqNo: " + rslt.mediItemReqNo);
+		    		//데이터 가져오기: {"mediItemReqNo":104,"mediItemReqDe":1694762207000,"mediItemReqSt":null,"mediItemReqQy":0,"empNo":null,"empNM":null,"mediItemName":null,
+		    		  //"mediItemReqDetailVOList":[{"mediItemReqNo":104,"mediItemCode":"640900630","mediItemReqQy":45,"mediItemReqTotal":0}]}
+		    		var str = '<tr>';
+					    str += '<td>신청번호<input type="text" value="' + rslt[0].mediItemReqNo + '" readonly /></td>';
+					    str += '<td>신청일시<input type="text" value="' + rslt[0].mediItemReqDe + '" readonly /></td>';
+					    str += '<td>신청자명<input type="text" value="' + rslt[0].empNm + '" readonly /></td>';
+					    str += '</tr>';
+		    		
+		    		$.each(rslt, function(index, item) {
+		    			console.log("체킁:",index);
+		    		    str += "<tr>";
+		    		    str += "<td>No.<input type='text' value='"+(index+1)+"'/></td>'";
+		    		    str += "<td>약품코드<input type='text' value='" + item.mediItemReqDetailVOList[0].mediItemCode + "' readonly /></td>";
+		    		    str += "<td>약품명<input type='text' value='" + item.mediItemName + "' readonly /></td>" ;
+		    		    str += "<td>신청수량<input type='number' value='" + item.mediItemReqDetailVOList[0].mediItemReqQy + "' class='updateReqQy' /></td>" ;
+		    		    str += "</tr>";
+		    		});
+		   	        $("#uptable").html(str);
+	
+		    	},
+	    	    error: function (xhr, status, error) {
+	      	      console.log("code: " + xhr.status);
+	      	      console.log("message: " + xhr.responseText);
+	      	      console.log("error: " + error);
+	    	    }
+		    	
+		    })
+		});
+	}
+	// 약품 리스트 함수
+	function mediItemWaitingList(fmediList){
+		$.ajax({
+			method:"get",
+	         url: "/item/mediItemWaitingList",
+	         async:true,
+	         dataType : "json",
+	         success: function(rslt) {
+	        	    console.log("체크", rslt);
+	        	    let mediReqNo = item.mediItemReqNo;
+	        	    let newRow = mediItemWaitingTh();
+	        	    newRow += "<tbody>";
+	        	    let uniqueMediItemReqNo = []; // 중복된 mediItemReqNo를 처리하기 위한 배열
+	        	    $.each(rslt, function (index, item) {
+	        	        if (uniqueMediItemReqNo.indexOf(item.mediItemReqNo) === -1) {
+	        	          // 중복되지 않은 mediItemReqNo인 경우에만 출력
+	        	          newRow += "<tr >";
+	        	          newRow += "<td><a href='#'>" + item.mediItemReqNo +"</a></td>";
+	        	          if (item.countMediItem > 1) { // 1 이상일 때 "외X"를 표시
+	        	          newRow += "<td>" + item.mediItemName + '<p style="color:red;display:inline;">외' + item.countMediItem + "</p></td>";
+	        	        	} else { // 1 미만일 때는 표시하지 않음
+	        	        	    newRow += "<td>" + item.mediItemName + "</td>";
+	        	        	}
+
+	        	          newRow += "<td>" + item.mediItemReqDeStr + "</td>";
+	        	          newRow += "<td>" + item.empNm + "</td>";
+	        	          newRow += "<td><span style='padding:5px'class='badge bg-label-info me-1'>상세보기</span></td>";
+	        	          newRow += "</tr>";
+	        	          uniqueMediItemReqNo.push(item.mediItemReqNo); // 중복된 mediItemReqNo를 배열에 추가
+	        	        }
+	        	      });
+	        	    newRow+="</tbody>";
+
+	        	      $("#waitingList").html(newRow);
+	        	    },
+	        	    error: function (xhr, status, error) {
+	        	      console.log("code: " + xhr.status);
+	        	      console.log("message: " + xhr.responseText);
+	        	      console.log("error: " + error);
+	        	    }
+	        	  });
+	        	}
+	// 비품 리스트 함수
+	function itemWaitingList(fitmeList){
+		$.ajax({
+			method:"get",
+	         url: "/item/ItemWaitingList",
+	         async:true,
+	         dataType : "json",
+	         success: function(rslt) {
+	        	    console.log("체크", rslt);
+	        	    let newRow = itemWaitingTh();
+	        	    newRow += "<tbody>";
+	        	    let uniqueItemReqNo = []; // 중복된 itemReqNo를 처리하기 위한 배열
+	        	    $.each(rslt, function (index, item) {
+	        	        if (uniqueItemReqNo.indexOf(item.itemReqNo) === -1) {
+	        	          // 중복되지 않은 mediItemReqNo인 경우에만 출력
+	        	          newRow += "<tr >";
+	        	          newRow += "<td><a href='#'>" + item.itemReqNo +"</a></td>";
+	        	          if (item.countItem > 1) { 
+	        	        	    newRow += "<td>" + item.itemName + '<p style="color:red;display:inline;">외' + item.countItem + "</p></td>";
+	        	        	} else { 
+	        	        	    newRow += "<td>" + item.itemName + "</td>";
+	        	        	}
+	        	          newRow += "<td>" + item.itemReqDeStr + "</td>";
+	        	          newRow += "<td>" + item.empNm + "</td>";
+	        	          newRow += "<td><span style='padding:5px'class='badge bg-label-info me-1' value="+item.itemReqNo+">상세보기</span></td>";
+	        	          newRow += "</tr>";
+	        	          uniqueItemReqNo.push(item.itemReqNo); // 중복된 mediItemReqNo를 배열에 추가
+	        	        }
+	        	      });
+	        	    newRow+="</tbody>";
+
+	        	      $("#waitingList").html(newRow);
+	        	    },
+	        	    error: function (xhr, status, error) {
+	        	      console.log("code: " + xhr.status);
+	        	      console.log("message: " + xhr.responseText);
+	        	      console.log("error: " + error);
+	        	    },
+	        	  });
+	        	}
+	
+        	      
+	//신청대기목록 th 함수 약품
+	function mediItemWaitingTh(){
+		let row = `<thead><tr>
+			<th>신청코드</th>
+			<th>약품명</th>
+			<th>발주신청일</th>
+			<th>신청자</th>
+			<th>상세보기</th>
+			</tr></thead>`;
+		return row;
+	}
+	
+	function itemWaitingTh(){
+		let row = `<thead><tr>
+			<th>신청코드</th>
+			<th>비품명</th>
+			<th>발주신청일</th>
+			<th>신청자</th>
+			<th>상세보기</th>
+			</tr></thead>`;
+		return row;
+	}
+	//신청대기목록 th 함수 비품
+});
+
+</script>
+
+<div class="grid-stack"></div>
+
+<script type="text/javascript">
+	
+	// 그리드 스택 아이템 정의
+	let gridStack1 = `<div id="div1" style=" height:100%; width:90% padding:30px; overflow: none;">
+
+						<div class="input-group" id= "searchBar" style="margin:20px 10px 0px 10px;">
+							<span class="input-group-text"><i class="tf-icons bx bx-search"></i></span>
+							<input type="text" id="searchText"class="form-control" placeholder="Search...">
+							<button type="button" id="searchButton"style="margin-left:10px;">검색</button>
+						</div><br><br>
+
+						<div id="buttons"style="margin-left:10px;">
+							<button type="button" id="mediItem">약품</button>
+							<button type="button" id="item">비품</button>
+						</div>
+						
+						<div class="card">
+					 		<h4 class="card-header"id="applicationList">신청 대기 목록(약품)</h4>
+					 		
+					 	 <div class="table-responsive text-nowrap" style="height:290px;overflow-x: auto;">
+					    	<table class="table table-hover"id="waitingList">
+
+	   						 </table>
+						  </div>
+						</div>	
+					 </div>`;
+	let gridStack2 = `<div style=" height:100%; padding:40px; overflow: none;"><h1>승인/발주현황</h1>
+				
+					</div>`;
+	
+	
+    let gridStack3 = `<div id="div2" style="width:100%; height:100%; padding:10px;">
+							<div id="ii" style="background-color:white;">
+							<h4 id="medicheckOK" style="float: left;font-weight: bold;margin:5px;">수정</h4><br><br>
+							<table id="uptable">
+							
+							</table>
+							<button>수정</button>
+							<button>삭제</button>
+							</div>
+					</div>`;
+						
+		let gridStack4 = `<div style="background-color:white; width:100%; height:100%;"><h1>반려사유</h1>
+		
+		</div>`;
+// 그리드 스택 아이템 배열
+var items = [
+    { w: 7, h: 3, float: false, content: gridStack1 },
+    { w: 5, h: 3, float: false, content: gridStack3 },
+    { w: 7, h: 3, float: false, content: gridStack2 },
+    { w: 5, h: 3, float: false, content: gridStack4 }
+];
+
+// 그리드 스택 초기화
+var grid = GridStack.init();
+grid.load(items);
+</script>

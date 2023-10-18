@@ -1,0 +1,13 @@
+package kr.or.ddit.hospitalization.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import kr.or.ddit.hospitalization.vo.hosptPatVO;
+
+@Mapper
+public interface HospitalizationMapper {
+
+	public List<hosptPatVO> hosptPatWaitList();
+}

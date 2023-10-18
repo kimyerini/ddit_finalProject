@@ -1,0 +1,50 @@
+package kr.or.ddit.receipt.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.document.vo.ProofReqVO;
+import kr.or.ddit.hospitalization.service.HospitalizationService;
+import kr.or.ddit.receipt.service.ReceiptionService;
+import kr.or.ddit.receipt.vo.HosReceiptionVO;
+import kr.or.ddit.receipt.vo.ReceiptionVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+@RequestMapping(value = "/receiption")
+public class ReceiptionController {
+	@Autowired
+	ReceiptionService receiptionService;
+	@Autowired
+	HospitalizationService hospitalizationService;
+	
+	
+	@PostMapping(value = "/insert")
+	@ResponseBody
+	public int insertReceiption(@RequestBody ReceiptionVO receiptionVO) {
+		log.info("receiptionVO:"+receiptionVO);
+		int cnt = receiptionService.insertReceiption(receiptionVO);
+		return cnt;
+	}
+	
+	@GetMapping("/reqDocument/{reqDocumentNo}")
+	@ResponseBody
+	public int proofReceiption(@PathVariable(value="reqDocumentNo")String reqDocumentNo) {
+		return receiptionService.reqDocReceiption(reqDocumentNo);
+	}
+	
+	@GetMapping("/hospitalization/{hsptlzNo}")
+	@ResponseBody
+	public List<HosReceiptionVO> getHosReceiptionVO(@PathVariable(value="hsptlzNo") String hsptlzNo) {
+		return hospitalizationService.getHosReceiptionContent(hsptlzNo);
+	}
+}

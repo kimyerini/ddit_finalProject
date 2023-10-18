@@ -1,0 +1,10 @@
+package kr.or.ddit.document.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import kr.or.ddit.document.vo.RequestDocumentVO;
+
+@Mapper
+public interface ProofRequestMapper {
+	public int insertProofReq (RequestDocumentVO requestDocumentVO);
+}

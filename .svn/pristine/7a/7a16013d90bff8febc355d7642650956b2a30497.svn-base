@@ -1,0 +1,48 @@
+package kr.or.ddit.board.service.serviceImpl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.board.mapper.NoticeMapper;
+import kr.or.ddit.board.service.NoticeService;
+import kr.or.ddit.board.vo.NoticeBoardVO;
+
+@Service
+public class NoticeServiceImpl implements NoticeService {
+
+	@Autowired
+	NoticeMapper noticeMapper;
+
+	@Override
+	public List<NoticeBoardVO> noticeList() {
+		return noticeMapper.noticeList();
+	}
+
+	@Override
+	public NoticeBoardVO oneNotice(String ntbdCode) {
+		return noticeMapper.oneNotice(ntbdCode);
+	}
+
+	@Override
+	public int insertNotice(NoticeBoardVO noticeBoardVO) {
+		return noticeMapper.insertNotice(noticeBoardVO);
+	}
+
+	@Override
+	public int updateNotice(NoticeBoardVO noticeBoardVO) {
+		return noticeMapper.updateNotice(noticeBoardVO);
+	}
+
+	@Override
+	public int deleteNotice(String ntbdCode) {
+		return noticeMapper.deleteNotice(ntbdCode);
+	}
+
+	@Override
+	public int updateHit(NoticeBoardVO noticeBoardVO) {
+		return noticeMapper.updateHit(noticeBoardVO);
+	}
+
+}

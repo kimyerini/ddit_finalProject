@@ -1,0 +1,293 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack-all.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack.min.css" rel="stylesheet"/> 
+<link href="../resources/css/demo.css" rel="stylesheet"/> 
+<style>
+.mygrid{
+	border : 1px solid black;
+}
+.mygrid-title{
+	text-align : right;
+	font-size : 0.8 rem;
+}
+</style>
+<div class="grid-stack"></div> 
+<script type="text/javascript">
+	var gr1 = 
+		`
+		<div style="background-color : #e7e9ed; height : 100%;"> <strong><p id="gr1">진료실1-윤강혁</p></strong>
+			<div class="nav-align-top mb-3" ><br>
+			    <ul class="nav nav-tabs" role="tablist">
+			        <li class="nav-item" role="presentation">
+			        	<button class="nav-link" style="background-color: #fff;" id="gr1Btn">대기(3)</button>
+			        </li>
+			    </ul>
+			    <div class="tab-content" style="height : 650px;" id="gr1Content">
+			        
+
+			        
+			    </div>
+			</div>
+		</div>
+		`;
+	var gr2 = 
+		`
+		<div style="background-color : #e7e9ed; height : 100%;"> <strong><p id="gr2">진료실2-김예린</p></strong>
+			<div class="nav-align-top mb-3" ><br>
+			    <ul class="nav nav-tabs" role="tablist">
+			        <li class="nav-item" role="presentation">
+			        	<button class="nav-link" style="background-color: #fff;" id="gr2Btn">대기(3)</button>
+			        </li>
+			    </ul>
+			    <div class="tab-content" style="height : 650px;">
+			        <div class="tab-pane fade" id="gr2Content" role="tabpanel" >
+			            
+			        </div>
+			    </div>
+			</div>
+		</div>
+		`;
+	var gr3 = 
+		`
+		<div style="background-color : #e7e9ed; height : 100%;"> <strong><p id="gr3">진료실3-정은비</p></strong>
+			<div class="nav-align-top mb-3" ><br>
+			    <ul class="nav nav-tabs" role="tablist">
+			        <li class="nav-item" role="presentation">
+			        	<button class="nav-link" style="background-color: #fff;" id="gr3Btn">대기(3)</button>
+			        </li>
+			    </ul>
+			    <div class="tab-content" style="height : 650px;">
+			        <div class="tab-pane fade" id="gr3Contentl" role="tabpanel" >
+			            
+			        </div>
+			    </div>
+			</div>
+		</div>
+		`;
+	var gr4 = 
+		`
+		<div style="background-color : #e7e9ed; height : 100%;"> <strong><p id="gr4">진료실4-정수지</p></strong>
+			<div class="nav-align-top mb-3" ><br>
+			    <ul class="nav nav-tabs" role="tablist">
+			        <li class="nav-item" role="presentation">
+			        	<button class="nav-link" style="background-color: #fff;" id="gr4Btn">대기(3)</button>
+			        </li>
+			    </ul>
+			    <div class="tab-content" style="height : 650px;">
+			        <div class="tab-pane fade" id="gr4Content" role="tabpanel" >
+			            
+			        </div>
+			    </div>
+			</div>
+		</div>
+		`;
+	var gr5 = 
+		`
+		<div style="background-color : #e7e9ed; height : 100%;"> <strong><p>오더수행중</p></strong>
+			<div class="nav-align-top mb-3" ><br>
+			    <ul class="nav nav-tabs" role="tablist">
+			        <li class="nav-item" role="presentation">
+			            <button class="nav-link" style="background-color: #fff;" id="gr5Btn">대기(3)</button>
+			        </li>
+			    </ul>
+			    <div class="tab-content" style="height : 650px;">
+			        <div class="tab-pane fade" id="gr5Content" role="tabpanel" >
+			            
+			        </div>
+			    </div>
+			</div>
+		</div>
+		`;
+	var gr6 = 
+		`
+		<div style="background-color : #e7e9ed; height : 100%;"> <strong><p>수납</p></strong>
+			<div class="nav-align-top mb-3" ><br>
+			    <ul class="nav nav-tabs" role="tablist">
+			        <li class="nav-item" role="presentation">
+			        	<button class="nav-link" style="background-color: #fff;" id="gr6Btn">대기(3)</button>
+			        </li>
+			    </ul>
+			    <div class="tab-content" style="height : 650px;">
+			        <div class="tab-pane fade" id="gr6Content" role="tabpanel" >
+			            
+			        </div>
+			    </div>
+			</div>
+		</div>
+		`;
+	
+    var items = [ 
+	   {w: 2, h:5, x:0, y:0, content: gr1}, 
+	   {w: 2, h:5, x:2, y:0, content: gr2},
+	   {w: 2, h:5, x:4, y:0, content: gr3},
+	   {w: 2, h:5, x:6, y:0, content: gr4},
+	   {w: 2, h:5, x:8, y:0, content: gr5},
+	   {w: 2, h:5, x:10, y:0, content: gr6}
+   ];
+   
+    var grid = GridStack.init(); grid.load(items);
+	const $gr1 = $('#gr1');
+	const $gr2 = $('#gr2');
+	const $gr3 = $('#gr3');
+	const $gr4 = $('#gr4');
+	const $gr5 = $('#gr5');
+	const $gr6 = $('#gr6');
+	const $gr1Content = $('#gr1Content');
+	const $gr2Content = $('#gr2Content');
+	const $gr3Content = $('#gr3Content');
+	const $gr4Content = $('#gr4Content');
+	const $gr5Content = $('#gr5Content');
+	const $gr6Content = $('#gr6Content');
+	const $gr1Btn = $('#gr1Btn');
+	const $gr2Btn = $('#gr2Btn');
+	const $gr3Btn = $('#gr3Btn');
+	const $gr4Btn = $('#gr4Btn');
+	const $gr5Btn = $('#gr5Btn');
+	const $gr6Btn = $('#gr6Btn');
+	function getPatList(){
+		$.ajax({
+			url : "/office/patList",
+			type : "get",
+			dataType : "json",
+			success : function(result){
+				console.log(result);
+				let txt1 = "";
+				let txt2 = "";
+				let txt3 = "";
+				let txt4 = "";
+				let txt5 = "";
+				let txt6 = "";
+				let c1 = 0;
+				let c2 = 0;
+				let c3 = 0;
+				let c4 = 0;
+				let c5 = 0;
+				let c6 = 0;
+				for(let i =0; i<result.length; i++){
+					let r = result[i];
+					if(r.patWait == '진료대기'){
+						if(r.hosFcName == '1진료실'){
+							c1 += 1;
+							txt1 += `
+					        	<table style="width : 100%; text-align : left; border-bottom : 1px solid black; margin-bottom : 15px;">
+					    			<tr>
+					    				<td style="width : 65%;">\${r.patName}(\${r.patBrthdy})</td>
+					    				<td>오후 4:19</td>
+					    			</tr>
+					    			<tr>
+					    				<td style="width : 65%;">\${r.patAge} | \${r.patGen} | \${r.patFirst}</td>
+					    				<td><button class="btn btn-xs btn-info" "disabled">\${r.patWait}</button></td>
+					    			</tr>
+				   				</table>
+							`;
+						}
+						if(r.hosFcName == '2진료실'){
+							c2 += 1;
+							txt2 += `
+					        	<table style="width : 100%; text-align : left; border-bottom : 1px solid black; margin-bottom : 15px;">
+					    			<tr>
+					    				<td style="width : 65%;">\${r.patName}(\${r.patBrthdy})</td>
+					    				<td>오후 4:19</td>
+					    			</tr>
+					    			<tr>
+					    				<td style="width : 65%;">\${r.patAge} | \${r.patGen} | \${r.patFirst}</td>
+					    				<td><button class="btn btn-xs btn-info" "disabled">\${r.patWait}</button></td>
+					    			</tr>
+				   				</table>
+							`;
+						}
+						if(r.hosFcName == '3진료실'){
+							c3 += 1;
+							txt3 += `
+					        	<table style="width : 100%; text-align : left; border-bottom : 1px solid black; margin-bottom : 15px;">
+					    			<tr>
+					    				<td style="width : 65%;">\${r.patName}(\${r.patBrthdy})</td>
+					    				<td>오후 4:19</td>
+					    			</tr>
+					    			<tr>
+					    				<td style="width : 65%;">\${r.patAge} | \${r.patGen} | \${r.patFirst}</td>
+					    				<td><button class="btn btn-xs btn-info" "disabled">\${r.patWait}</button></td>
+					    			</tr>
+				   				</table>
+							`;
+						}
+						if(r.hosFcName == '4진료실'){
+							c4 += 1;
+							txt4 += `
+					        	<table style="width : 100%; text-align : left; border-bottom : 1px solid black; margin-bottom : 15px;">
+					    			<tr>
+					    				<td style="width : 65%;">\${r.patName}(\${r.patBrthdy})</td>
+					    				<td>오후 4:19</td>
+					    			</tr>
+					    			<tr>
+					    				<td style="width : 65%;">\${r.patAge} | \${r.patGen} | \${r.patFirst}</td>
+					    				<td><button class="btn btn-xs btn-info" "disabled">\${r.patWait}</button></td>
+					    			</tr>
+				   				</table>
+							`;
+						}
+					} else if(r.patWait == '오더수행중') {
+						c5 += 1;
+						txt5 += `
+				        	<table style="width : 100%; text-align : left; border-bottom : 1px solid black; margin-bottom : 15px;">
+				    			<tr>
+				    				<td style="width : 65%;">\${r.patName}(\${r.patBrthdy})</td>
+				    				<td>오후 4:19</td>
+				    			</tr>
+				    			<tr>
+				    				<td style="width : 65%;">\${r.patAge} | \${r.patGen} | \${r.patFirst}</td>
+				    				<td><button class="btn btn-xs btn-secondary" "disabled">\${r.patWait}</button></td>
+				    			</tr>
+			   				</table>
+						`;
+					} else if(r.patWait == '오더완료'){
+						c5 += 1;
+						txt5 += `
+				        	<table style="width : 100%; text-align : left; border-bottom : 1px solid black; margin-bottom : 15px;">
+				    			<tr>
+				    				<td style="width : 65%;">\${r.patName}(\${r.patBrthdy})</td>
+				    				<td>오후 4:19</td>
+				    			</tr>
+				    			<tr>
+				    				<td style="width : 65%;">\${r.patAge} | \${r.patGen} | \${r.patFirst}</td>
+				    				<td><button class="btn btn-xs btn-primary" "disabled">\${r.patWait}</button></td>
+				    			</tr>
+			   				</table>
+						`;
+					} else if(r.patWait == '진료완료'){
+						c6 += 1;
+						txt6 += `
+				        	<table style="width : 100%; text-align : left; border-bottom : 1px solid black; margin-bottom : 15px;">
+				    			<tr>
+				    				<td style="width : 65%;">\${r.patName}(\${r.patBrthdy})</td>
+				    				<td>오후 4:19</td>
+				    			</tr>
+				    			<tr>
+				    				<td style="width : 65%;">\${r.patAge} | \${r.patGen} | \${r.patFirst}</td>
+				    				<td><button class="btn btn-xs btn-info" "disabled">\${r.patWait}</button></td>
+				    			</tr>
+			   				</table>
+						`;
+					}
+					
+				}
+				$gr1Content.html(txt1);
+				$gr2Content.html(txt2);
+				$gr3Content.html(txt3);
+				$gr4Content.html(txt4);
+				$gr5Content.html(txt5);
+				$gr6Content.html(txt6);
+				$gr1Btn.text("대기("+c1+")");
+				$gr2Btn.text("대기("+c2+")");
+				$gr3Btn.text("대기("+c3+")");
+				$gr4Btn.text("대기("+c4+")");
+				$gr5Btn.text("대기("+c5+")");
+				$gr6Btn.text("대기("+c6+")");
+			}
+		});
+	}
+	$(function(){
+		getPatList();
+	});
+</script>

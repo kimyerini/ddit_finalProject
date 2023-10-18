@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.item.mapper.ItemOrderMapper">
+	
+	<!-- select 약품리스트 -->
+	<select id="getMediItemList" resultType="mediItemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.getMediItemList */
+		SELECT req.medi_item_req_no
+			, detail.medi_item_code
+			, item.medi_item_name
+			, item.medi_item_makr
+		    , item.medi_item_price
+		    , detail.medi_item_req_qy
+		    , to_char(req.medi_item_req_de, 'YYYY-MM-DD') as medi_item_req_de
+		    , req.emp_no
+		    , emp.emp_nm
+		FROM
+			tb_medi_item_req_detail detail
+		JOIN
+			tb_medi_item_list item
+		ON
+			detail.medi_item_code = item.medi_item_code
+		JOIN
+			tb_medi_item_request req
+		ON
+			detail.medi_item_req_no = req.medi_item_req_no
+		JOIN
+			tb_employee emp
+		ON
+			req.emp_no = emp.emp_no
+	</select>
+	
+	<!-- select 약품신청목록에 있는 거래처 -->
+	<select id="getCompanyName" resultType="mediItemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.getCompanyName */
+		SELECT item.medi_item_makr
+		FROM
+		    tb_medi_item_list item
+		JOIN
+		    tb_medi_item_req_detail detail
+		ON
+		    detail.medi_item_code = item.medi_item_code
+		JOIN
+		    tb_medi_item_request req
+		ON
+		    detail.medi_item_req_no = req.medi_item_req_no
+		JOIN
+		    tb_employee emp
+		ON
+		    req.emp_no = emp.emp_no
+		GROUP BY
+		    item.medi_item_makr
+	</select>
+	
+	<!-- select 거래처별 약품리스트 (발주모달) -->
+	<select id="mediItemByCompany" parameterType="String" resultType="mediItemReqDetailVO">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.mediItemByCompany */
+	SELECT
+		req.medi_item_req_no
+		, detail.medi_item_code
+		, item.medi_item_name
+		, item.medi_item_makr
+    	, item.medi_item_price
+    	, detail.medi_item_req_qy
+    	, to_char(req.medi_item_req_de, 'YYYY-MM-DD') AS mediItemReqDe
+    	, req.emp_no, emp.emp_nm
+	FROM
+		tb_medi_item_req_detail detail
+	JOIN
+		tb_medi_item_list item
+	ON
+		detail.medi_item_code = item.medi_item_code
+	JOIN
+		tb_medi_item_request req
+	ON
+		detail.medi_item_req_no = req.medi_item_req_no
+	JOIN
+		tb_employee emp
+	ON
+		req.emp_no = emp.emp_no
+	WHERE
+		item.medi_item_makr = #{mediItemMakr}
+	</select>
+	
+	<!-- select 비품리스트 -->
+	<select id="getEquipItemList" resultType="String">
+	/* kr.or.ddit.item.mapper.ItemOrderMapper.getEquipItemList */
+		SELECT req.item_req_no
+			, detail.item_code
+			, item.item_name
+			, item.item_makr
+			, item.item_price
+		    , detail.item_req_qy
+		    , to_char(req.item_req_de, 'YYYY-MM-DD') as item_req_de
+		    , req.emp_no
+		    , emp.emp_nm
+		FROM
+			tb_item_req_detail detail
+		JOIN
+			tb_item_list item
+		ON
+			item.item_code = detail.item_code
+		JOIN
+			tb_item_req req
+		ON
+			detail.item_req_no = req.item_req_no
+		JOIN
+			tb_employee emp
+		ON
+			req.emp_no = emp.emp_no
+	</select>
+	
+	
+</mapper>

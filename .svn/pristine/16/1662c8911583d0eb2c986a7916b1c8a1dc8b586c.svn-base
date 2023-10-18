@@ -1,0 +1,158 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<sec:authentication property="principal.employee" var="empVO" />
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="/resources/ckeditor/ckeditor.js"></script>
+<script src="/resources/js/jquery-3.6.0.js"></script>
+<title>Insert title here</title>
+<style>
+.card {
+	width: 70vw;
+	height:79vh;
+	margin:27px 0px 0px 265px;
+	overflow: hidden;
+}
+.noticeHeader {
+	display: flex;
+	width: 81.6vw;
+	margin: 10px 0px 0px 0px;
+}
+.card-header {
+	font-weight:bolder;
+	margin: 3px 0px -5px 5px;
+}
+a, a:active {
+	color: inherit;
+	text-decoration: none;
+}
+.noticeBody {
+	width: 70vw;
+	margin: -5px 0px 22px 8px;	
+}
+.flex {
+	display: flex;
+    justify-content: space-between;
+    margin: 1.5rem;
+}
+.writeInput-long {
+	width: 79vw!important;
+}
+.writeInput-short {
+	width: 19.6vw!important;
+}
+#formFileMultiple {
+	width: 62vw!important;
+}
+#fileDeleteBtn {
+	margin-left: -23px;
+}
+#noticeBody textarea {
+	width: 75.2vw;
+}
+.noticeFooter {
+	display: flex;
+	justify-content: end;
+	margin: 0px 39px 0px 0px;
+}
+#updateBtn {
+	width: 4vw;
+	height: 4vh;
+}
+#cancelBtn {
+	width: 4vw;
+	height: 4vh;
+	margin-left: 15px;
+}
+.fileAlign {
+	display: block;
+	margin: -3px 0px 0px 0px;
+}
+.eachFile {
+	margin-right:30px;
+}
+</style>
+</head>
+<body>
+	<div class="card">
+		<div id="wrapper">
+			<div class="noticeHeader">
+				<h4 class="card-header">공지사항</h4>
+			</div><!-- notice header 끝 -->
+
+			<form id="writeForm" action="/board/update" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="_method" value="put"/>
+				<div class="noticeBody">
+					<div class="flex">
+						<input type="hidden" name="ntbdCode" value="${noticeBoardVO.ntbdCode}">
+						<label for="smallInput" class="form-label writeLabel" style="width:61px;">제목</label>
+						<input id="smallInput" class="form-control form-control-sm writeInput-long" type="text" value="${noticeBoardVO.ntbdSubject}" name="ntbdSubject">
+					</div>
+					<div class="flex">
+						<input type="hidden" name="writerEmpNo" value="${empVO.empNo}">
+						<label for="smallInput" class="form-label writeLabel" style="width:37px;">작성자</label>
+						<input id="smallInput" class="form-control form-control-sm writeInput-short" type="text" name="empName" value="${empVO.empNm}" readonly>
+						<label for="smallInput" class="form-label writeLabel">부서</label>
+						<input id="smallInput" class="form-control form-control-sm writeInput-short" type="text" name="deptName" value="${empVO.comCodeName}" readonly>
+						<label for="smallInput" class="form-label writeLabel">작성일자</label>
+						<input id="smallInput" class="form-control form-control-sm writeInput-short" type="text" name="ntbdRegDate" value="${noticeBoardVO.ntbdRegDate}" readonly>
+					</div>
+					<div style="display:flex; margin-left:24px;">
+						<label for="smallInput" class="form-label writeLabel" style="width:37px;">첨부</label>
+						<div style="margin-left:18px;">
+							<c:forEach var="fileList" items="${noticeBoardVO.fileList}">
+								<div class="eachFile">
+									<span>${fileList.fileName}</span>
+									<a class="deleteFileBtn" href="#" data-file-no="${fileList.fileNo}"><img src="/resources/images/x-regular-24.png"></a>
+								</div>
+							</c:forEach>
+						</div>
+					</div>
+					<div class="flex" style="margin-right:40px;">
+						<label for="smallInput" class="form-label writeLabel" style="margin-right:10px;">내용</label>
+						<textarea class="form-control" name="ntbdContent">${noticeBoardVO.ntbdContent}</textarea>
+					</div>
+				</div>
+			
+			<div class="noticeFooter" id="updateBtns">
+				<button type="submit" class="btn btn-primary" id="updateBtn">수정</button>
+				<button type="button" class="btn btn-secondary" id="cancelBtn" onclick="location.href='/board/notice'">취소</button>
+			</div><!-- notice Footer 끝 -->
+			</form>	
+		</div><!-- wrapper 끝 -->
+	</div><!-- card 끝 -->
+</body>
+<script>
+$(function(){
+	$('input[name=ntbdRegDate]').val(getToday());
+	CKEDITOR.instances.ntbdContent.getData();
+});
+
+$('.deleteFileBtn').on('click', function(event) {
+	event.preventDefault();
+	
+	var fileNo = $(this).data("fileNo"); //this.getAttribute('data-fileNo');
+	alert("선택한 파일 번호: " + fileNo);
+})
+
+// 오늘 날짜 가져오기 (작성일자)
+function getToday() {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = ("0" + (1 + date.getMonth())).slice(-2);
+    var day = ("0" + date.getDate()).slice(-2);
+
+    return year + "-" + month + "-" + day;
+}
+
+// CKEDITOR 설정
+CKEDITOR.replace("ntbdContent", {
+	height: 400, width: 1562
+});
+	
+</script>
+</html>

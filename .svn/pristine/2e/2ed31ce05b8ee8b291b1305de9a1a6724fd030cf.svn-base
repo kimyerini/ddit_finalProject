@@ -1,0 +1,72 @@
+package kr.or.ddit.board.service.serviceImpl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import kr.or.ddit.board.mapper.NoticeMapper;
+import kr.or.ddit.board.service.NoticeService;
+import kr.or.ddit.board.vo.NoticeBoardVO;
+import kr.or.ddit.common.vo.AttachFileVO;
+import kr.or.ddit.util.FileUploadUtils;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class NoticeServiceImpl implements NoticeService {
+
+	@Autowired
+	NoticeMapper noticeMapper;
+	@Autowired
+	FileUploadUtils fileUploadUtils; // 파일 업로드를 위함
+
+	@Override
+	public List<NoticeBoardVO> noticeList() {
+		return noticeMapper.noticeList();
+	}
+
+	@Override
+	public NoticeBoardVO oneNotice(String ntbdCode) {
+		return noticeMapper.oneNotice(ntbdCode);
+	}
+
+	@Override
+	public int insertNotice(NoticeBoardVO noticeBoardVO) {
+
+		log.info("serviceImpl에 넘어온 noticeBoardVO: " + noticeBoardVO);
+		
+		int result = noticeMapper.insertNotice(noticeBoardVO);
+		log.info("mapper 찍은 noticeBoardVO: " + noticeBoardVO); // ntbdCode가 안들어간다..
+		
+		// 파일 처리
+		MultipartFile[] files = noticeBoardVO.getFiles();
+		List<AttachFileVO> attachFileVOList = fileUploadUtils.multiUpload(
+				noticeBoardVO.getNtbdCode(), noticeBoardVO.getWriterEmpNo(), files);
+		noticeBoardVO.setFileList(attachFileVOList);
+
+		return result;
+	}
+
+	@Override
+	public int updateNotice(NoticeBoardVO noticeBoardVO) {
+		return noticeMapper.updateNotice(noticeBoardVO);
+	}
+
+	@Override
+	public int deleteNotice(String ntbdCode) {
+		return noticeMapper.deleteNotice(ntbdCode);
+	}
+
+	@Override
+	public int updateHit(NoticeBoardVO noticeBoardVO) {
+		return noticeMapper.updateHit(noticeBoardVO);
+	}
+
+	@Override
+	public List<Integer> fileCountList() {
+		return noticeMapper.fileCountList();
+	}
+
+}

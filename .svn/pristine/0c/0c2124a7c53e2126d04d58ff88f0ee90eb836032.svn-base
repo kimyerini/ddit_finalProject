@@ -1,0 +1,81 @@
+package kr.or.ddit.clinic.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import kr.or.ddit.clinic.vo.ChartDetailByDateVO;
+import kr.or.ddit.clinic.vo.ChartDetailVO;
+import kr.or.ddit.clinic.vo.ClinicChartRecPatVO;
+import kr.or.ddit.clinic.vo.ClinicVO;
+import kr.or.ddit.clinic.vo.DiseaseVO;
+import kr.or.ddit.clinic.vo.PatRecCliVO;
+import kr.or.ddit.clinic.vo.PatientRecieptVO;
+import kr.or.ddit.item.vo.MediItemListVO;
+import kr.or.ddit.order.vo.InspectionListVO;
+import kr.or.ddit.order.vo.InspectionVO;
+import kr.or.ddit.order.vo.PhysioTherapyListVO;
+import kr.or.ddit.order.vo.PhysiotherapyVO;
+import kr.or.ddit.order.vo.PrescriptionVO;
+import kr.or.ddit.order.vo.TreatmentListVO;
+import kr.or.ddit.order.vo.TreatmentVO;
+import kr.or.ddit.patient.vo.PatientVO;
+import kr.or.ddit.receipt.vo.WaitPatVO;
+
+
+@Mapper
+public interface ClinicMapper {
+	// 환자 접수 상세보기 
+	public PatientRecieptVO receiptDetail(PatientRecieptVO patientRecieptVO);
+
+	// 진료내역 등록날짜별로 조회하기
+	public List<ClinicChartRecPatVO> getRegDateList(ClinicChartRecPatVO clinicChartRecPatVO);
+
+	// 환자 정보 조회하기
+	public PatientVO selectPatInfo(PatientVO patientVO);
+	
+	// 대기 환자 목록 조회하기
+	public List<PatRecCliVO> getWaitPatList();
+	
+	// 등록날짜로 환자차트 조회하기
+	public List<ChartDetailByDateVO> getChartByRegDate(ChartDetailByDateVO chartDetailByDateVO);
+		
+	// 검사오더 검색 
+	public List<InspectionVO> searchInspection(InspectionVO inspectionVO);
+	
+	// 처치오더 검색 
+	public List<TreatmentVO> searchTreat(TreatmentVO treatmentVO);
+	
+	// 치료오더 검색 
+	public List<PhysiotherapyVO> searchPhysio(PhysiotherapyVO physiotherapyVO);
+	
+	// 처방오더 검색 
+	public List<MediItemListVO> searchMedi(MediItemListVO mediItemListVO);
+		
+	// 차트번호 출력
+	public ChartDetailVO getChartDetailNo();
+	
+	// 대기 환자 목록 조회하기
+	public List<WaitPatVO> selectWaitPat();	
+	
+	// 진료번호 출력
+	public ClinicVO getTreatNo();
+		
+	//차트 틀 입력 
+	public int insertChartBefore(ChartDetailVO chartDetailVO);
+	
+	//검사오더 요청
+	public int insertInspcOrder(InspectionListVO inspectionListVO);
+	
+	//처치오더 요청
+	public int insertTreatOrder(TreatmentListVO treatmentListVO);
+	
+	//치료오더 요청
+	public int insertPhysioOrder(PhysioTherapyListVO physioTherapyListVO);
+	
+	//질병 검색
+	public List<DiseaseVO> searchDisease(DiseaseVO diseaseVO);
+	
+	//처방오더 요청 
+	public int insertMediOrder(PrescriptionVO prescriptionVO);
+}

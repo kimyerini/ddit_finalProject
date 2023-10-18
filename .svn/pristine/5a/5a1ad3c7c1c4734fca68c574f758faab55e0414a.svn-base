@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.receipt.mapper.ReceiptionMapper">
+	<insert id="insertReceiption" parameterType="receiptionVO">
+		<selectKey resultType="String" order="BEFORE" keyProperty="rcivCode">
+	        SELECT 
+	        	TO_CHAR(SYSDATE,'YYMM') 
+	        	|| '08' 
+	            || TRIM(TO_CHAR(NVL(
+	            (
+	            SELECT 
+	            	MAX(TO_NUMBER(SUBSTR(rciv_code,-3))) 
+	            FROM 
+	            	tb_receiption 
+	            WHERE rciv_code LIKE  TO_CHAR(sysdate,'YYMM')||'%'),0)+1, '000')
+	            ) 
+	        FROM 
+	        	dual
+	    </selectKey>
+	    /*insertReceiption*/
+	    INSERT INTO
+	    	tb_receiption (
+	    		rciv_code
+	    		, treat_no
+	    		, rciv_de
+	    		, rciv_payment
+	    	) VALUES ( 
+				#{rcivCode}
+				, #{treatNo}
+				, TO_CHAR(sysdate,'YYYY-MM-DD')
+				, #{rcivPayment}
+			)
+	</insert>
+	<select id="findTreatNoByDetailNo" parameterType="String" resultType="String">
+		SELECT 
+			c.treat_no 
+		FROM 
+			tb_clinic c
+		INNER JOIN tb_chart_detail cd ON c.treat_no = cd.treat_no
+		WHERE 
+			cd.detail_no = #{detailNo}
+	</select>
+	<update id="reqDocReceiption" parameterType="String">
+		/*ReqDocReceiption*/
+		UPDATE
+			tb_request_document
+		SET
+			req_document_recept_yn = 'Y'
+		WHERE req_document_no = #{reqDocumentNo}
+	</update>
+	
+	<select id="getInspcCostByDtlNo" parameterType="String" resultType="int">
+		SELECT 
+			SUM(inspc_cost) 
+		FROM 
+			tb_inspection_list
+		WHERE 
+			detail_no = #{detailNo}
+	</select>
+	
+	<select id="getPhysioCostByDtlNo" parameterType="String" resultType="int">
+		SELECT 
+			SUM(physio_cost) 
+		FROM 
+			tb_physiotherapy_list
+		WHERE 
+			detail_no = #{detailNo}
+	</select>
+	<select id="getTreatCostByDtlNo" parameterType="String" resultType="int">
+		SELECT 
+			SUM(tre_costs) 
+		FROM 
+			tb_treatment_list
+		WHERE 
+			detail_no = #{detailNo}
+	</select>
+	<select id="getPrescriptCostByDtlNo" parameterType="String" resultType="prescriptionVO">
+		SELECT 
+			 prscrptn_amount
+			 , prscrptn_count
+			 , prscrptn_days
+			 , medi_item_price
+		FROM 
+			tb_prescription
+		WHERE 
+			detail_no = #{detailNo}
+	</select>
+</mapper>

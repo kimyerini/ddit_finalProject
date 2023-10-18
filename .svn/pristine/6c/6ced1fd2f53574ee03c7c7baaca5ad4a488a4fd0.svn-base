@@ -1,0 +1,32 @@
+package kr.or.ddit.prescription.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.prescription.service.PrescriptionService;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+@RequestMapping(value = "prescription")
+public class PrescriptionController {
+	
+	@Autowired
+	PrescriptionService prescriptionService;
+	
+	@GetMapping(value = "getList/{detailNo}")
+	@ResponseBody
+	public Map<String,Object> getPrescription(@PathVariable(value = "detailNo", required = false) String detailNo){
+		Map<String,Object> map = new HashMap<String,Object>();
+		map = prescriptionService.getPresciprtion(detailNo);
+		log.info("map:"+map.toString());
+		return map;
+	}
+}

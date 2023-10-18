@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.board.mapper.NoticeMapper">
+	
+	<select id="noticeList" resultType="noticeBoardVO">
+	/* kr.or.ddit.board.mapper.NoticeMapper.noticeList */
+		SELECT
+			a.ntbd_code
+			, c.com_code_name AS deptName
+			, a.ntbd_subject
+			, TO_CHAR(a.ntbd_reg_date, 'YYYY-MM-DD') AS ntbdRegDate
+			, b.emp_nm AS empName
+			, b.emp_no AS writerEmpNo
+			, a.ntbd_hit
+		FROM
+			tb_notice_board a
+		JOIN
+			tb_employee b
+		ON
+			a.writer_emp_no = b.emp_no
+		JOIN
+			tb_common_code c
+		ON
+			b.dept_code = c.com_code
+		ORDER BY
+			a.ntbd_code DESC
+	</select>
+
+	<select id="oneNotice" parameterType="String" resultType="noticeBoardVO">
+	/* kr.or.ddit.board.mapper.NoticeMapper.noticeOne */
+		SELECT
+			a.ntbd_code
+			, c.com_code_name AS deptName
+			, a.ntbd_subject
+			, TO_CHAR(a.ntbd_reg_date, 'YYYY-MM-DD') AS ntbdRegDate
+			, b.emp_nm AS empName
+			, b.emp_no AS writerEmpNo
+			, a.ntbd_hit
+		FROM 
+			tb_notice_board a
+		JOIN
+			tb_employee b
+		ON
+			a.writer_emp_no = b.emp_no
+		JOIN
+			tb_common_code c
+		ON
+			b.dept_code = c.com_code
+		WHERE
+			ntbd_code = #{ntbdCode}
+	</select>
+	
+	<update id="updateHit" parameterType="noticeBoardVO">
+	/* kr.or.ddit.board.mapper.NoticeMapper.updateHit */
+		UPDATE
+			tb_notice_board
+		SET
+			ntbd_hit = ntbd_hit + 1
+		WHERE
+			ntbd_code = #{ntbdCode}
+	</update>
+	
+	<insert id="insertNotice" parameterType="noticeBoardVO">
+	/* kr.or.ddit.board.mapper.NoticeMapper.insertNotice */
+		INSERT INTO
+			tb_notice_board (
+				ntbd_code
+				, writer_emp_no
+				, ntbd_reg_date
+				, ntbd_subject
+				, ntbd_content
+			)
+		VALUES (
+			seq_notice_board.nextval
+			, #{writerEmpNo}
+			, SYSDATE
+			, #{ntbdSubject}
+			, #{ntbdContent}
+		)
+	</insert>
+
+	<delete id="deleteNotice" parameterType="String">
+	/* kr.or.ddit.board.mapper.NoticeMapper.deleteNotice */
+		DELETE FROM
+			tb_notice_board
+		WHERE
+			ntbd_code = #{ntbdCode}
+	</delete>
+	
+	<update id="updateNotice" parameterType="noticeBoardVO">
+	/* kr.or.ddit.board.mapper.NoticeMapper.updateNotice */
+		UPDATE
+			tb_notice_board
+		SET
+			ntbd_subject = #{ntbdSubject}
+			, ntbd_content = #{ntbdContent}
+		WHERE
+			ntbd_code = #{ntbdCode}
+	</update>
+</mapper>

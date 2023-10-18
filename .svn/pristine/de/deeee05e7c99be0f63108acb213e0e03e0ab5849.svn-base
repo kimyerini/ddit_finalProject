@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.hospitalization.mapper.HospitalizationMapper">
+
+<select id="hosptPatWaitList" resultType="kr.or.ddit.receipt.vo.WaitPatVO">
+  SELECT 
+        h.HSPTLZ_NO
+    	, c.treat_no as treat_no
+    	, r.rcept_no as rcept_no
+        , p.pat_name  as pat_name
+        , p.pat_code as pat_code
+           , p.PAT_HSPTLZ_STATUS
+        , TO_CHAR(sysdate,'YYYY') - SUBSTR(p.pat_brthdy,0,4) as pat_age
+        , TO_CHAR(TO_DATE(p.pat_brthdy),'YYYY-MM-DD') as pat_brthdy
+              , c1.com_code_name as pat_hsptlz_status
+           , p.pat_hsptlz_in_date as pat_hsptlz_in_date
+           , p.pat_hsptlz_out_plan aspat_hsptlz_out_plan
+        , c2.com_code_name as pat_gen
+        , c3.com_code_name as pat_path
+        , c4.com_code_name as pat_first
+        , c5.com_code_name as pat_day
+        , e.emp_nm as emp_nm
+       	, hf.hos_fc_name as hos_fc_name
+       	, r.recept_time
+           ,d.detail_no
+       FROM tb_clinic c
+       INNER JOIN tb_receipt r 
+           INNER JOIN tb_patient p 
+                   INNER JOIN tb_common_code c2 
+                   ON p.pat_gen_code = c2.com_code 
+                   AND c2.com_code_grp = 'GEND'
+           ON r.pat_code = p.pat_code
+           INNER JOIN tb_common_code c3
+           ON r.rcept_path_code = c3.com_code  
+           AND c3.com_code_grp = 'PVST'
+           INNER JOIN tb_common_code c4
+           ON r.rcept_first_exam_code = c4.com_code 
+           AND c4.com_code_grp = 'FEXM'
+           INNER JOIN tb_common_code c5
+           ON r.rcept_day_code = c5.com_code 
+           AND c5.com_code_grp = 'DAYN'
+        ON c.rcept_no = r.rcept_no
+        INNER JOIN tb_clinic_schedule cs
+            INNER JOIN tb_hospital_facility hf 
+            ON hf.HOS_FC_NO = cs.HOS_FC_NO
+            INNER JOIN tb_employee e
+            ON e.emp_no = cs.emp_no
+        ON r.schd_no = cs.schd_no
+        INNER JOIN tb_common_code c1 
+        ON p. pat_hsptlz_status= c1.com_code 
+        AND c1.com_code_grp = 'HSPT'
+        INNER JOIN tb_chart_detail d ON d.TREAT_NO = c.TREAT_NO
+        INNER JOIN TB_HOSPITALIZATION h ON h.PAT_CODE= p.PAT_CODE
+        WHERE p.PAT_HSPTLZ_STATUS = '3'
+</select>
+
+<select id ="selectRoomData" resultType="kr.or.ddit.hospitalization.vo.SickRoomTypeVO">
+	SELECT
+		A.SCKRM_TYPE_CODE,
+		A.SCKRM_TYPE_OCC,
+		B.SCKRM_NO,
+		MAX(C.SCK_BD_CONDITION) AS SCK_BD_CONDITION
+	FROM TB_SICK_ROOM_TYPE A
+	INNER JOIN TB_SICK_ROOM B ON A.SCKRM_TYPE_CODE = B.SCKRM_TYPE_CODE
+	INNER JOIN TB_SICKBED C ON B.SCKRM_NO = C.SCKRM_NO
+	GROUP BY
+		A.SCKRM_TYPE_CODE,
+		A.SCKRM_TYPE_OCC,
+		B.SCKRM_NO
+	ORDER BY B.SCKRM_NO ASC
+</select>
+<update id="updateHsptlzStatus" parameterType="kr.or.ddit.patient.vo.PatientVO">
+UPDATE TB_PATIENT P
+SET P.PAT_HSPTLZ_STATUS = '4'
+WHERE P.PAT_CODE= #{patCode}
+</update>
+
+<update id="updateHsptlzRoom" parameterType="kr.or.ddit.order.vo.HospitalizationVO">
+update TB_HOSPITALIZATION
+set SCK_BD_NO = #{sckBdNo} , SCKRM_NO =#{sckrmNo}
+where PAT_CODE = #{patCode}
+</update>
+
+<select id="selectHsptlzstatus" resultType="kr.or.ddit.order.vo.HospitalizationVO">
+	SELECT 
+    P.PAT_CODE
+    , P.PAT_NAME
+    , H.SCKRM_NO
+    , H.SCK_BD_NO
+    , H.HSPTLZ_IN_DATE
+    , H.HSPTLZ_OUT_DATE
+FROM TB_PATIENT P 
+INNER JOIN TB_HOSPITALIZATION H ON P.PAT_CODE = H.PAT_CODE
+WHERE PAT_HSPTLZ_STATUS = '4'
+</select>
+
+</mapper>

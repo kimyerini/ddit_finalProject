@@ -1,0 +1,24 @@
+package kr.or.ddit.statistics.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import kr.or.ddit.statistics.vo.ChartVO;
+
+@Mapper
+public interface ChartMapper {
+	
+	// 성별 환자 통계
+	public List<ChartVO> patCntByGender();
+	
+	// 연령대별 환자 통계
+	public List<ChartVO> patCntByAge();
+	
+	// 질병별 환자 통계
+	public List<ChartVO> patCntByDisease();
+	
+	// 월별 매출 통계
+	public List<ChartVO> salesByMonth(String yearMonth);
+	
+}

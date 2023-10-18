@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.item.mapper.InventoryMapper">
+
+
+<select id="selectAllmediItem" resultType="mediItemListVO">
+	SELECT   
+		a.MEDI_ITEM_CODE
+		, a.MEDI_ITEM_NAME
+		, a.MEDI_ITEM_MAKR
+		, a.MEDI_ITEM_UNIT
+		, a.MEDI_ITEM_USAGE
+		, a.NARCOTIC_YN
+		, a.MEDI_ITEM_PRICE
+		, b.MEDI_ITEM_INVR_QTY
+ 		, b.MEDI_ITEM_LEAST_QTY
+ 		, b.MEDI_ITEM_REG_DATE
+	from 
+		TB_MEDI_ITEM_LIST a
+	inner join 
+		TB_MEDI_ITEM_INVENTORY b
+	on 
+	a.MEDI_ITEM_CODE =b.MEDI_ITEM_CODE
+   </select>
+   
+<select id="selectAllItemList" resultType="itemListVO">
+SELECT
+  a.ITEM_CODE, a.ITEM_NAME, a.ITEM_MAKR, a.ITEM_USAGE, a.ITEM_PRICE,
+  b.ITEM_INVR_QTY, b.ITEM_INVR_LEAST_QTY, b.ITEM_INVR_REG_DATE, TO_CHAR(B.ITEM_INVR_REG_DATE,'YYYY-MM-DD') ITEM_INVR_REG_DATE_STR
+FROM
+  TB_ITEM_LIST a
+INNER JOIN
+  TB_ITEM_INVENTORY b
+ON
+  a.ITEM_CODE = b.ITEM_CODE
+
+</select>
+
+<select id="searchItem" resultType="itemListVO" parameterType="itemListVO">
+	SELECT
+		a.ITEM_CODE
+		, a.ITEM_NAME
+		, a.ITEM_MAKR
+		, a.ITEM_USAGE
+		, a.ITEM_PRICE 
+		, b.ITEM_INVR_QTY
+		, b.ITEM_INVR_LEAST_QTY
+		, b.ITEM_INVR_REG_DATE
+	FROM
+		TB_ITEM_LIST a
+		INNER JOIN
+		TB_ITEM_INVENTORY b
+   ON
+      a.ITEM_CODE = b.ITEM_CODE
+   <if test="searchType.equals('itemCodeSelect')">
+      WHERE a.ITEM_CODE LIKE '%'||#{keyword}||'%'
+   </if>
+   <if test="searchType.equals('itemNameSelect')">
+      WHERE a.ITEM_NAME LIKE '%'||#{keyword}||'%'
+   </if>
+
+   ORDER BY a.ITEM_CODE DESC 
+</select>
+<select id="searchMediItem" resultType="mediItemListVO" parameterType="mediItemListVO">
+	SELECT   
+		a.MEDI_ITEM_CODE
+		, a.MEDI_ITEM_NAME
+		, a.MEDI_ITEM_MAKR
+		, a.MEDI_ITEM_UNIT
+		, a.MEDI_ITEM_USA GE
+		, a.NARCOTIC_YN
+		, a.MEDI_ITEM_PRICE
+		, b.MEDI_ITEM_INVR_QTY
+		, b.MEDI_ITEM_LEAST_QTY
+		, b.MEDI_ITEM_REG_DATE
+		
+	FROM
+		TB_MEDI_ITEM_LIST a
+		INNER JOIN
+		TB_MEDI_ITEM_INVENTORY b
+	ON
+		a.MEDI_ITEM_CODE =b.MEDI_ITEM_CODE
+	  <if test="searchType.equals('itemCodeSelect')">
+		WHERE a.MEDI_ITEM_CODE LIKE '%'||#{keyword}||'%'
+	</if>
+	 <if test="searchType.equals('itemNameSelect')">
+		WHERE a.MEDI_ITEM_NAME LIKE '%'||#{keyword}||'%' 
+	 </if>
+	 ORDER BY MEDI_ITEM_CODE DESC 
+</select>
+<select id="insertMediItemName" resultType="mediItemListVO" parameterType="mediItemListVO" >
+	SELECT MEDI_ITEM_NAME,NARCOTIC_YN
+	FROM TB_MEDI_ITEM_LIST
+	WHERE MEDI_ITEM_CODE=#{mediItemCode}
+</select>
+
+
+<select id="insertItemName" resultType="itemListVO" parameterType="itemListVO">
+	SELECT ITEM_NAME
+	FROM TB_ITEM_LIST
+	WHERE ITEM_CODE = #{itemCode}
+</select>
+
+
+
+</mapper>

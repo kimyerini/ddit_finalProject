@@ -1,0 +1,19 @@
+package kr.or.ddit.order.vo;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class HospitalizationVO {
+	private String hsptlzNo;
+	private String patCode;
+	private String treatNo;
+	private int hsptlzPayment;
+	private String hsptlzInDate;
+	private String hsptlzOutDate;
+	private int sckBdNo;
+	private int sckrmNo;
+}

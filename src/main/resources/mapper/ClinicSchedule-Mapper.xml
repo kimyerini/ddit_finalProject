@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.schedule.mapper.ClinicScheduleMapper">
+
+	<select id="listClinicSch" resultType="clinicschFacilityEmpVO">
+		/*  kr.or.ddit.schedule.mapper.ClinicScheduleMapper */
+		SELECT
+			a.schd_no
+			, c.emp_nm
+			, b.hos_fc_name
+			, a.schd_start
+			, a.schd_end
+			, b.hos_fc_color
+		FROM
+			tb_clinic_schedule a
+		INNER JOIN
+			tb_hospital_facility b
+		ON
+			(a.hos_fc_no = b.hos_fc_no)
+        INNER JOIN
+        	tb_employee c
+        ON
+        	(a.emp_no = c.emp_no)
+	</select>
+
+</mapper>

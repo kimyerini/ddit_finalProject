@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.receipt.mapper.ReceiptionMapper">
+	<insert id="insertReceiption" parameterType="receiptionVO">
+		<selectKey resultType="String" order="BEFORE" keyProperty="rcivCode">
+	        SELECT 
+	        	TO_CHAR(SYSDATE,'YYMM') 
+	        	|| '08' 
+	            || TRIM(TO_CHAR(NVL(
+	            (
+	            SELECT 
+	            	MAX(TO_NUMBER(SUBSTR(rciv_code,-3))) 
+	            FROM 
+	            	tb_receiption 
+	            WHERE rciv_code LIKE  TO_CHAR(sysdate,'YYMM')||'%'),0)+1, '000')
+	            ) 
+	        FROM 
+	        	dual
+	    </selectKey>
+	    /*insertReceiption*/
+	    INSERT INTO
+	    	tb_receiption (
+	    		rciv_code
+	    		, treat_no
+	    		, rciv_de
+	    		, rciv_payment
+	    	) VALUES ( 
+				#{rcivCode}
+				, #{treatNo}
+				, TO_CHAR(sysdate,'YYYY-MM-DD')
+				, #{rcivPayment}
+			)
+	</insert>
+	
+	<update id="reqDocReceiption" parameterType="String">
+		/*ReqDocReceiption*/
+		UPDATE
+			tb_request_document
+		SET
+			req_document_recept_yn = 'Y'
+		WHERE req_document_no = #{reqDocumentNo}
+	</update>
+</mapper>

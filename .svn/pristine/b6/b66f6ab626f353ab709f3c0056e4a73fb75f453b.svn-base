@@ -1,0 +1,17 @@
+package kr.or.ddit.common.vo;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class SmsHistoryVO {
+	private int smsHisNo;
+	private String smsNm;
+	private String smsCn;
+	private String smsSender;
+	private String smsReceiver;
+	private String smsSendDate;
+}

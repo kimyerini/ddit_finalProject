@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.common.mapper.SmsHistoryMapper">
+	<insert id="insertSMSHis" parameterType="smsHistoryVO">
+
+		<selectKey resultType="String" order="BEFORE" keyProperty="smsHisNo">
+		 SELECT 
+	            'SMS'
+	        	|| TO_CHAR(sysdate,'MM') 
+	            || TRIM(TO_CHAR(NVL(
+	            (
+	            SELECT 
+	            	MAX(TO_NUMBER(SUBSTR(sms_his_no,-4))) 
+	            FROM 
+	            	tb_sms_history
+	            WHERE sms_his_no LIKE 'SMS'|| TO_CHAR(sysdate,'MM')||'%'),0)+1, '0000')
+	            ) 
+	        FROM 
+	        	dual
+		</selectKey>
+		/*insertSMSHis*/
+		INSERT INTO 
+			tb_sms_history (
+				sms_his_no
+				, sms_his_cn
+				, sms_his_sender
+				, sms_his_receiver
+				, sms_his_send_date
+				, sms_his_receiver_name
+			)
+		VALUES
+			(
+				#{smsHisNo}
+				, #{smsHisCn}
+				, #{smsHisSender}
+				, #{smsHisReceiver}
+				, TO_CHAR(sysdate,'YYYY-MM-DD hh:mm')
+				, #{smsHisReceiverName}
+			)
+	</insert>
+	<select id="getSMSHisList" resultType="SmsHistoryVO">
+		/*getSMSHisList*/
+		SELECT
+			s.sms_his_no
+			, s.sms_his_cn
+			, s.sms_his_sender
+			, s.sms_his_receiver
+			, s.sms_his_send_date
+			, s.sms_his_receiver_name
+		FROM
+			tb_sms_history s
+		ORDER BY
+			s.sms_his_no desc
+	</select>
+</mapper>

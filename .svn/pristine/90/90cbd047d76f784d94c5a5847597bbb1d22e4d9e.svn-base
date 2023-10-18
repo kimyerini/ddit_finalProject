@@ -1,0 +1,59 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack-all.min.js"></script>
+<script type="text/javascript" src="/resources/js/jquery-3.6.0.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack.min.css" rel="stylesheet"/> 
+
+<link href="../resources/css/demo.css" rel="stylesheet"/> 
+<style>
+.mygrid{
+	border : 1px solid black;
+}
+.mygrid-title{
+	text-align : right;
+	font-size : 0.8 rem;
+}
+</style>
+<div class="grid-stack"></div> 
+<script>
+const gr1 = 
+	`
+	<div id="docList" style="padding : 30px;">
+		<table class="table table-hover">
+		      <thead>
+		         <tr>
+		            <th>번호</th>
+		            <th>환자명</th>
+		            <th>생년월일</th>
+		            <th>담당의</th>
+		            <th>발급비용</th>
+		            <th>발급일자</th>
+		            <th>신청상태</th>
+		         </tr>
+		      </thead>
+		      <tbody id="docListTbody" class="table-border-bottom-0">
+		         <tr>
+		            <td></td>
+		            <td></td>
+		            <td></td>
+		            <td></td>
+		            <td></td>
+		            <td><a href="/pdffiles/230910001_아작(나)스_진단서.pdf">눌러엉</a></td>
+		            <td><a href="http://192.168.142.26/pdffiles/230910001_아작(나)스_진단서.pdf">눌렁</a></td>
+		         </tr>
+		      </tbody>
+		</table>
+	</div>
+	`;
+const gr2 =
+	`
+	<div id="docPreview" style="padding : 30px; height : 100%; width : 100%;">
+		<iframe width="100%" height="100%" src="/pdffiles/230910001_아작(나)스_진단서.pdf#toolbar=0""> </iframe>
+	</div>
+	`
+var items = [ 
+	   {w: 7, h:5, x:0, y:0, content: gr1},
+	   {w: 5, h:5, x:8, y:0, content: gr2}
+];
+
+    var grid = GridStack.init(); grid.load(items);
+</script>

@@ -1,0 +1,33 @@
+package kr.or.ddit.employee.service.serviceImpl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.employee.mapper.EmployeeManageMapper;
+import kr.or.ddit.employee.service.EmployeeManageService;
+import kr.or.ddit.employee.vo.EmployeeVO;
+
+@Service
+public class EmployeeManageServiceImpl implements EmployeeManageService {
+
+	@Autowired
+	EmployeeManageMapper mapper;
+
+	@Override
+	public List<EmployeeVO> listEmp() {
+		return mapper.listEmp();
+	}
+
+	@Override
+	public EmployeeVO detailEmp(EmployeeVO employeeVO) {
+		return mapper.detailEmp(employeeVO);
+	}
+
+	@Override
+	public int updateEmp(EmployeeVO employeeVO) {
+		return mapper.updateEmp(employeeVO);
+	}
+	
+}

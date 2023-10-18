@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.prescription.mapper.PrescriptionMapper">
+
+<select id="getPreInspec" parameterType="String" resultType="preInspecVO">
+	SELECT 
+		cd.detail_no
+		, il.inspc_code
+		, i.inspc_type
+		, i.inspc_cost 
+	FROM
+		tb_chart_detail cd
+	INNER JOIN tb_inspection_list il on cd.detail_no = il.detail_no
+	INNER JOIN tb_inspection i ON il.inspc_code = i.inspc_code
+	WHERE 
+		cd.detail_no = #{detailNo}
+</select> 
+
+<select id="getPreMedi" parameterType="String" resultType="preMediVO">
+	SELECT 
+		cd.detail_no
+		, p.medi_item_code
+		, mi.medi_item_name
+		, p.prscrptn_amount
+		, p.prscrptn_count
+		, p.prscrptn_days
+		, p.medi_item_price
+	FROM
+		tb_chart_detail cd
+	INNER JOIN tb_prescription p ON cd.detail_no = p.detail_no
+	INNER JOIN tb_medi_item_list mi ON mi.medi_item_code = p.medi_item_code
+	WHERE 
+		cd.detail_no = #{detailNo}
+</select> 
+
+<select id="getPrePhysio" parameterType="String" resultType="prePhysioVO">
+	SELECT
+		cd.detail_no
+		, pt.physio_code
+		, pt.physio_content
+		, pt.physio_cost 
+	FROM
+		tb_chart_detail cd
+	INNER JOIN tb_physiotherapy_list pl ON cd.detail_no = pl.detail_no
+	INNER JOIN tb_physiotherapy pt ON pt.physio_code = pl.physio_code
+	WHERE
+		cd.detail_no = #{detailNo}
+</select> 
+
+<select id="getPreTreat" parameterType="String" resultType="preTreatVO">
+	SELECT
+		cd.detail_no
+		, tl.tre_code
+		, t.tre_content
+		, t.tre_costs 
+	FROM
+		tb_chart_detail cd
+	INNER JOIN tb_treatment_list tl ON cd.detail_no = tl.detail_no
+	INNER JOIN tb_treatment t ON tl.tre_code = t.tre_code
+	WHERE
+		cd.detail_no = #{detailNo}
+</select> 
+</mapper>

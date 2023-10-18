@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.employee.mapper.EmployeeMapper">
+   <resultMap type="EmployeeVO" id="empMap">
+      <id property="empNo" column="EMP_NO"/>
+      <result property="firstLogin" column="FIRST_LOGIN" />
+      <result property="empNo" column="EMP_NO" />
+      <result property="empPassword" column="EMP_PASSWORD" />
+      <result property="empNm" column="EMP_NM" />
+      <result property="empEmail" column="EMP_EMAIL" />
+      <result property="empTelno" column="EMP_TELNO" />
+      <result property="empBrthdy" column="EMP_BRTHDY" />
+      <result property="empAddr" column="EMP_ADDR" />
+      <result property="empDtlAddr" column="EMP_DTL_ADDR" />
+      <result property="empZip" column="EMP_ZIP" />
+      <result property="empEncpn" column="EMP_ENCPN" />
+      <result property="empRtcpn" column="EMP_RTCPN" />
+      <result property="empSignImgPath" column="EMP_SIGN_IMG_PATH" />
+      <result property="deptCode" column="DEPT_CODE" />
+      <result property="empRegDate" column="EMP_REG_DATE" />
+      <collection property="userAuthList" resultMap="authMap" />
+      <collection property="fileList" resultMap="FileMap" notNullColumn="FILE_CODE" />
+   </resultMap>
+
+   <resultMap type="AttachFileVO" id="FileMap">
+    <result property="fileCode" column="FILE_CODE" />
+    <result property="fileNo" column="FILE_NO" />
+    <result property="fileName" column="FILE_NAME" />
+    <result property="fileSaveName" column="FILE_SAVE_NAME" />
+    <result property="filePhysicPath" column="FILE_PHYSIC_PATH" />
+    <result property="fileWebPath" column="FILE_WEB_PATH" />
+    <result property="fileSize" column="FILE_SIZE" />
+    <result property="fileDownCnt" column="FILE_DOWN_CNT" />
+    <result property="fileContType" column="FILE_CONT_TYPE" />
+    <result property="fileRegDate" column="FILE_REG_DATE" />
+    <result property="regUserId" column="REG_USER_ID" />
+    <result property="fileUpdDate" column="FILE_UPD_DATE" />
+    <result property="updUserId" column="UPD_USER_ID" />
+   </resultMap>
+   
+   <resultMap type="UserAuthoritiesVO" id="authMap">
+      <result property="authGrpCode" column="AUTH_GRP_CODE" />
+      <result property="empNo" column="EMP_NO" />
+   </resultMap>
+   
+
+   <select id="listEmployee" resultType="employeeVO">
+      select * from TB_Employee 
+   </select>
+   
+   <delete id="delete" parameterType="String">
+      delete from TB_Employee where emp_no = #{empNo}
+   </delete>
+   
+   <select id="selectEmployeeByNo" resultMap="empMap" parameterType="String">
+      select
+         emp.EMP_NO
+         , EMP_PASSWORD
+         , EMP_NM, EMP_EMAIL
+         , EMP_TELNO
+         , EMP_BRTHDY
+         , EMP_ADDR
+         , EMP_DTL_ADDR
+         , EMP_ZIP
+         , TO_CHAR(EMP_ENCPN, 'YYYY-MM-DD') as EMP_ENCPN
+         , EMP_RTCPN
+         , EMP_SIGN_IMG_PATH
+         , DEPT_CODE
+         , EMP_REG_DATE
+         , FIRST_LOGIN
+         , auth.AUTH_GRP_CODE
+         , af.FILE_CODE
+         , af.FILE_NO
+         , af.FILE_NAME
+         , af.FILE_SAVE_NAME
+         , af.FILE_PHYSIC_PATH
+         , af.FILE_WEB_PATH
+         , af.FILE_SIZE
+         , af.FILE_DOWN_CNT
+         , af.FILE_CONT_TYPE
+         , af.FILE_REG_DATE
+         , af.REG_USER_ID
+         , af.FILE_UPD_DATE
+         , af.UPD_USER_ID
+      from 
+      	TB_EMPLOYEE emp 
+        left join tb_attach_file af ON emp.EMP_NO = af.file_code
+      	inner join tb_user_authorities auth
+        on emp.emp_no = auth.emp_no
+      where
+      	emp.EMP_NO = #{empNo}
+   </select>
+   
+   <!-- 회원가입(경민) 
+   <insert id="insert" parameterType="employeeVO">
+     <selectKey keyProperty="empNo" resultType="string" order="AFTER">
+        SELECT emp_no from TB_EMPLOYEE where emp_email = #{empEmail}
+     </selectKey>
+   	insert into TB_EMPLOYEE 
+   		(
+   		  emp_no
+   		, emp_password
+   		, emp_nm
+   		, emp_email
+   		, emp_telno
+   		, emp_brthdy
+   		, emp_addr
+   		, emp_dtl_addr
+   		, emp_zip
+   		, dept_code
+   		)
+   		values
+   		 (
+   		   #{empNo}||lpad(seq_empno.nextval,3,'0') 
+   		 , #{empPassword}
+   		 , #{empNm}
+   		 , #{empEmail}
+   		 , #{empTelno}
+   		 , #{empBrthdy}
+   		 , #{empAddr}
+   		 , #{empDtlAddr}
+   		 , #{empZip}
+   		 , #{deptCode}
+   		 )
+   </insert>
+	-->
+
+	<!-- 다음에 생성될 사번 번호 select (예린) -->
+	<select id="getEmpNo" resultType="String">
+	SELECT
+		TO_CHAR(SYSDATE, 'YYMM')
+		|| '03'
+		|| TRIM(TO_CHAR
+			(NVL
+				(
+					(SELECT MAX(TO_NUMBER(SUBSTR(emp_no,-3)))
+					FROM tb_employee
+					WHERE emp_no LIKE TO_CHAR(sysdate,'YYMM') || '%')
+				, 0) + 1
+			, '000')
+		)
+	FROM DUAL
+	</select>
+	
+	<!-- 직원 등록 (예린) -->
+	<insert id="insertEmp" parameterType="employeeVO">
+		/* kr.or.ddit.employee.mapper.EmployeeMapper.insertEmp */
+		INSERT INTO
+			tb_employee (
+				emp_no
+				, emp_nm
+				, emp_email
+				, emp_Password
+				, emp_telno
+				, emp_brthdy
+				, emp_addr
+				, emp_dtl_addr
+				, emp_zip
+				, dept_code
+			)
+		VALUES (
+			  #{empNo}
+			, #{empNm}
+			, #{empEmail}
+			, #{empPassword}
+			, #{empTelno}
+			, #{empBrthdy}
+			, #{empAddr}
+			, #{empDtlAddr}
+			, #{empZip}
+			, #{deptCode}
+		)
+   </insert>
+   
+	<!-- 직원 수정 (예린) -->
+	<update id="updateEmp" parameterType="employeeVO">
+    <!-- kr.or.ddit.employee.mapper.EmployeeMapper.updateEmp -->
+    UPDATE
+        tb_employee
+    SET
+        emp_email = #{empEmail}
+        , emp_telno = #{empTelno}
+        , emp_addr = #{empAddr}
+        , emp_dtl_addr = #{empDtlAddr}
+        , emp_zip = #{empZip}
+        , emp_rtcpn = #{empRtcpn}
+        , emp_resign_ysno =
+        	CASE WHEN
+        		#{empRtcpn} IS NULL THEN '0'
+            ELSE
+            	'1'
+          END
+    WHERE
+        emp_no = #{empNo}
+	</update>
+   
+   <!-- 회원가입 시 권한 insert -->
+	<insert id="insertAuth" parameterType="UserAuthoritiesVO">
+		INSERT INTO TB_USER_AUTHORITIES (AUTH_GRP_CODE, EMP_NO)
+		VALUES (#{authGrpCode},#{empNo})
+	</insert>  	
+   
+	<!-- 이메일 체크 -->
+	<select id="check" parameterType="String" resultType="int">
+		select count(emp_email) 
+		from tb_employee 
+		where emp_email = #{empEmail}
+	</select>
+	
+	<!-- 비밀번호 변경(비번update+최초로그인상태N으로update) -->
+	<update id="updatePwFrst" parameterType="EmployeeVO">
+		update tb_employee set first_login = 'N', emp_password = #{empPassword} where emp_no = #{empNo}
+	</update>
+	
+	<!-- 비밀번호찾기  (입력한 회원이 있는지 확인)-->
+	<select id="checkEmp" parameterType="EmployeeVO" resultType="int">
+		select count(emp_no)
+		from tb_employee
+		where 
+			emp_no = #{empNo} and 
+			emp_email = #{empEmail}
+	</select>
+	
+	<!-- (암호화된)임시비밀번호로 update하기 -->
+	<update id="updateimsiPw" parameterType="EmployeeVO">
+		update tb_employee
+		set emp_password = #{empPassword}
+		, first_login = 'Y'
+		where emp_no = #{empNo}
+	</update>
+	
+	<!-- 정보수정 
+	12(String), null, 010-3609-4541(String), 대전 대덕구 동춘당로 151(String)
+	, 그린타운아파트(String), 34407(String), null-->
+	<update id="updatemyInfo" parameterType="EmployeeVO">
+		update TB_EMPLOYEE
+		set 
+		     EMP_PASSWORD = #{empPassword}
+		     <if test="empEmail!=null and empEmail!=''">
+		    , EMP_EMAIL =#{empEmail}
+		     </if>
+		    , EMP_TELNO =#{empTelno}
+		    , EMP_ADDR =#{empAddr}
+		    , EMP_DTL_ADDR =#{empDtlAddr}
+		    , EMP_ZIP =#{empZip}
+		where emp_no=#{empNo}
+	</update>
+	
+
+   
+   
+   
+</mapper>

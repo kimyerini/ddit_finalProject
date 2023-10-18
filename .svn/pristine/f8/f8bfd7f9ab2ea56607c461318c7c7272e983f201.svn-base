@@ -1,0 +1,26 @@
+package kr.or.ddit.board.vo;
+
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+
+public class NoticeBoardVO {
+	private String ntbdCode; // 게시글 번호
+	private String ntbdSubject; // 게시글 제목
+	private String ntbdContent; // 게시글 내용
+	private String ntbdRegDate; // 게시글 등록일자
+	private String writerEmpNo; // 게시글 등록한 사번
+	private int ntbdHit; // 게시글 조회수
+	private Date ntbdUpdDate; // 게시글 수정일자 - 안쓸듯
+	private String updaterEmpNo; // 게시글 수정한 사번 - 안쓸듯
+	private String comFileCode; // 파일코드 - 안쓸듯
+	
+	private String deptName; // 부서명
+	private String empName; // 사원명
+}

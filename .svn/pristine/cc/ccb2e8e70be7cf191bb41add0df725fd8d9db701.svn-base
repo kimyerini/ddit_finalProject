@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.document.mapper.ProofRequestMapper">
+	<insert id="insertDProofReq" parameterType="requestDocumentVO">
+		<selectKey resultType="String" order="BEFORE" keyProperty="reqDocumentNo">
+	         SELECT 
+	        	TO_CHAR(SYSDATE,'YYMM') 
+	        	|| '10' 
+	            || TRIM(TO_CHAR(NVL(
+	            (
+	            SELECT 
+	            	MAX(TO_NUMBER(SUBSTR(req_document_no,-3))) 
+	            FROM 
+	            	tb_request_document 
+	            WHERE req_document_no LIKE  TO_CHAR(sysdate,'YYMM')||'%'),0)+1, '000')
+	            ) 
+	        FROM 
+	        	dual
+	    </selectKey>
+	    /*insertProofReq*/
+		INSERT 
+			INTO
+				tb_request_document (
+					req_document_no
+					, detail_no
+					, req_document_reg_date
+					, req_document_status
+					, req_document_payment
+					, document_type
+				) VALUES (
+					#{reqDocumentNo}
+					, #{detailNo}
+					, TO_CHAR(sysdate,'YYYY-MM-DD')
+					, 'DCWT'
+					, 2000
+					, #{documentType}
+				)
+	</insert>
+	<insert id="insertOProofReq" parameterType="requestDocumentVO">
+		<selectKey resultType="String" order="BEFORE" keyProperty="reqDocumentNo">
+	         SELECT 
+	        	TO_CHAR(SYSDATE,'YYMM') 
+	        	|| '11' 
+	            || TRIM(TO_CHAR(NVL(
+	            (
+	            SELECT 
+	            	MAX(TO_NUMBER(SUBSTR(req_document_no,-3))) 
+	            FROM 
+	            	tb_request_document 
+	            WHERE req_document_no LIKE  TO_CHAR(sysdate,'YYMM')||'%'),0)+1, '000')
+	            ) 
+	        FROM 
+	        	dual
+	    </selectKey>
+	    /*insertProofReq*/
+		INSERT 
+			INTO
+				tb_request_document (
+					req_document_no
+					, detail_no
+					, req_document_reg_date
+					, req_document_status
+					, req_document_payment
+					, document_type
+				) VALUES (
+					#{reqDocumentNo}
+					, #{detailNo}
+					, TO_CHAR(sysdate,'YYYY-MM-DD')
+					, 'DCWT'
+					, 2000
+					, #{documentType}
+				)
+	</insert>
+</mapper>

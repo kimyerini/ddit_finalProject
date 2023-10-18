@@ -1,0 +1,57 @@
+package kr.or.ddit.order.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.common.mapper.TbAttachFileMapper;
+import kr.or.ddit.order.service.InspectionService;
+import kr.or.ddit.order.vo.InspectionListVO;
+import kr.or.ddit.receipt.vo.WaitPatVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+@RequestMapping("/insp")
+public class InspectionController {
+	@Autowired
+	private InspectionService inspService;
+	
+	@Autowired
+	private TbAttachFileMapper tbAttachFileMapper; // TB_ATTACH_FILE 테이블에 insert 하기 위해 주입
+	
+	@GetMapping("/insp")
+	public String getInspection() {
+		return "insp/inspection";
+	}
+	@GetMapping(value = "/waitInspection",produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public List<WaitPatVO> selectWaitInspection(){
+		log.info("뭐라도 좀 나와봐");
+		return inspService.selectWaitInspection();
+	}
+	@ResponseBody
+	@GetMapping(value="/waitpatClick/{patCode}/{treatNo}/{detailNo}")
+	public Map<String, Object> patInfoInspDetail(@PathVariable(value="patCode") String patCode ,@PathVariable(value="treatNo",required = false) String treatNo, @PathVariable(value="detailNo") String detailNo){
+	    Map<String, Object> result = inspService.patInfoInspDetail(patCode, treatNo, detailNo);
+	    return result;
+	}
+	// 
+	@PostMapping("/insertFile")
+	@ResponseBody
+	public int insertFile(InspectionListVO inspectionListVO) {
+		log.info("=================== 파일 들어오는곳이다 ====================" +inspectionListVO);
+		
+		inspService.insertFile(inspectionListVO);
+		
+		return 1;
+	}
+	
+}

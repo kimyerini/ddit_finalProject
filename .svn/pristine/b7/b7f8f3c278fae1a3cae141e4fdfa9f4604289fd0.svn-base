@@ -1,0 +1,155 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="/resources/ckeditor/ckeditor.js"></script>
+<script src="/resources/js/jquery-3.6.0.js"></script>
+<title>Insert title here</title>
+<style>
+.card {
+	width: 82vw;
+	height:79vh;
+	margin:23px 0px 0px 144px
+}
+.noticeHeader {
+	display: flex;
+	width: 81.6vw;
+	margin: 10px 0px 0px 0px;
+}
+.card-header {
+	font-weight:bolder;
+	margin: 3px 0px -5px 5px;
+}
+a, a:active {
+	color: inherit;
+	text-decoration: none;
+}
+.noticeBody {
+	width: 81vw;
+	margin: -5px 0px 22px 20px;	
+}
+.flex {
+	display: flex;
+    justify-content: space-between;
+    margin: 1.5rem;
+}
+.writeInput-long {
+	width: 79vw!important;
+}
+.writeInput-short {
+	width: 21.8vw!important;
+}
+#noticeBody textarea {
+	width: 75.2vw;
+}
+.noticeFooter {
+	display: flex;
+	justify-content: end;
+	margin: 0px 39px 0px 0px;
+}
+#insertBtn, #updateBtn {
+	width: 4vw;
+	height: 4vh;
+}
+#iCancelBtn, #uCancelBtn {
+	width: 4vw;
+	height: 4vh;
+	margin-left: 15px;
+}
+#updateBtns {
+	display: none;
+}
+</style>
+</head>
+<body>
+	<div class="card">
+		<div id="wrapper">
+			<div class="noticeHeader">
+				<h4 class="card-header">공지사항</h4>
+			</div><!-- notice header 끝 -->
+
+			<form id="writeForm" action="/board/write" method="post" enctype="multipart/form-data">
+				<div class="noticeBody">
+					<div class="flex">
+						<label for="smallInput" class="form-label writeLabel" style="width:61px;">제목</label>
+						<input id="smallInput" class="form-control form-control-sm writeInput-long" type="text" name="ntbdSubject">
+					</div>
+					<div class="flex">
+						<input type="hidden" name="writerEmpNo">
+						<label for="smallInput" class="form-label writeLabel" style="width:37px;">작성자</label>
+						<input id="smallInput" class="form-control form-control-sm writeInput-short" type="text" name="empName" readonly>
+						<label for="smallInput" class="form-label writeLabel">부서</label>
+						<input id="smallInput" class="form-control form-control-sm writeInput-short" type="text" name="deptName" readonly>
+						<label for="smallInput" class="form-label writeLabel">작성일자</label>
+						<input id="smallInput" class="form-control form-control-sm writeInput-short" type="text" name="ntbdRegDate" readonly>
+					</div>
+					<div class="flex">
+						<label for="smallInput" class="form-label writeLabel" style="width:73px;">첨부파일</label>
+						<input id="smallInput" class="form-control form-control-sm" type="file" name="files" id="formFileMultiple" multiple>
+					</div>
+					<div style="justify-content:center; display:flex;">
+						<label for="smallInput" class="form-label writeLabel" style="margin-right:19px;">내용</label>
+						<textarea class="form-control" name="ntbdContent"></textarea>
+					</div>
+				</div>
+			
+			<div class="noticeFooter" id="insertBtns">
+				<button type="submit" class="btn btn-primary" id="insertBtn">등록</button>
+				<button type="button" class="btn btn-secondary" id="iCancelBtn" onclick="location.href='/board/notice'">취소</button>
+			</div><!-- noticeFooter 끝 -->
+			<div class="noticeFooter" id="updateBtns">
+				<button type="submit" class="btn btn-primary" id="updateBtn">수정</button>
+				<button type="button" class="btn btn-secondary" id="uCancelBtn" onclick="location.href='/board/notice'">취소</button>
+			</div>
+			</form>	
+		</div><!-- wrapper 끝 -->
+	</div><!-- card 끝 -->
+</body>
+<script>
+function setValue() {
+	console.log("setValue()에 왔다");
+	
+	// 공지사항을 작성하는 사원 기본정보(사원명, 부서명, 등록일자) 세팅
+	$.ajax({
+		url:"/board/empInfo",
+		type:"get",
+		dataType:"json",
+		success:function(result){
+			console.log("result", result);
+			
+			// input value 세팅
+			$('input[name=empName]').val(result.empName);
+			$('input[name=deptName]').val(result.deptName);
+			$('input[name=ntbdRegDate]').val(result.ntbdRegDate);
+			$('input[name=writerEmpNo]').val(result.writerEmpNo);
+		}
+	});
+}
+
+$(function(){
+// 	console.log("여기는 noticeWrite.jsp");
+	setValue();
+	
+	/*
+	// 공지사항 글 등록 성공 시 alert
+	if("${param.result}" == "1") {
+		Swal.fire({
+			icon: 'success',
+			text: '공지사항 게시글이 정상적으로 등록되었습니다.'
+		})
+	}
+	*/
+});
+
+// CKEDITOR 설정
+CKEDITOR.replace("ntbdContent", {
+	height: 280, width: 1431
+});
+	
+
+
+	
+</script>
+</html>

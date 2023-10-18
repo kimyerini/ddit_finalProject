@@ -1,0 +1,32 @@
+package kr.or.ddit.employee.service;
+
+import java.util.List;
+
+import kr.or.ddit.employee.vo.EmployeeVO;
+
+public interface EmployeeManageService {
+
+	// listEmp
+	public List<EmployeeVO> listEmp();
+	
+	// detailEmp
+	public EmployeeVO detailEmp(EmployeeVO employeeVO);
+	
+	// updateEmp
+	public int updateEmp(EmployeeVO employeeVO);
+	
+	// search by empname
+	public List<EmployeeVO> searchByEmpName(String search);
+	
+	// search by empno
+	public List<EmployeeVO> searchByEmpNo(String search);
+	
+	// search by dept
+	public List<EmployeeVO> searchByDept(String search);
+	
+	// search by telno
+	public List<EmployeeVO> searchByTelno(String search);
+	
+	// count emp
+	public int countEmp(EmployeeVO employeeVO);
+}

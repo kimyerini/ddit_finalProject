@@ -1,0 +1,60 @@
+package kr.or.ddit.statistics.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.statistics.service.ChartService;
+import kr.or.ddit.statistics.vo.ChartVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Controller
+@RequestMapping("/chart")
+public class ChartController {
+
+	@Autowired
+	private ChartService service;
+	
+	@GetMapping
+	public String getChart() {
+		log.info("<<< 여기는 getChart >>>");
+		
+		return "statistics/chart";
+	}
+	
+	@ResponseBody
+	@GetMapping(value="/gender", produces="application/json; charset=utf-8")
+	public List<ChartVO> getGenderData() {
+		log.info("<<< 여기는 getGenderData >>>");
+		
+		List<ChartVO> genderList = service.patCntByGender();
+		
+		return genderList;
+	}
+	
+	@ResponseBody
+	@GetMapping(value="/age", produces="application/json; charset=utf-8")
+	public List<ChartVO> getAgeData() {
+		log.info("<<< 여기는 getAgeData >>>");
+		
+		List<ChartVO> ageList = service.patCntByAge();
+		
+		return ageList;
+	}
+	
+	@ResponseBody
+	@GetMapping(value="/disease", produces="application/json; charset=utf-8")
+	public List<ChartVO> getDiseaseData() {
+		log.info("<<< 여기는 getDiseaseData >>>");
+		
+		List<ChartVO> diseaseData = service.patCntByDisease();
+		
+		return diseaseData;
+	}
+	
+}

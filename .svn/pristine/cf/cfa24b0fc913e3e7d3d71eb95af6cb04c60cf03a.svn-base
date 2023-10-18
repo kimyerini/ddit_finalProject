@@ -1,0 +1,39 @@
+package kr.or.ddit.receipt.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.hospitalization.service.HospitalizationService;
+import kr.or.ddit.order.vo.HospitalizationVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Controller
+@RequestMapping("/reqHospitalizaton")
+public class ReqHospitalizationController {
+	@Autowired
+	HospitalizationService hService;
+	
+	@GetMapping(value="/main")
+	public String ReqHospitalizationMain() {
+		return "office/officeHospitalization";
+	}
+	
+	@GetMapping(value="/list")
+	@ResponseBody
+	public List<HospitalizationVO> getList(){
+		return hService.getReqHospitalizationList();
+	}
+	
+	@GetMapping(value="/get/{hsptlzNo}")
+	@ResponseBody
+	public HospitalizationVO getHospitalization(@PathVariable(value="hsptlzNo") String hsptlzNo) {
+		return hService.getReqHospitalization(hsptlzNo);
+	}
+}

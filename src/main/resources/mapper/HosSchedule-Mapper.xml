@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.schedule.mapper.HosScheduleMapper">
+	
+	<select id="listHosSch" resultType="hosScheduleVO">
+		/* kr.or.ddit.schedule.mapper.HosScheduleMapper.listHosSch */
+		SELECT * FROM tb_hos_schedule
+	</select>
+	
+	<select id="oneHosSch" resultType="hosScheduleVO">
+		/* kr.or.ddit.schedule.mapper.HosScheduleMapper.hosSchDetail */
+		SELECT * FROM tb_hos_schedule
+		WHERE hos_sch_no = #{hosSchNo}	
+	</select>
+	
+	<insert id="insertHosSch" parameterType="hosScheduleVO">
+		/* kr.or.ddit.schedule.mapper.HosScheduleMapper.insertHosSch */
+		INSERT INTO tb_hos_schedule(
+				hos_sch_no
+				, hos_sch_start
+				, hos_sch_end
+				, hos_sch_title
+				, hos_sch_cont
+				, hos_sch_url
+				, hos_sch_allday
+				, hos_sch_color
+			)
+		VALUES (
+			seq_hos_schedule.nextval
+				, #{hosSchStart}
+				, #{hosSchEnd}
+				, #{hosSchTitle}
+				, #{hosSchCont}
+				, #{hosSchUrl}
+				, #{hosSchAllDay}
+				, #{hosSchColor}
+			)
+	</insert>
+	
+	<update id="updateHosSch" parameterType="hosScheduleVO">
+		/* kr.or.ddit.schedule.mapper.HosScheduleMapper.updateHosSch */
+		UPDATE tb_hos_schedule
+		SET
+			hos_sch_start=#{hosSchStart}
+			, hos_sch_end=#{hosSchEnd}
+			, hos_sch_title=#{hosSchTitle}
+			, hos_sch_cont=#{hosSchCont}
+			, hos_sch_url=#{hosSchUrl}
+			, hos_sch_allday=#{hosSchAllDay}
+			, hos_sch_color=#{hosSchColor}
+		WHERE hos_sch_no=#{hosSchNo}
+	</update>
+	
+	<delete id="deleteHosSch" parameterType="hosScheduleVO">
+		/* kr.or.ddit.schedule.mapper.HosScheduleMapper.deleteHosSch */
+		DELETE FROM tb_hos_schedule
+		WHERE hos_sch_no = #{hosSchNo}
+	</delete>
+</mapper>

@@ -1,0 +1,19 @@
+package kr.or.ddit.order.vo;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class PrescriptionVO {
+	private String mediItemCode;
+	private String detailNo;
+	private int prscrptnAmount;
+	private int prscrptnCount;
+	private int prscrptnDays;
+	private String prscrptnStatus;
+	private String empNo;
+	private int mediItemPrice;
+}

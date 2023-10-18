@@ -1,0 +1,423 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack-all.min.js"></script>
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack.min.css"
+	rel="stylesheet" />
+<link href="/resources/css/demo.css" rel="stylesheet" />
+
+<script src="/resources/js/jquery-3.6.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<style>
+.mygrid {
+	border: 1px solid black;
+}
+
+.mygrid-title {
+	text-align: right;
+	font-size: 0.8 rem;
+}
+
+
+
+
+#iForm {
+	margin: 0;
+	padding-left: 90px;
+}
+
+/* .mb-3 { */
+/* 	margin-bottom: 0; */
+/* } */
+
+/* .mb-4 { */
+/* 	margin-bottom: 1.2rem !important; */
+/* 	display: block; */
+/* } */
+
+#patientInfo {
+   width: 100%;
+   height: 35%;
+}
+
+.form-control {
+   width: 35%;
+   display: inline-block;
+   margin-right: 15px;
+}
+.chartlog {
+	width: 100%;
+}
+
+.chartloglabel {
+	float: left;
+}
+
+/* .rounded-border { */
+/*    border: 2px solid #000; /* 테두리 스타일과 두께 설정 */ */
+/*    border-radius: 40px; /* 테두리의 둥근 정도를 조절 (원하는 크기로 조절 가능) */ */
+/*    padding: 10px; /* 텍스트와 테두리 사이의 여백 설정 (원하는 크기로 조절 가능) */ */
+/* } */
+
+input[type="text"] {
+   border: none;
+   width: 22%;
+}
+
+.mb-3 {
+   margin-bottom: 0.7rem !important;
+   text-align:left;
+}
+
+/* .fw-medium me-2 { */
+/*    font-weight: 500 !important; */
+/* } */
+
+.mb-4 {
+   margin-bottom: 1.2rem !important;
+   display: block;
+}
+
+.col-md-6 {
+   width: auto;
+}
+.table-border-bottom-0 td{
+	border-style: none;
+	padding : 5px;
+}
+.form-control-sm{
+ border : none; 
+}
+</style>
+<div class="grid-stack"></div>
+
+<script type="text/javascript">
+
+
+	var gr1 = 
+		`  
+		<div class="table-responsive text-nowrap">
+		    <table class="table" style="text-align : left;">
+		      <thead>
+		        <tr>
+		          <th style="text-align : center;" id="waitTotal"><h5>진료대기 : 0명</h5></th>
+		        </tr>
+		      </thead>
+		      <tbody class="table-border-bottom-0" id="waitTBody">
+		      </tbody>
+		    </table>
+	  	</div>`;
+	  	
+	var gr2 = 
+	
+	`<div class="card-body">
+		<div style="display:flex;">
+	    <div>
+	        <h5 class="pb-2 border-bottom mb-4" style="text-align:left; margin-right:120px; font-weight: bold;">환자정보</h5>
+	    </div>
+
+	    </div>
+        <div class="info-container">
+        <div class="row">
+        <div class="col-md-6">
+          <ul class="list-unstyled">
+            <li class="mb-3">   
+            <input type="hidden" name="rceptNo" class="form-control form-control-sm" id="rceptNo1" style="border:none;">
+               <span class="fw-medium me-2" style="display:inline-block;width:94px;" >환자코드:</span>
+               <input type="text" name="patCode" class="form-control form-control-sm" id="patCode1" style="width:40%;">
+             
+            </li>
+            <li class="mb-3">
+               <span class="fw-medium me-2" style="display:inline-block;width:94px;">이름:</span>
+               <input type="text" name="patName" class="form-control form-control-sm " id="patName1" style="width:50%;">
+
+            
+            </li>
+            <li class="mb-3">
+	           <span class="fw-medium me-2" style="display:inline-block;width:94px;">연락처:</span>
+               <input type="text" name="patTel" class="form-control form-control-sm" id="patTel1" style="width:40%;">
+              
+            </li>
+
+            <li class="mb-3">
+               <span class="fw-medium me-2" style="display:inline-block;width:94px;">최초내원일자:</span>
+               <input type="text" name="patFirstDate" class="form-control form-control-sm" id="patFirstDate1" style="width:40%;">
+            </li>
+            <li class="mb-3">
+            	<span class="fw-medium me-2" style="display:inline-block;width:94px;">최근내원일자:</span>
+           		<input type="text" name="patLastDate" class="form-control form-control-sm" id="patLastDate1" style="width:40%;">
+            </li>
+            <li class="mb-3">
+            <span class="fw-medium me-2" style="display:inline-block;width:94px;">기본주소:</span>
+            <input type="text" name="patAddr" class="form-control form-control-sm" id="patAddr1" style="width:50%;">
+
+            </li>
+            
+            <li class="mb-3">
+            <span class="fw-medium me-2" style="display:inline-block;width:94px;">상세주소:</span>
+            <input type="text" name="patDtlAddr" class="form-control form-control-sm" id="patDtlAddr1" style="width:50%;"><br>
+            </li>
+
+          </ul>
+          </div>
+          </div>
+          <div class="d-flex justify-content-center pt-3">        
+          </div>
+        </div>
+      </div>
+      </div>`;
+      
+      
+	var gr3 = 
+		`
+	 <div style="display:flex;"><div id="disp" style="float:left;"></div>
+		<div class="card-body">
+		 <div class="mb-3">
+          <input type="text" name="rceptFirstExamCode" class="form-control " id="rceptFirstExamCode2" style="width:20%; margin:0px;">
+          <input type="text" name="rceptDayCode" class="form-control " id="rceptDayCode2" style="width:20%; margin:0px;">
+          <input type="text" name="clnicSttusCode" class="form-control " id="patHsptlzStatus2" style="width:20%; margin:0px;">
+         </div>
+            <div class="mb-3">
+               <label class="form-label chartloglabel">증상메모</label><br>
+               <input type="text" class="form-control chartlog" name="detailMemo" id="detailMemo2">
+            </div>  
+            <div class="mb-3">
+                <label class="form-label chartloglabel">질병</label><br>
+                <input type="text" name="dissKorName" class="form-control chartlog" id="dissKorName2">
+            </div>
+            <div class="mb-3">
+				<label class="form-label chartloglabel">오더내역</label><br>
+				<input type="text" name="inspcType" class="form-control chartlog" id="inspcType2"><br>
+				<input type="text" name="treContent" class="form-control chartlog" id="treContent2"><br>
+				<input type="text" name="physioContent" class="form-control chartlog" id="physioContent2">
+            </div>
+            <div class="mb-3">
+               <label class="form-label chartloglabel">처방내역</label><br>
+               <input type="text" name="mediItemName" class="form-control chartlog" id="mediItemName2">
+            </div>
+            <div class="mb-3">
+              <label class="form-label chartloglabel">수납금</label><br>
+              <input type="text" name="rcivPayment" class="form-control chartlog" id="rcivPayment2">
+            </div>
+      </div>
+      </div>
+ `;
+ 
+	var gr4 = 
+		`
+		<div class="card-body" style="padding-bottom : 1rem; padding-top : 1rem; text-align : left;">
+			<div>
+	        	<h5 class="pb-2 border-bottom mb-4" style="text-align:left; margin-right:120px; font-weight: bold; margin-bottom : 5px;">진료접수</h5>
+	    	</div>
+	    	<form>
+	    		<input type="hidden" id="pNo" value=""/>
+			    <label style="width : 100px;">환자 정보 : </label>
+			    <input style="border : 0;" id="pInfo" type="text" readonly value=""/><br>
+			    <label style="width : 100px;">접수 번호 : </label>
+			    <input style="border : 0;" id="rNo" type="text" readonly value=""/><br>
+			    <label style="width : 100px;">접수 일시 : </label>
+			    <input style="border : 0; width : 220px;" id="rDate" type="text" readonly value=""/><br>
+			    <label style="width : 100px;">담당의</label>
+			    
+			    <select name="schdNo" id="selSchd">
+				</select><br>
+				<label style="width : 100px;">진료비 기준</label>
+				<div id="selectDiv" style="display : inline;">
+					<select name="rceptFirstExamCode">
+					    <option value="Y">초진</option>
+					    <option value="N">재진</option>
+					</select>
+					<select name="rceptDayCode">
+					    <option value="0">주간</option>
+					    <option value="1">야간</option>
+					</select><br>
+				</div>
+				<label style="width : 100px;">내원경로</label>
+				<select name="rceptPathCode">
+				   
+				</select><br>
+				<label style="width : 200px;">접수메모(증상/내원목적)</label><br/>
+				<textarea id="rceptMemo"></textarea><br>
+				<div id="insDiv">
+					<button type="button" id="submitRpt" class="btn btn-success">등록</button>
+				</div>
+				
+			</form>
+		    
+		</div>
+		`;
+	
+    var items = [ 
+	   {w: 2, h:6, x:0, y:0, content: gr1}, 
+	   {w: 4, h:3, x:2, y:0, content: gr2},
+	   {w: 4, h:3, x:2, y:3, content: gr3},
+	   {w: 6, h:6, x:6, y:0, content: gr4}
+	  
+   ];
+   
+    var grid = GridStack.init(); grid.load(items);
+   
+	
+	$(function(){
+		getWaitPat();	  
+	});
+	const selectDiv        =   $('#selectDiv');
+	const patCode0         =   $('#patCode0');     
+	const patName0         =   $('#patName0');     
+	const patTel0          =   $('#patTel0');
+	const patGenCode0      =   $('#patGenCode0');    
+	const patAge0          =   $('#patAge0');        
+	const patAddr0         =   $('#patAddr0');       
+	const patFirstDate0    =   $('#patFirstDate0');  
+	const patLastDate0     =   $('#patLastDate0');   
+	const patFrgnrYn0      =   $('#patFrgnrYn0');    
+	const patHsptlzStatus0 =   $('#patHsptlzStatus0');
+	const pNo              =   $('#pNo');
+	const rNo              =   $('#rNo');
+	const pInfo            =   $('#pInfo');
+	const rDate            =   $('#rDate');
+ 	const selSchd          =   $('#selSchd');
+	const rceptFirstExamCode = $("select[name = rceptFirstExamCode]");
+	const rceptDayCode     =   $("select[name = rceptDayCode]");
+	const rceptPathCode    =   $("select[name = rceptPathCode]");
+	const rceptMemo        =   $('#rceptMemo');
+	const waitTBody        =   $('#waitTBody');
+	const waitTotal        =   $('#waitTotal');
+	const search           =   $('#pSearch');
+	const patCode1         =   $('#patCode1');
+	const patHsptlzStatus1 =   $('#patHsptlzStatus1');
+	const patName1         =   $('#patName1');
+	const patTel1          =   $('#patTel1');
+	const patGenCode1      =   $('#patGenCode1');
+	const patAge1          =   $('#patAge1');
+	const patFrgnrYn1      =   $('#patFrgnrYn1');
+	const patAddr1         =   $('#patAddr1');
+	const patDtlAddr1      =   $('#patDtlAddr1');
+	const patFirstDate1    =   $('#patFirstDate1');
+	const patLastDate1     =   $('#patLastDate1');
+	const insDiv           =   $('#insDiv');
+	const dateDiv          =   $("#dateDiv");
+	const selDate          =   $('#selDate');
+	const selInfo          =   $('#selInfo');
+	const sDiv             =   $('#searchDiv1');
+	const disp             =   $('#disp');
+
+	
+	
+	function dateList(patCode) {
+	    let xhr = new XMLHttpRequest();
+	    let schURL = "/doctor/clinic/date/"+patCode
+	    xhr.open("get",schURL,true);
+	    xhr.onreadystatechange = () => {
+	        if(xhr.readyState == 4 && xhr.status == 200){
+	        	console.log("날짜도착");
+	            //json문자열을 json객체로 바꿔야 편하게 쓸 수 있음
+	            let rslt = JSON.parse(xhr.responseText)
+	            let tblStr = `<div class="card-body">`;      
+	                tblStr += `<h5 class="pb-2 border-bottom mb-4"  style="font-weight: bold;">진료내역</h5>`;
+	            for(let i=0; i<rslt.length; i++){
+	                tblStr += `<button type="button" class="btn btn-outline-primary" onclick="showChart(this)">\${rslt[i].detailRegDate}</button><br>`;
+	            }
+	            tblStr += "</div>"
+	            disp.html(tblStr);
+	        }
+	    }
+	    xhr.send(); 
+	}
+	
+	function showChart(button){
+		console.log("차트보깅 체킁");		
+		const detailRegDate = $(button).text();
+		console.log("detailRegDate",detailRegDate);	
+		
+	    let schURL = "/doctor/clinic/date/chart/"+detailRegDate;
+	    let xhr = new XMLHttpRequest();
+	    xhr.open("get",schURL,true);
+	    xhr.onreadystatechange = function(){
+	        if(xhr.readyState == 4 && xhr.status == 200){
+	        	console.log("성공!");
+	            let chartDetailByDateVO = xhr.responseText;
+	            console.log("zzzz",xhr.responseText);
+	            if(chartDetailByDateVO){
+	            	chartDetailByDateVO = JSON.parse(chartDetailByDateVO); //json문자열을 json객체로
+					selDate.html(`<h6>\${detailRegDate}</h6>`);
+	            	selInfo.html(`<h6>\${chartDetailByDateVO.patHsptlzStatus} | \${chartDetailByDateVO.rceptFirstExamCode} | \${chartDetailByDateVO.rceptDayCode}</h6>`);
+	            	
+	            }else{
+	            	Swal.fire({
+	            		icon: 'error',
+	            		title:'실패!',	
+	            		text:'해당 날짜 차트는 없습니다.',	
+	            		});
+
+	               
+	            }
+	        }
+	    }
+	    xhr.send(); 
+	}//end 
+	function showChart(button){
+		console.log("차트보깅 체킁");		
+		const detailRegDate = $(button).text();
+		console.log("detailRegDate",detailRegDate);	
+		
+	    let schURL = "/doctor/clinic/date/chart/"+detailRegDate;
+	    let xhr = new XMLHttpRequest();
+	    xhr.open("get",schURL,true);
+	    xhr.onreadystatechange = function(){
+	        if(xhr.readyState == 4 && xhr.status == 200){
+	        	console.log("성공!");
+	        	let chartDetailByDateVOList = xhr.responseText;
+	           // let chartDetailByDateVO = xhr.responseText;
+	            console.log(xhr.responseText);
+	            if(chartDetailByDateVOList){
+	            	//chartDetailByDateVO = JSON.parse(chartDetailByDateVO); //json문자열을 json객체로
+	            	chartDetailByDateVOList = JSON.parse(chartDetailByDateVOList); //json문자열을 json객체로
+	            	
+	                    console.log("하잉하이",chartDetailByDateVOList);
+	                    console.log("하잉하이 바바",chartDetailByDateVOList[0].inspcType); // 두부 머리촬영
+	            		let orderList = ""
+	            		let inspcType2 = "";
+	            		let treContent2 =  "";
+	            		let physioContent2 =  "";
+	            		let mediItemName2 =  "";
+
+	            	    console.log("길이예용",chartDetailByDateVOList.length);
+	            	    console.log("0번째",chartDetailByDateVOList[0].inspcType);
+	            	    console.log("1번째",chartDetailByDateVOList[1].inspcType);
+	            	    
+	            		for(let i = 0; i < chartDetailByDateVOList.length; i++){
+	            				if(i == chartDetailByDateVOList.length-1){         					
+	            					inspcType2 += chartDetailByDateVOList[i].inspcType;
+	            					treContent2 += chartDetailByDateVOList[i].treContent;
+	            					physioContent2 += chartDetailByDateVOList[i].physioContent;
+	            					mediItemName2 += chartDetailByDateVOList[i].mediItemName;
+	            					//dissKorName += chartDetailByDateVOList[i].dissKorName;
+	            				}else{
+	            					inspcType2 += chartDetailByDateVOList[i].inspcType + ",";
+	            					treContent2 += chartDetailByDateVOList[i].treContent + ",";
+	            					physioContent2 += chartDetailByDateVOList[i].physioContent + ",";
+	            					mediItemName2 += chartDetailByDateVOList[i].mediItemName + ",";
+	            				}
+	            		}	
+	 							console.log(inspcType2);
+				             	$("#rceptFirstExamCode2").val(chartDetailByDateVOList[0].rceptFirstExamCode);        	
+				             	$("#rceptDayCode2").val(chartDetailByDateVOList[0].rceptDayCode);
+				             	$("#patHsptlzStatus2").val(chartDetailByDateVOList[0].patHsptlzStatus);      
+				             	$("#detailMemo2").val(chartDetailByDateVOList[0].detailMemo);
+	 			             	$("#dissKorName2").val(chartDetailByDateVOList[0].dissKorName);
+				             	$("#inspcType2").val(inspcType2);
+				             	$("#treContent2").val(treContent2);
+				             	$("#physioContent2").val(physioContent2);           	
+				             	$("#mediItemName2").val(mediItemName2);
+				             	$("#rcivPayment2").val(chartDetailByDateVOList[0].rcivPayment);
+
+	            			} 
+	            } // readyState의 끝
+	    } //  xhr.onreadystatechange의 끝
+	    xhr.send(); 
+	}// showChart end 
+</script>

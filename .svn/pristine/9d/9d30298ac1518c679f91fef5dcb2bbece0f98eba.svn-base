@@ -1,0 +1,23 @@
+package kr.or.ddit.document.vo;
+
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class DiagnosisVO {
+	private int diagnosisNo;
+	private String reqDiagnosisNo;
+	private String diagnosisDocNm;
+	private String diagnosisSignImgPath;
+	private Date diagnosisIsuDate;
+	private String diagnosisDissCn;
+	private String diagnosisDissClNo;
+	private String diagnosisOpinion;
+	private String diagnosisRm;
+	private String diagnosisPrpos;
+}

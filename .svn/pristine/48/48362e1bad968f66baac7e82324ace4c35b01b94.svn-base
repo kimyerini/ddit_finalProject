@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.statistics.mapper.ChartMapper">
+	
+	<select id="patCntByGender" resultType="chartVO">
+	/* kr.or.ddit.board.mapper.ChartMapper.patCntByGender */
+	SELECT
+		'Female' AS dataLabel
+		, COUNT(*) AS dataVal
+	FROM
+		TB_PATIENT
+	WHERE
+		PAT_GEN_CODE = 'F'
+	UNION ALL
+	SELECT
+		'Male' AS dataLabel
+		, COUNT(*) AS dataVal
+	FROM
+		TB_PATIENT
+	WHERE
+		PAT_GEN_CODE = 'M'
+	</select>
+	
+	<select id="patCntByAge" resultType="chartVO">
+	/* kr.or.ddit.board.mapper.ChartMapper.patCntByAge */
+	SELECT
+	    '10대 미만' AS dataLabel
+	    , SUM(
+	        CASE WHEN TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 0 AND 9
+	                THEN 1
+	                ELSE 0
+	        END) AS dataVal
+	FROM
+		TB_PATIENT
+	UNION ALL
+	SELECT
+	    '10대' AS dataLabel
+	    , SUM(
+	        CASE WHEN TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 10 AND 19
+	                THEN 1
+	                ELSE 0
+	        END) AS dataVal
+	FROM
+		TB_PATIENT
+	UNION ALL
+	SELECT
+	    '20대' AS dataLabel
+	    , SUM(
+	        CASE WHEN TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 20 AND 29
+	                THEN 1
+	                ELSE 0
+	        END) AS dataVal
+	FROM
+		TB_PATIENT
+	UNION ALL
+	SELECT
+	    '30대' AS dataLabel
+	    , SUM(
+	        CASE WHEN TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 30 AND 39
+	                THEN 1
+	                ELSE 0
+	        END) AS dataVal
+	FROM
+		TB_PATIENT
+	UNION ALL
+	SELECT
+	    '40대' AS dataLabel
+	    , SUM(
+	        CASE WHEN TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 40 AND 49
+	                THEN 1
+	                ELSE 0
+	        END) AS dataVal
+	FROM TB_PATIENT
+	UNION ALL
+	SELECT
+	    '50대' AS dataLabel
+	    , SUM(
+	        CASE WHEN TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 50 AND 59
+	                THEN 1
+	                ELSE 0
+	        END) AS dataVal
+	FROM
+		TB_PATIENT
+	UNION ALL
+	SELECT
+	    '60대' AS dataLabel
+	    , SUM(
+	        CASE WHEN TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) BETWEEN 60 AND 69
+	                THEN 1
+	                ELSE 0
+	        END) AS dataVal
+	FROM
+		TB_PATIENT
+	UNION ALL
+	SELECT
+	    '60대 이상' AS dataLabel
+	    , SUM(
+	        CASE WHEN TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE(PAT_BRTHDY, 'YYYYMMDD')) / 12) >= 70
+	                THEN 1
+	                ELSE 0
+	        END) AS dataVal
+	FROM
+		TB_PATIENT
+	</select>
+	
+	<select id="visitPathCnt" resultType="chartVO">
+	/* kr.or.ddit.board.mapper.ChartMapper.visitPathCnt */
+	SELECT
+	    '지역거주자' AS dataLabel
+	    , SUM(CASE WHEN RCEPT_PATH_CODE = '1' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+	    TB_RECEIPT
+	UNION ALL
+	SELECT '지인소개' AS dataLabel
+	    , SUM(CASE WHEN RCEPT_PATH_CODE = '2' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+	    TB_RECEIPT
+	UNION ALL
+	SELECT '제휴업체' AS dataLabel
+	    , SUM(CASE WHEN RCEPT_PATH_CODE = '3' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+	    TB_RECEIPT
+	UNION ALL
+	SELECT '검색' AS dataLabel
+	    , SUM(CASE WHEN RCEPT_PATH_CODE = '4' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+	    TB_RECEIPT
+	UNION ALL
+	SELECT '광고매체' AS dataLabel
+	    , SUM(CASE WHEN RCEPT_PATH_CODE = '5' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+	    TB_RECEIPT
+	UNION ALL
+	SELECT '기타' AS dataLabel
+	    , SUM(CASE WHEN RCEPT_PATH_CODE = '6' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+	    TB_RECEIPT
+	</select>
+	
+	<select id="visitReasonCnt" resultType="chartVO">
+	/* kr.or.ddit.board.mapper.ChartMapper.visitReasonCnt */
+	SELECT
+	    '머리' AS dataLabel
+	    , SUM(CASE WHEN SUBSTR(DISS_CODE_NO, -2) BETWEEN 0 AND 9 THEN 1
+	            ELSE 0 END) AS dataVal
+	FROM
+		TB_CHART_DETAIL
+	UNION ALL
+	SELECT
+	    '목' AS dataLabel
+	    , SUM(CASE WHEN SUBSTR(DISS_CODE_NO, -2) BETWEEN 10 AND 19 THEN 1
+	            ELSE 0 END) AS dataVal
+	FROM
+		TB_CHART_DETAIL
+	UNION ALL
+	SELECT
+	    '흉곽' AS dataLabel
+	    , SUM(CASE WHEN SUBSTR(DISS_CODE_NO, -2) BETWEEN 20 AND 29 THEN 1
+	            ELSE 0 END) AS dataVal
+	FROM
+		TB_CHART_DETAIL
+	UNION ALL
+	SELECT
+	    '복부, 요추, 골반' AS dataLabel
+	    , SUM(CASE WHEN SUBSTR(DISS_CODE_NO, -2) BETWEEN 30 AND 39 THEN 1
+	            ELSE 0 END) AS dataVal
+	FROM
+		TB_CHART_DETAIL
+	UNION ALL
+	SELECT
+	    '어깨, 팔 상완' AS dataLabel
+	    , SUM(CASE WHEN SUBSTR(DISS_CODE_NO, -2) BETWEEN 40 AND 49 THEN 1
+	        ELSE 0 END) AS dataVal
+	FROM
+		TB_CHART_DETAIL
+	UNION ALL
+	SELECT
+	    '팔꿈치, 팔 하완' AS dataLabel
+	    , SUM(CASE WHEN SUBSTR(DISS_CODE_NO, -2) BETWEEN 50 AND 59 THEN 1
+	            ELSE 0 END) AS dataVal
+	FROM
+		TB_CHART_DETAIL
+	UNION ALL
+	SELECT
+	    '손, 손목' AS dataLabel
+	    , SUM(CASE WHEN SUBSTR(DISS_CODE_NO, -2) BETWEEN 60 AND 69 THEN 1
+	            ELSE 0 END) AS dataVal
+	FROM
+		TB_CHART_DETAIL
+	UNION ALL
+	SELECT
+	    '둔부, 대퇴' AS dataLabel
+	    , SUM(CASE WHEN SUBSTR(DISS_CODE_NO, -2) BETWEEN 70 AND 79 THEN 1
+	            ELSE 0 END) AS dataVal
+	FROM
+		TB_CHART_DETAIL
+	UNION ALL
+	SELECT
+	    '무릎, 다리 하완부' AS dataLabel
+	    , SUM(CASE WHEN SUBSTR(DISS_CODE_NO, -2) BETWEEN 80 AND 89 THEN 1
+	            ELSE 0 END) AS dataVal
+	FROM
+		TB_CHART_DETAIL
+	UNION ALL
+	SELECT
+	    '발, 발목' AS dataLabel
+	    , SUM(CASE WHEN SUBSTR(DISS_CODE_NO, -2) BETWEEN 90 AND 99 THEN 1
+	            ELSE 0 END) AS dataVal
+	FROM
+		TB_CHART_DETAIL
+	WHERE
+	    REPLACE(SUBSTR(TO_CHAR(DETAIL_REG_DATE), 1, 7), '/', '') = #{yearMonth}
+	</select>
+	
+	<select id="salesByMonth" resultType="chartVO">
+	SELECT dataLabel, dataVal
+	FROM (
+	    SELECT
+	        SUBSTR(RCIV_DE, 1, 7) AS dataLabel,
+	        SUM(RCIV_PAYMENT) AS dataVal
+	    FROM
+	        TB_RECEIPTION
+	    GROUP BY
+	        SUBSTR(RCIV_DE, 1, 7)
+	    ORDER BY
+	        SUBSTR(RCIV_DE, 1, 7) DESC
+	)
+	WHERE <![CDATA[ROWNUM <= 12]]>
+	ORDER BY dataLabel ASC
+	</select>
+
+	<select id="physioList" resultType="chartVO">
+	SELECT
+		'열치료' AS dataLabel
+	    , SUM(CASE WHEN PHYSIO_CODE = 'PHYS001' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+		TB_PHYSIOTHERAPY_LIST
+	UNION ALL
+	SELECT
+		'음압치료' AS dataLabel
+	    , SUM(CASE WHEN PHYSIO_CODE = 'PHYS002' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+		TB_PHYSIOTHERAPY_LIST
+	UNION ALL
+	SELECT
+		'냉각치료' AS dataLabel
+	    , SUM(CASE WHEN PHYSIO_CODE = 'PHYS003' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+		TB_PHYSIOTHERAPY_LIST
+	UNION ALL
+	SELECT
+		'레이저치료' AS dataLabel
+	    , SUM(CASE WHEN PHYSIO_CODE = 'PHYS004' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+		TB_PHYSIOTHERAPY_LIST
+	UNION ALL
+	SELECT
+		'파라핀치료' AS dataLabel
+	    , SUM(CASE WHEN PHYSIO_CODE = 'PHYS005' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+		TB_PHYSIOTHERAPY_LIST
+	UNION ALL
+	SELECT
+		'견인치료' AS dataLabel
+	    , SUM(CASE WHEN PHYSIO_CODE = 'PHYS006' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+		TB_PHYSIOTHERAPY_LIST
+	UNION ALL
+	SELECT
+		'이온치료' AS dataLabel
+	    , SUM(CASE WHEN PHYSIO_CODE = 'PHYS007' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+		TB_PHYSIOTHERAPY_LIST
+	UNION ALL
+	SELECT
+		'초음파치료' AS dataLabel
+	    , SUM(CASE WHEN PHYSIO_CODE = 'PHYS008' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+		TB_PHYSIOTHERAPY_LIST
+	UNION ALL
+	SELECT
+		'저주파치료' AS dataLabel
+	    , SUM(CASE WHEN PHYSIO_CODE = 'PHYS009' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+		TB_PHYSIOTHERAPY_LIST
+	UNION ALL
+	SELECT
+		'아쿠아치료' AS dataLabel
+	    , SUM(CASE WHEN PHYSIO_CODE = 'PHYS010' THEN 1 ELSE 0 END) AS dataVal
+	FROM
+		TB_PHYSIOTHERAPY_LIST
+	</select>
+</mapper>

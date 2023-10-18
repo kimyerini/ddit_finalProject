@@ -1,0 +1,22 @@
+package kr.or.ddit.document.vo;
+
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+
+public class OpinionVO {
+	private int opinionNo;
+	private String reqOpinionNo;
+	private String opinionDocNm;
+	private String opinionSignImgPath;
+	private Date opinionIsuDate;
+	private String opinionNote;
+	private String opinionRm;
+	private String opinionPrpos;
+}

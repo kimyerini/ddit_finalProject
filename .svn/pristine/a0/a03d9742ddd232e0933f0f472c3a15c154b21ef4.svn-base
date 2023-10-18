@@ -1,0 +1,15 @@
+package kr.or.ddit.item.vo;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class MediItemReqDetailVO {
+	private int mediItemReqNo;
+	private String mediItemCode;
+	private int mediItemReqQy;
+	private int mediItemReqTotal;
+}

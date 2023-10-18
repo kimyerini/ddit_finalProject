@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.board.mapper.NoticeMapper">
+	
+	<!-- map :{size=25, currentPage=1, keyword=개똥} -->
+	<sql id="where">
+		<!-- 전체검색 -->
+		<if test="keyword!=null and keyword!=''">
+			<choose>
+				<when test="category=='제목'">
+					AND  ntc.ntbd_subject LIKE '%' || #{keyword} || '%'
+				</when>
+				<when test="category=='작성자'">
+		            AND  emp.emp_nm LIKE '%' || #{keyword} || '%'
+				</when>
+				<when test="category=='내용'">
+		            AND  ntc.NTBD_CONTENT LIKE '%' || #{keyword} || '%'
+				</when>
+			</choose>
+		</if>
+	</sql>
+	
+	<resultMap type="NoticeBoardVO" id="noticeMap">
+		<id property="ntbdCode" column="NTBD_CODE" />
+		<result property="rnum2" column="RNUM2" />
+		<result property="ntbdSubject" column="NTBD_SUBJECT" />
+		<result property="ntbdContent" column="NTBD_CONTENT" />
+		<result property="ntbdHit" column="NTBD_HIT" />
+		<result property="ntbdUpdDate" column="NTBD_UPD_DATE" />
+		<result property="updaterEmpNo" column="UPDATER_EMP_NO" />
+		<result property="comFileCode" column="COM_FILE_CODE" />
+		<result property="ntbdRegDate" column="ntbdRegDate" />
+		<result property="writerEmpNo" column="writerEmpNo" />
+		<result property="deptName" column="deptName" />
+		<result property="empName" column="empName" />
+		<collection property="fileList" resultMap="fileMap" notNullColumn="FILE_CODE" />
+	</resultMap>
+	
+	<resultMap type="AttachFileVO" id="fileMap">
+		<result property="fileCode" column="FILE_CODE" />
+		<result property="fileNo" column="FILE_NO" />
+		<result property="fileName" column="FILE_NAME" />
+		<result property="fileSaveName" column="FILE_SAVE_NAME" />
+		<result property="filePhysicPath" column="FILE_PHYSIC_PATH" />
+		<result property="fileWebPath" column="FILE_WEB_PATH" />
+		<result property="fileSize" column="FILE_SIZE" />
+		<result property="fileDownCnt" column="FILE_DOWN_CNT" />
+		<result property="fileContType" column="FILE_CONT_TYPE" />
+		<result property="fileRegDate" column="FILE_REG_DATE" />
+		<result property="regUserId" column="REG_USER_ID" />
+		<result property="fileUpdDate" column="FILE_UPD_DATE" />
+		<result property="updUserId" column="UPD_USER_ID" />
+	</resultMap>
+	
+	<select id="noticeList" parameterType="hashMap" resultMap="noticeMap">
+	/* kr.or.ddit.mapper.NoticeMapper.noticeList */
+	SELECT U.*
+	FROM ( SELECT DENSE_RANK() OVER(ORDER BY Y.RNUM2 DESC) RNUM, Y.*
+        FROM ( WITH X AS ( SELECT DENSE_RANK() OVER( ORDER BY to_number(t.ntbd_code) ASC ) RNUM2, T.*
+            FROM (
+                SELECT
+                    ntc.ntbd_code,
+                    cmn.com_code_name AS deptname,
+                    ntc.ntbd_subject,
+                    to_char(ntc.ntbd_reg_date, 'YYYY-MM-DD') AS ntbdregdate,
+                    emp.emp_nm AS empname,
+                    emp.emp_no AS writerempno,
+                    ntc.ntbd_hit,
+                    af.file_code,
+                    af.file_no,
+                    af.file_name,
+                    af.file_cont_type,
+                    af.file_reg_date,
+                    af.reg_user_id
+                FROM
+                    tb_notice_board ntc
+                LEFT OUTER JOIN
+                    tb_attach_file af
+                ON
+                    ntc.ntbd_code = af.file_code
+                JOIN
+                    tb_employee emp
+                ON
+                    ntc.writer_emp_no = emp.emp_no
+                JOIN
+                    tb_common_code  cmn
+                ON
+                    emp.dept_code = cmn.com_code
+                WHERE 1 = 1
+                    <include refid="where"></include>
+            	) T
+        	)
+	        SELECT X.*
+	        FROM X
+	    ) Y
+	) U
+	WHERE U.RNUM BETWEEN (#{currentPage} * #{size}) - (#{size} - 1)
+	AND (#{currentPage} * #{size})
+	</select>
+	
+	<select id="countNotice" parameterType="hashMap" resultType="int">
+	/* kr.or.ddit.board.mapper.NoticeMapper.countNotice */
+		SELECT
+			count(*)
+		FROM
+			tb_notice_board ntc
+		JOIN
+			tb_employee emp
+		ON 
+			ntc.writer_emp_no = emp.emp_no
+		JOIN
+			tb_common_code cmn
+		ON 
+			emp.dept_code = cmn.com_code
+		WHERE 1 = 1
+		<include refid="where"></include>
+	</select>
+
+	<select id="oneNotice" parameterType="String" resultMap="noticeMap">
+	/* kr.or.ddit.board.mapper.NoticeMapper.noticeOne */
+		SELECT
+			ntc.ntbd_code
+			, cmn.com_code_name AS deptName
+			, ntc.ntbd_subject
+			, TO_CHAR(ntc.ntbd_reg_date, 'YYYY-MM-DD') AS ntbdRegDate
+			, emp.emp_nm AS empName
+			, emp.emp_no AS writerEmpNo
+			, ntc.ntbd_hit
+			, af.file_code
+			, af.file_no
+			, af.file_name
+            , ntc.ntbd_content
+			, af.file_save_name
+			, af.file_physic_path
+			, af.file_web_path
+			, af.file_size
+			, af.file_down_cnt
+			, af.file_cont_type
+			, af.file_reg_date
+			, af.reg_user_id
+			, af.file_upd_date
+			, af.upd_user_id
+		FROM
+		    tb_notice_board ntc
+		LEFT JOIN
+		    tb_attach_file af
+		ON
+		    ntc.ntbd_code = af.file_code
+		JOIN
+		    tb_employee emp
+		ON
+		    ntc.writer_emp_no = emp.emp_no
+		JOIN
+		    tb_common_code cmn
+		ON
+		    emp.dept_code = cmn.com_code
+        where ntbd_code = #{ntbdCode}
+		ORDER BY
+		    TO_NUMBER(ntc.ntbd_code) DESC
+	</select>
+	
+	<update id="updateHit" parameterType="noticeBoardVO">
+	/* kr.or.ddit.board.mapper.NoticeMapper.updateHit */
+		UPDATE
+			tb_notice_board
+		SET
+			ntbd_hit = ntbd_hit + 1
+		WHERE
+			ntbd_code = #{ntbdCode}
+	</update>
+	
+	<insert id="insertNotice" parameterType="noticeBoardVO">
+	/* kr.or.ddit.board.mapper.NoticeMapper.insertNotice */
+		<selectKey resultType="String" order="BEFORE" keyProperty="ntbdCode">
+			SELECT NVL(MAX(TO_NUMBER(ntbd_code)), 0) + 1 FROM tb_notice_board
+		</selectKey>
+		INSERT INTO
+			tb_notice_board (
+				ntbd_code
+				, writer_emp_no
+				, ntbd_reg_date
+				, ntbd_subject
+				, ntbd_content
+			)
+		VALUES (
+			#{ntbdCode}
+			, #{writerEmpNo}
+			, SYSDATE
+			, #{ntbdSubject}
+			, #{ntbdContent}
+		)
+	</insert>
+
+	<delete id="deleteNotice" parameterType="String">
+	/* kr.or.ddit.board.mapper.NoticeMapper.deleteNotice */
+		DELETE FROM
+			tb_notice_board
+		WHERE
+			ntbd_code = #{ntbdCode}
+	</delete>
+	
+	<update id="updateNotice" parameterType="noticeBoardVO">
+	/* kr.or.ddit.board.mapper.NoticeMapper.updateNotice */
+		UPDATE
+			tb_notice_board
+		SET
+			ntbd_subject = #{ntbdSubject}
+			, ntbd_content = #{ntbdContent}
+		WHERE
+			ntbd_code = #{ntbdCode}
+	</update>
+	
+	<delete id="deleteOneFile" parameterType="int">
+	/* kr.or.ddit.board.mapper.NoticeMapper.deleteOneFile */
+		DELETE FROM
+			tb_attach_file
+		WHERE
+			file_no = #{fileNo}
+	</delete>
+	
+	<delete id="deleteAllFile" parameterType="String">
+	/* kr.or.ddit.board.mapper.NoticeMapper.deleteAllFile */
+		DELETE FROM
+			tb_attach_file
+		WHERE
+			file_code = #{ntbdCode}
+	</delete>
+	
+</mapper>

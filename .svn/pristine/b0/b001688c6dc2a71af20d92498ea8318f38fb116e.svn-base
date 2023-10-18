@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.board.mapper.NoticeMapper">
+	
+	<select id="noticeList" resultType="noticeBoardVO">
+	/* kr.or.ddit.board.mapper.NoticeMapper.noticeList */
+		SELECT
+			a.ntbd_code
+			, c.com_code_name AS deptName
+			, a.ntbd_subject
+			, TO_CHAR(a.ntbd_reg_date, 'YYYY-MM-DD') AS ntbd_reg_date
+			, b.emp_nm as empName
+			, b.emp_no as empNo
+			, a.ntbd_hit
+		FROM
+			tb_notice_board a
+		JOIN
+			tb_employee b
+		ON
+			a.writer_emp_no = b.emp_no
+		JOIN
+			tb_common_code c
+		ON
+			b.dept_code = c.com_code
+		ORDER BY
+			a.ntbd_code DESC
+	</select>
+
+	<select id="getEmpInfo" resultType="noticeBoardVO" parameterType="String">
+		/* kr.or.ddit.board.mapper.NoticeMapper.getEmpInfo */
+		SELECT
+			emp.emp_no as writerEmpNo
+			, emp.emp_nm AS empName
+			, com.com_code_name AS deptName
+			, TO_CHAR(SYSDATE, 'YYYY-MM-DD') AS ntbdRegDate
+		FROM
+			tb_notice_board ntc
+		JOIN
+			tb_employee emp
+		ON
+			#{writerEmpNo} = emp.emp_no
+		JOIN
+			tb_common_code com
+		ON
+			emp.dept_code = com.com_code
+	</select>
+	
+	<select id="noticeOne" resultType="noticeBoardVO">
+	/* kr.or.ddit.board.mapper.NoticeMapper.noticeOne */
+		SELECT * FROM tb_notice_board
+		WHERE ntbd_code = #{ntbdCode}
+	</select>
+	
+	<insert id="insertNotice" parameterType="noticeBoardVO">
+	/* kr.or.ddit.board.mapper.NoticeMapper.insertNotice */
+		INSERT INTO
+			tb_notice_board (
+				ntbd_code
+				, writer_emp_no
+				, ntbd_reg_date
+				, ntbd_subject
+				, ntbd_content
+			)
+		VALUES (
+			seq_notice_board.nextval
+			, #{writerEmpNo}
+			, SYSDATE
+			, #{ntbdSubject}
+			, #{ntbdContent}
+		)
+	</insert>
+
+</mapper>

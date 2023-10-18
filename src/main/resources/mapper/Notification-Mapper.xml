@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.common.mapper.NotificationMapper">
+
+	<insert id="insertNoti" parameterType="NotificationVO">
+		INSERT INTO TB_NOTIFICATION (
+			NTCN_ID
+			, NTCN_RCVER_EMP_NO
+			, NTCN_CONTENT
+			, NTCN_URL
+			, NTCN_DT
+			, NTCN_TITLE
+			, NTCN_GUBUN
+		)
+		VALUES (
+			SEQ_NOTIFICATION.NEXTVAL
+			, #{ntcnRcverEmpNo}
+			, #{ntcnContent}
+			, #{ntcnUrl}
+			, sysdate
+			, #{ntcnTitle}
+			, #{ntcnGubun}
+		)
+	</insert>
+	
+	<!-- 일정 업데이트 시 알림내역 목록 -->
+	<select id="selectNoti" parameterType="String" resultType="NotificationVO">
+		SELECT A.NTCN_ID, A.NTCN_RCVER_EMP_NO, A.NTCN_CONTENT, A.NTCN_URL, A.NTCN_DT
+		     , A.NTCN_TITLE, A.NTCN_READ_STATUS, A.NTCN_GUBUN
+		FROM   TB_NOTIFICATION A
+		WHERE  A.NTCN_ID NOT IN(
+		        SELECT B.NTCN_ID FROM TB_NOTI_CHECK B WHERE B.EMP_NO = #{empNo}
+		    )
+		ORDER BY A. NTCN_ID DESC
+	</select>
+	
+	<!-- 일정 확인 시 insert -->
+	<insert id="insertNotiCheck" parameterType="NotiCheckVO">
+		INSERT INTO TB_NOTI_CHECK(NTCN_ID, EMP_NO, CHECK_DATE)
+		VALUES(#{ntcnId}, #{empNo}, SYSDATE)
+	</insert>
+	
+	<!-- 일정 내역 전체삭제 버튼 -->
+	<insert id="deleteNotiList" parameterType="String">
+	INSERT INTO TB_NOTI_CHECK(NTCN_ID, EMP_NO, CHECK_DATE)
+	SELECT A.NTCN_ID, #{empNo}, SYSDATE
+	FROM   TB_NOTIFICATION A
+	WHERE  A.NTCN_ID NOT IN(
+	        SELECT B.NTCN_ID FROM TB_NOTI_CHECK B WHERE B.EMP_NO = #{empNo}
+	    )
+	ORDER BY A. NTCN_ID DESC
+<!-- 	MERGE INTO TB_NOTI_CHECK tgt -->
+<!-- 	USING ( -->
+<!-- 	    SELECT NTCN_ID, #{empNo} AS EMP_NO, SYSDATE AS CHECK_DATE -->
+<!-- 	    FROM TB_NOTIFICATION -->
+<!-- 	) src -->
+<!-- 	ON (tgt.NTCN_ID = src.NTCN_ID) -->
+<!-- 	WHEN MATCHED THEN -->
+<!-- 	    UPDATE SET tgt.EMP_NO = src.EMP_NO, tgt.CHECK_DATE = src.CHECK_DATE -->
+<!-- 	WHEN NOT MATCHED THEN -->
+<!-- 	    INSERT (NTCN_ID, EMP_NO, CHECK_DATE) -->
+<!-- 	    VALUES (src.NTCN_ID, src.EMP_NO, src.CHECK_DATE) -->
+	</insert>
+</mapper>
+
+
+
+

@@ -1,0 +1,23 @@
+package kr.or.ddit.board.vo;
+
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+
+public class NoticeBoardVO {
+	private String ntbdCode;
+	private String writerEmpNo;
+	private Date ntbdRegDate;
+	private String updaterEmpNo;
+	private Date ntbdUpdDate;
+	private String ntbdSubject;
+	private String ntbdContent;
+	private int ntbdHit;
+	private String comFileCode;
+}

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.receipt.mapper.ReceiptMapper">
+	<select id="getCSchedule" resultType="cScheduleVO">
+		/* getCSchedule */
+		SELECT 
+			c.schd_no
+			, h.hos_fc_name
+			, e.emp_nm
+		FROM 
+            tb_clinic_schedule c
+			LEFT JOIN tb_employee e 
+            	ON c.emp_no = e.emp_no
+            LEFT JOIN tb_hospital_facility h
+            	ON c.hos_fc_no = h.hos_fc_no 
+        ORDER BY c.hos_fc_no
+	</select>
+	
+	<select id="getRcepNo" resultType="String">
+		/* getRcepNo */
+		SELECT 
+			TO_CHAR(SYSDATE,'YYMM') 
+			|| '02' 
+            || TRIM(TO_CHAR(NVL(
+            	(SELECT 
+            		MAX(TO_NUMBER(SUBSTR(r.rcept_no,-3))) 
+            	FROM 
+            		tb_receipt r WHERE rcept_no LIKE  TO_CHAR(SYSDATE,'YYMM')||'%')
+            	,0)+1, '000')) AS rcept_no
+        FROM dual
+	</select>
+	
+	<insert id="insertReceipt" parameterType="receiptVO">
+		/* insertReceipt */
+		INSERT INTO 
+			tb_receipt 
+			(
+				RCEPT_NO
+				, PAT_CODE
+				, RCEPT_PATH_CODE
+				, RCEPT_FIRST_EXAM_CODE
+				, RCEPT_DAY_CODE
+				, RCEPT_MEMO
+				, SCHD_NO
+				, RECEPT_TIME
+			)
+		VALUES
+			(
+				#{rceptNo}
+				, #{patCode}
+				, #{rceptPathCode}
+				, #{rceptFirstExamCode}
+				, #{rceptDayCode}
+				, #{rceptMemo}
+				, #{schdNo}
+				, #{receptTime}
+			)
+	</insert>
+	<select id="selectPVST" resultType="commonCodeVO">
+	    /* selectPVST */
+		SELECT
+			com_code
+			, com_code_grp
+			, com_code_name 
+		FROM 
+			tb_common_code
+		WHERE 
+			com_code_grp = 'PVST'
+	</select>
+	
+	<insert id="insertClinic" parameterType="kr.or.ddit.clinic.vo.ClinicVO">
+		/*insertClinic*/
+	<selectKey resultType="String" order="BEFORE" keyProperty="treatNo">
+        SELECT 
+	        TO_CHAR(sysdate,'YYMM') 
+	        || '05' 
+	        || TRIM(TO_CHAR(NVL(
+   					(SELECT 
+    					MAX(TO_NUMBER(SUBSTR(treat_no,-3))) 
+      				FROM 
+      					tb_clinic 
+      				WHERE treat_no LIKE TO_CHAR(sysdate,'YYMM')||'%')
+      					,0)+1, '000')) as treat_no
+        FROM dual
+    </selectKey>
+    	INSERT INTO 
+    		TB_CLINIC 
+    		(
+    		treat_no
+    		,rcept_no
+    		) 
+    	VALUES 
+    		(
+    		#{treatNo}
+    		,#{rceptNo}
+    		)
+	</insert>
+	
+	
+	<select id="selectWaitPat" resultType="waitPatVO">
+	/* selectWaitPat */
+	    SELECT 
+	        c.treat_no
+	        , r.rcept_no as rcept_no
+	        , p.pat_name  as pat_name
+	        , p.pat_code as pat_code
+	        , TO_CHAR(sysdate,'YYYY') - SUBSTR(p.pat_brthdy,0,4) as pat_age
+	        , c2.com_code_name as pat_gen
+	        , c1.com_code_name as pat_wait
+	        , c3.com_code_name as pat_path
+	        , c4.com_code_name as pat_first
+	        , c5.com_code_name as pat_day
+	        , e.emp_nm as emp_nm
+        	, hf.hos_fc_name as hos_fc_name
+        	
+        FROM tb_clinic c
+        INNER JOIN tb_receipt r 
+            INNER JOIN tb_patient p 
+                    INNER JOIN tb_common_code c2 
+                    ON p.pat_gen_code = c2.com_code 
+                    AND c2.com_code_grp = 'GEND'
+            ON r.pat_code = p.pat_code
+            INNER JOIN tb_common_code c3
+            ON r.rcept_path_code = c3.com_code  
+            AND c3.com_code_grp = 'PVST'
+            INNER JOIN tb_common_code c4
+            ON r.rcept_first_exam_code = c4.com_code 
+            AND c4.com_code_grp = 'FEXM'
+            INNER JOIN tb_common_code c5
+            ON r.rcept_day_code = c5.com_code 
+            AND c5.com_code_grp = 'DAYN'
+         ON c.rcept_no = r.rcept_no
+         INNER JOIN tb_clinic_schedule cs
+             INNER JOIN tb_hospital_facility hf 
+             ON hf.HOS_FC_NO = cs.HOS_FC_NO
+             INNER JOIN tb_employee e
+             ON e.emp_no = cs.emp_no
+         ON r.schd_no = cs.schd_no
+         INNER JOIN tb_common_code c1 
+         ON c.clnic_sttus_code = c1.com_code 
+         AND c1.com_code_grp = 'STAT'
+         WHERE c.clnic_sttus_code = 'WAIT'
+	</select>
+	<update id="delWait" parameterType="String">
+	/* delWait */
+		UPDATE 
+			tb_clinic 
+		SET 
+			clnic_sttus_code = 'FAIL' 
+		WHERE treat_no = #{treatNo}
+	</update>
+	
+	<select id="selectOneWaitPat" parameterType="waitPatVO" resultType="waitPatVO">
+	/* selectOneWaitPat */
+		SELECT 
+            c.treat_no
+            , r.rcept_memo as rcept_memo
+	        , r.rcept_no as rcept_no
+	        , p.pat_name  as pat_name
+	        , p.pat_code as pat_code
+	        , TO_CHAR(sysdate,'YYYY') - SUBSTR(p.pat_brthdy,0,4) as pat_age
+	        , c2.com_code_name as pat_gen
+	        , c1.com_code_name as pat_wait
+	        , c3.com_code_name as pat_path
+	        , c4.com_code_name as pat_first
+	        , c5.com_code_name as pat_day
+	        , e.emp_nm as emp_nm
+        	, hf.hos_fc_name as hos_fc_name
+        	, r.recept_time as recept_time
+        FROM tb_clinic c
+        INNER JOIN tb_receipt r 
+            INNER JOIN tb_patient p 
+                    INNER JOIN tb_common_code c2 
+                    ON p.pat_gen_code = c2.com_code 
+                    AND c2.com_code_grp = 'GEND'
+            ON r.pat_code = p.pat_code
+            INNER JOIN tb_common_code c3
+            ON r.rcept_path_code = c3.com_code  
+            AND c3.com_code_grp = 'PVST'
+            INNER JOIN tb_common_code c4
+            ON r.rcept_first_exam_code = c4.com_code 
+            AND c4.com_code_grp = 'FEXM'
+            INNER JOIN tb_common_code c5
+            ON r.rcept_day_code = c5.com_code 
+            AND c5.com_code_grp = 'DAYN'
+         ON c.rcept_no = r.rcept_no
+         INNER JOIN tb_clinic_schedule cs
+             INNER JOIN tb_hospital_facility hf 
+             ON hf.HOS_FC_NO = cs.HOS_FC_NO
+             INNER JOIN tb_employee e
+             ON e.emp_no = cs.emp_no
+         ON r.schd_no = cs.schd_no
+         INNER JOIN tb_common_code c1 
+         ON c.clnic_sttus_code = c1.com_code 
+         AND c1.com_code_grp = 'STAT'
+         WHERE c.clnic_sttus_code = 'WAIT' and c.treat_no = #{treatNo}
+	</select>
+	
+	
+
+</mapper>

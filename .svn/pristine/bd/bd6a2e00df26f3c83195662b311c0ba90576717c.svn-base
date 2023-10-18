@@ -1,0 +1,91 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="/resources/ckeditor/ckeditor.js"></script>
+<script src="/resources/js/jquery-3.6.0.js"></script>
+<title>Insert title here</title>
+<style>
+.card {
+	width: 82vw;
+	height:79vh;
+	margin:23px 0px 0px 144px
+}
+#noticeHeader {
+	display:flex;
+	width:81.6vw;
+	margin:0px 0px 25px 0px;
+}
+.card-header {
+	margin: 17px 1121px 0px 5px;
+	font-weight:bolder;
+}
+a, a:active {
+	color: inherit;
+	text-decoration: none;
+}
+#noticeBody {
+	margin-left: 10px;	
+}
+.flex {
+	display: flex;
+    justify-content: space-between;
+    margin: 1.5rem;
+}
+.writeInput-long {
+	width: 79vw!important;
+}
+.writeInput-short {
+	width: 21.8vw!important;
+}
+#noticeBody textarea {
+	width: 75.2vw;
+}
+#noticeFooter {
+	display: flex;
+	justify-content: center;
+}
+
+</style>
+</head>
+<body>
+	<div class="card">
+		<div id="wrapper">
+			<div id="noticeHeader">
+				<h4 class="card-header">공지사항</h4>
+			</div><!-- notice header 끝 -->
+
+			<div id="noticeBody">
+				<div class="flex">
+					<label for="smallInput" class="form-label writeLabel" style="width:61px;">제목</label>
+					<input id="smallInput" class="form-control form-control-sm writeInput-long" type="text" name="ntbdSubject">
+				</div>
+				<div class="flex">
+					<label for="smallInput" class="form-label writeLabel" style="width:37px;">작성자</label>
+					<input id="smallInput" class="form-control form-control-sm writeInput-short" type="text" name="empName" readonly>
+					<label for="smallInput" class="form-label writeLabel">부서</label>
+					<input id="smallInput" class="form-control form-control-sm writeInput-short" type="text" name="deptName" readonly>
+					<label for="smallInput" class="form-label writeLabel">작성일자</label>
+					<input id="smallInput" class="form-control form-control-sm writeInput-short" type="text" name="ntbdRegDate" readonly>
+				</div>
+				<div class="flex">
+					<label for="smallInput" class="form-label writeLabel" style="width:73px;">첨부파일</label>
+					<input id="smallInput" class="form-control form-control-sm" type="file" name="files" id="formFileMultiple" multiple>
+				</div>
+				<div class="flex">
+					<label for="smallInput" class="form-label writeLabel">내용</label>
+					<textarea class="form-control" name="ntbdContent" rows="15" cols="250"></textarea>
+				</div>
+			</div>		
+			
+			<div id="noticeFooter">
+			</div><!-- noticeFooter 끝 -->
+		</div><!-- wrapper 끝 -->
+	</div><!-- card 끝 -->
+</body>
+<script>
+CKEDITOR.replace("ntbdContent"); // ckeditor 사용할 textarea의 name값
+</script>
+</html>

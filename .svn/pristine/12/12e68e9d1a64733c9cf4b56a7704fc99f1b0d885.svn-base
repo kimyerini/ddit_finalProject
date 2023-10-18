@@ -1,0 +1,298 @@
+package kr.or.ddit.clinic.controller;
+
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.clinic.service.ClinicService;
+import kr.or.ddit.clinic.vo.ChartDetailByDateVO;
+import kr.or.ddit.clinic.vo.ChartDetailVO;
+import kr.or.ddit.clinic.vo.ClinicChartRecPatVO;
+import kr.or.ddit.clinic.vo.ClinicVO;
+import kr.or.ddit.clinic.vo.DiseaseVO;
+import kr.or.ddit.clinic.vo.PatientRecieptVO;
+import kr.or.ddit.item.vo.MediItemListVO;
+import kr.or.ddit.order.vo.InspectionListVO;
+import kr.or.ddit.order.vo.InspectionVO;
+import kr.or.ddit.order.vo.PhysioTherapyListVO;
+import kr.or.ddit.order.vo.PhysiotherapyVO;
+import kr.or.ddit.order.vo.PrescriptionVO;
+import kr.or.ddit.order.vo.TreatmentListVO;
+import kr.or.ddit.order.vo.TreatmentVO;
+import kr.or.ddit.patient.vo.PatientVO;
+import kr.or.ddit.receipt.vo.WaitPatVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Controller
+@RequestMapping("/doctor")
+public class ClinicController {
+	
+	@Autowired
+	private ClinicService clinicSVC;
+	
+	
+	@GetMapping("/clinic")
+	public String getView() {
+		
+		log.info("clinic 도착!");
+		return "clinic/clinic";
+	}
+	
+	//환자 접수 상세정보 조회
+	@ResponseBody
+	@GetMapping(value="/clinic/receipt/{rceptNo}",produces = "application/json;charset=utf-8")
+	public PatientRecieptVO receiptDetail(@PathVariable String rceptNo) {
+		PatientRecieptVO patientRecieptVO = new PatientRecieptVO();
+		patientRecieptVO.setRceptNo(rceptNo);
+		patientRecieptVO = clinicSVC.receiptDetail(patientRecieptVO);
+		log.info("환자 접수상세정보 rceptNo 도착!");
+		log.info("VO : " + patientRecieptVO);
+		return patientRecieptVO;
+	}
+		
+	
+	//환자 정보 조회
+	@ResponseBody
+	@GetMapping(value="/clinic/{patCode}",produces = "application/json;charset=utf-8")
+	public PatientVO selectPatInfo(@PathVariable String patCode) {
+		PatientVO patientVO = new PatientVO();
+		patientVO.setPatCode(patCode);
+		patientVO = clinicSVC.selectPatInfo(patientVO);
+		log.info("환자정보 patCode 도착!");
+		log.info("VO : " + patientVO);
+		return patientVO;
+	}
+	
+	
+	// 대기 환자 목록 조회하기	
+//	@ResponseBody
+//	@GetMapping(value="/clinic/waitList",produces = "application/json;charset=utf-8")
+//	public List<PatRecCliVO> getWaitPatList() {
+//		return clinicSVC.getWaitPatList();
+//	}
+	
+	
+	//환자 차트 날짜별 리스트 조회
+	@ResponseBody
+	@GetMapping(value="/clinic/date/{patCode}",produces = "application/json;charset=utf-8")
+	public List<ClinicChartRecPatVO> getRegDateList(@PathVariable String patCode) {
+		ClinicChartRecPatVO clinicChartRecPatVO = new ClinicChartRecPatVO();
+		clinicChartRecPatVO.setPatCode(patCode);
+		
+		log.info("차트날짜VO : " + clinicChartRecPatVO);
+		return clinicSVC.getRegDateList(clinicChartRecPatVO);
+	}
+	
+	
+	// 등록날짜로 환자차트 조회하기	
+	// vo 생성후, 서비스에 전달하여 결과를 얻고, vo에 결과를 저장, 이를 반환한다.
+	@ResponseBody
+	@GetMapping(value="/clinic/date/chart/{detailRegDate}", produces = "application/json;charset=utf-8")
+	public List<ChartDetailByDateVO> getChartByRegDate(@PathVariable String detailRegDate) {
+	    ChartDetailByDateVO chartDetailByDateVO = new ChartDetailByDateVO();
+	    chartDetailByDateVO.setDetailRegDate(detailRegDate);
+
+	    log.info("날짜당 제발제발" + detailRegDate);
+	    List<ChartDetailByDateVO> chartDetailByDateVOList = clinicSVC.getChartByRegDate(chartDetailByDateVO);
+	   // chartDetailByDateVO = clinicSVC.getChartByRegDate(chartDetailByDateVO);
+	    log.info("날짜로 검색한 환자차트 detailRegDate 도착!");
+	    log.info("VO : " + chartDetailByDateVO);
+	    return chartDetailByDateVOList;
+	}
+	
+		
+	//검사오더 검색하기
+	// vo 생성 후 서비스에 전달하여 결과를 얻고 List(그대로) 반환한다.
+	@ResponseBody
+	@GetMapping(value="/clinic/chart/order/inspc/{searchInspc}",produces = "application/json;charset=utf-8")
+	public List<InspectionVO> searchInspection(@PathVariable String searchInspc) {
+		InspectionVO inspectionVO = new InspectionVO();
+		inspectionVO.setSearchInspc(searchInspc);
+		
+		log.info("검사부위양 : " + searchInspc);
+		log.info("검사검색VO : " + inspectionVO);
+		return clinicSVC.searchInspection(inspectionVO);
+	}
+	
+	
+	//차트번호 출력하기
+	@ResponseBody
+	@GetMapping(value="/clinic/chart/detailNo",produces = "application/json;charset=utf-8")
+	public ChartDetailVO getChartDetailNo() {
+		log.info("차트번호출력하깅");
+		return clinicSVC.getChartDetailNo();
+	}
+	
+	// 대기 환자 목록 조회하기	
+	@ResponseBody
+	@GetMapping(value="/clinic/waitList",produces = "application/json;charset=utf-8")
+	public List<WaitPatVO> selectWaitPat() {
+		log.info("대기 환자 목록 출력하깅");
+		return clinicSVC.selectWaitPat();
+	}
+	
+	//진료번호 출력하기
+	@ResponseBody
+	@GetMapping(value="/clinic/chart/treatNo",produces = "application/json;charset=utf-8")
+	public ClinicVO getTreatNo() {
+		log.info("진료번호출력하깅");
+		return clinicSVC.getTreatNo();
+	}
+	
+	
+	//차트 틀 입력 
+	@ResponseBody
+	@PostMapping(value="/clinic/chart/before",produces = "application/json;charset=utf-8")
+	public String insertChartBefore(@RequestBody ChartDetailVO chartDetailVO) {
+		log.info("차트틀만들었당");
+		return Integer.toString(clinicSVC.insertChartBefore(chartDetailVO));
+	}
+	
+
+	//검사오더 요청
+	@ResponseBody
+	@PostMapping(value="/clinic/chart/order/inspc",produces = "application/json;charset=utf-8")
+	public String insertInspcOrder(@RequestBody List<InspectionListVO> inspectionListVOlist) {
+		log.info("검사요청이 되었당");
+		
+		int cnt = 0;
+		for (InspectionListVO inspectionListVO : inspectionListVOlist) {
+			cnt += clinicSVC.insertInspcOrder(inspectionListVO);
+		}
+		
+		String result = "success";
+		if(cnt != inspectionListVOlist.size()) {
+			result = "fail";
+		}
+		return result;
+	}
+
+	
+	//처치오더 검색하기
+	// vo 생성 후 서비스에 전달하여 결과를 얻고 List(그대로) 반환한다.
+	@ResponseBody
+	@GetMapping(value="/clinic/chart/order/treat/{searchTreat}",produces = "application/json;charset=utf-8")
+	public List<TreatmentVO> searchTreat(@PathVariable String searchTreat) {
+		TreatmentVO treatmentVO = new TreatmentVO();
+		treatmentVO.setSearchTreat(searchTreat);
+		
+		log.info("처치오더양 : " + searchTreat);
+		log.info("처치검색VO : " + treatmentVO);
+		return clinicSVC.searchTreat(treatmentVO);
+	}
+
+	
+	//처치오더 요청
+	@ResponseBody
+	@PostMapping(value="/clinic/chart/order/treat",produces = "application/json;charset=utf-8")
+	public String insertTreatOrder(@RequestBody List<TreatmentListVO> treatmentListVOlist) {
+		log.info("처치요청이 되었당");
+
+		int cnt = 0;
+		for (TreatmentListVO treatmentListVO : treatmentListVOlist) {
+			cnt += clinicSVC.insertTreatOrder(treatmentListVO);
+		}
+		
+		String result = "success";
+		if(cnt != treatmentListVOlist.size()) {
+			result = "fail";
+		}
+		return result;
+	}
+	
+	//치료오더 검색하기
+	@ResponseBody
+	@GetMapping(value="/clinic/chart/order/physio/{searchPhysio}",produces = "application/json;charset=utf-8")
+	public List<PhysiotherapyVO> searchPhysio(@PathVariable String searchPhysio) {
+		PhysiotherapyVO physiotherapyVO = new PhysiotherapyVO();
+		physiotherapyVO.setSearchPhysio(searchPhysio);
+		
+		log.info("치료오더양 : " + searchPhysio);
+		log.info("치료검색VO : " + physiotherapyVO);
+		return clinicSVC.searchPhysio(physiotherapyVO);
+	}
+	
+	
+	//치료오더 요청
+	@ResponseBody
+	@PostMapping(value="/clinic/chart/order/physio",produces = "application/json;charset=utf-8")
+	public String insertPhysioOrder(@RequestBody List<PhysioTherapyListVO> physioTherapyListVOlist) {
+		log.info("치료요청이 되었당");
+
+		int cnt = 0;
+		for (PhysioTherapyListVO physioTherapyListVO : physioTherapyListVOlist) {
+			cnt += clinicSVC.insertPhysioOrder(physioTherapyListVO);
+		}
+		
+		String result = "success";
+		if(cnt != physioTherapyListVOlist.size()) {
+			result = "fail";
+		}
+		return result;
+	}
+	
+	
+	//질병 검색하기
+	@ResponseBody
+	@GetMapping(value="/clinic/chart/order/diss/{searchDiss}",produces = "application/json;charset=utf-8")
+	public List<DiseaseVO> searchDisease(@PathVariable String searchDiss) {
+		DiseaseVO diseaseVO = new DiseaseVO();
+		diseaseVO.setSearchDiss(searchDiss);
+		
+		log.info("처치오더양 : " + searchDiss);
+		log.info("처치검색VO : " +  diseaseVO);
+		return clinicSVC.searchDisease(diseaseVO);
+	}
+	
+	
+	//처방오더 검색하기
+	@ResponseBody
+	@GetMapping(value="/clinic/chart/order/medi/{searchMedi}",produces = "application/json;charset=utf-8")
+	public List<MediItemListVO> searchMedi(@PathVariable String searchMedi) {
+		MediItemListVO mediItemListVO = new MediItemListVO();
+		mediItemListVO.setSearchMedi(searchMedi);
+		
+		log.info("처방오더양 : " + searchMedi);
+		log.info("처방검색VO : " +  mediItemListVO);
+		return clinicSVC.searchMedi(mediItemListVO);
+	}
+	
+	
+	//처방오더 요청하기
+	@ResponseBody
+	@PostMapping(value="/clinic/chart/order/medi",produces = "application/json;charset=utf-8")
+	public String insertMediOrder(@RequestBody List<PrescriptionVO> prescriptionVOList) {
+		log.info("처방요청이 되었당");
+
+		int cnt = 0;
+		for (PrescriptionVO prescriptionVO : prescriptionVOList) {
+			cnt += clinicSVC.insertMediOrder(prescriptionVO);
+		}
+		
+		String result = "success";
+		if(cnt != prescriptionVOList.size()) {
+			result = "fail";
+		}
+		return result;
+	}
+	
+	
+	
+//	}
+//	//1개 insert
+//	@ResponseBody
+//	@PostMapping(value="/yerin",produces = "application/json;charset=utf-8")
+//	public String postYerin(@RequestBody YerinVO yerinVO) {
+//		return Integer.toString(yerinSVC.insertData(yerinVO));
+//	}
+
+}

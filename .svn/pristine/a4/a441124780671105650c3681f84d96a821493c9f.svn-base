@@ -1,0 +1,193 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="/resources/js/jquery-3.6.0.js"></script>
+<title>Insert title here</title>
+<style>
+.card {
+	width: 82vw;
+	height:79vh;
+	margin:23px 0px 0px 144px
+}
+#noticeHeader {
+	display:flex;
+	width:81.6vw;
+	margin:0px 0px 25px 0px;
+}
+.card-header {
+	margin: 17px 1121px 0px 5px;
+	font-weight:bolder;
+}
+#searchCtgr {
+    width: 4.9vw;
+    height: 4vh;
+    margin-top: 35px;
+}
+#noticeSearch {
+	width: 10vw;
+    height: 5.5vh;
+    margin-top: 35px;
+    margin-left: 5px;
+}
+.table-hover {
+    margin-left: 18px;
+    width: 80vw;
+}
+.text-nowrap {
+	height: 57vh;
+}
+#writeBtn {
+	width: 4vw;
+    height: 3.5vh;
+    padding: 3px 0px 0px 0px!important;
+    margin: 9px 0px -7px 1469px;
+}
+a, a:active {
+	color: inherit;
+	text-decoration: none;
+}
+.noticeSearchSpan {
+	width: 2vw;
+	height: 4vh;
+}
+#searchInput {
+	height: 4vh;
+}
+#noticeFooter {
+	display: flex;
+	justify-content: center;
+}
+
+</style>
+</head>
+<body>
+	<div class="card">
+		<div id="wrapper">
+			<div id="noticeHeader">
+				<h4 class="card-header">공지사항</h4>
+				<div class="btn-group">
+					<button type="button" id="searchCtgr" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item searchCtgr" href="javascript:void(0);">제목</a></li>
+						<li><a class="dropdown-item searchCtgr" href="javascript:void(0);">작성자</a></li>
+						<li><a class="dropdown-item searchCtgr" href="javascript:void(0);">내용</a></li>
+					</ul>
+				</div>
+				<div class="input-group input-group-merge" id="noticeSearch">
+					<span class="input-group-text noticeSearchSpan" id="basic-addon-search31">
+						<i class="bx bx-search"></i></span>
+					<input type="text" class="form-control" placeholder="검색" id="searchInput" aria-label="Search..." aria-describedby="basic-addon-search31">
+				</div>
+			</div><!-- notice header 끝 -->
+			
+			<div class="table-responsive text-nowrap">
+				<div id="tableHtml"></div>
+			</div><!-- table div 끝 -->
+			
+			<button type="button" class="btn btn-info" id="writeBtn" onclick="location.href='/board/write'">글쓰기</button>
+			<div id="noticeFooter">
+				<nav aria-label="Page navigation">
+					<ul class="pagination" style="justify-content: center;">
+						<li class="page-item prev"><a class="page-link" href="javascript:void(0);">
+							<i class="tf-icon bx bx-chevrons-left"></i></a></li>
+						<li class="page-item active"><a class="page-link" href="javascript:void(0);">1</a></li>
+						<li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
+						<li class="page-item"><a class="page-link" href="javascript:void(0);">3</a></li>
+						<li class="page-item"><a class="page-link" href="javascript:void(0);">4</a></li>
+						<li class="page-item"><a class="page-link" href="javascript:void(0);">5</a></li>
+						<li class="page-item next"><a class="page-link" href="javascript:void(0);">
+							<i class="tf-icon bx bx-chevrons-right"></i></a></li>
+					</ul>
+				</nav>
+			</div><!-- noticeFooter 끝 -->
+		</div><!-- wrapper 끝 -->
+	</div><!-- card 끝 -->
+</body>
+<script>
+$(function(){
+	console.log("zz");
+	getList();
+	
+	// 기본값을 제목으로
+	$('#searchCtgr').text("제목");
+	$('#searchCtgr').on('click', function() {
+		// 현재 선택된 버튼값
+	    let nowText = $('#searchCtgr').text();
+		    
+		// 드롭다운 메뉴의 모든 값 표시
+	    $('.dropdown-menu li').show(); 
+	    
+		// 현재 선택된 버튼값과 같은 li 숨김
+	    $('.dropdown-menu li:contains(' + nowText + ')').hide(); 
+	});
+    
+	// 드롭다운 메뉴 선택 시 변경
+	var oldBtnVal = "";
+	$('.dropdown-menu').on('click', '.searchCtgr', function () {
+		// 선택한 드롭다운 메뉴
+	    let newBtnVal = $(this).text();
+
+	 	// 버튼값 업데이트
+	    $('#searchCtgr').text(newBtnVal); 
+
+		// 이전 버튼값을 다시 드롭다운 메뉴에 추가
+	    if (oldBtnVal !== "") {
+	        $('.dropdown-menu').append(oldBtnVal);
+	    }
+
+	    // 클릭된 항목의 부모인 <li> 태그를 삭제
+	    oldBtnVal = $(this).parent();
+	    oldBtnVal.remove();
+	});
+});
+	
+
+	//리스트 뿌리기
+	const getList = function() {
+	   let xhr = new XMLHttpRequest();
+	   xhr.open("get", "/board/list", true);
+	   xhr.onreadystatechange = function() {
+	      if(xhr.readyState == 4 && xhr.status == 200) {
+	         let result = JSON.parse(xhr.responseText);
+	         console.log("예린 result", result);
+	
+	         let tblStr = `<table class="table table-hover">`;
+	         tblStr += `<thead><tr>`;
+	         tblStr += `<th>No</th>`;
+	         tblStr += `<th>제목</th>`;
+	         tblStr += `<th>등록일자</th>`;
+	         tblStr += `<th>작성자</th>`;
+	         tblStr += `<th>조회수</th>`;
+	         tblStr += `<th>관리</th>`;
+	         tblStr += `</tr></thead>`;
+	         tblStr += `<tbody class="table-border-bottom-0">`;
+	         if(result==null || result.length==0) {
+	        	 tblStr += `<td colspan="6" style="text-align:center;"><br><br><br>게시글이 없습니다.</td>`;
+	         } else {
+		         for(let i=0; i<result.length; i++) {
+		            tblStr += `<td>\${result[i].ntbdCode}</td>`;
+		            tblStr += `<td><a href="#"><span class="badge bg-label-secondary">\${result[i].deptName}</span>&nbsp;\${result[i].ntbdSubject}</a></td>`;
+		            tblStr += `<td>\${result[i].ntbdRegDate}</td>`;
+		            tblStr += `<td>\${result[i].empName}</td>`;
+		            tblStr += `<td>\${result[i].ntbdHit}</td>`;
+		            tblStr += `<td><div class="dropdown"><button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+						            <i class="bx bx-dots-vertical-rounded"></i></button><div class="dropdown-menu">
+						            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i>수정</a>
+						            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i>삭제</a></div></div></td>`;
+		            tblStr += `</tr>`;
+		         }
+	         }
+	         tblStr += `</tbody></table>`;
+	         document.querySelector('#tableHtml').innerHTML = tblStr;
+	      }
+	   }
+	   xhr.send();
+	}
+
+
+
+</script>
+</html>

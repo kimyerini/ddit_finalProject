@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.patient.mapper.PatientMapper">
+<insert id="insertPat" parameterType="patientVO">
+    <selectKey resultType="String" order="BEFORE" keyProperty="patCode">
+        SELECT 
+        	TO_CHAR(SYSDATE,'YYMM') 
+        	|| '01' 
+            || TRIM(TO_CHAR(NVL(
+            (
+            SELECT 
+            	MAX(TO_NUMBER(SUBSTR(pat_code,-3))) 
+            FROM 
+            	tb_patient 
+            WHERE pat_code LIKE  TO_CHAR(sysdate,'YYMM')||'%'),0)+1, '000')
+            ) 
+        FROM 
+        	dual
+    </selectKey>
+    /* insertPat */
+    INSERT INTO 
+    	tb_patient (
+    	pat_code
+    	, pat_name
+    	, pat_tel
+    	, pat_ihidnum
+    	, pat_brthdy
+    	, pat_gen_code
+    	, pat_addr
+    	, pat_dtl_addr
+    	, pat_zip
+    	, pat_first_date
+    	, pat_last_date
+    	, pat_frgnr_yn
+    	) VALUES (
+        #{patCode}
+        , #{patName}
+        , #{patTel}
+        , #{patIhidnum}
+        , 
+        CASE
+		  WHEN  substr(#{patIhidnum},8,1) = '1' or  substr(#{patIhidnum},8,1) = '2' THEN '19'||substr(#{patIhidnum},0,6)
+		  ELSE '20'||substr(#{patIhidnum},0,6)
+		END
+		,
+        CASE
+		  WHEN  substr(#{patIhidnum},8,1) = '1' or  substr(#{patIhidnum},8,1) = '3' THEN 'M'
+		  ELSE 'F'
+		END
+		, #{patAddr}
+		, #{patDtlAddr}
+		,#{patZip}
+		, SYSDATE
+		, SYSDATE
+		,
+        CASE
+		  WHEN  substr(#{patIhidnum},8,1) in ('1','2','3','4') THEN 'N'
+		  ELSE 'Y'
+		END
+        )
+</insert>
+	<!-- 환자 정보 수정, 수정 내역은 이름, 전화번호, 주소, 세부주소, 우편번호 -->
+	<update id="updatePat" parameterType="patientVO">
+	/* updatePat */
+		UPDATE 
+			tb_patient
+		SET 
+			pat_name = #{patname}
+			, pat_tel = #{pattel}
+			, pat_addr = #{pataddr}
+			, pat_dtl_addr = #{patdtladdr}
+			, pat_zip = #{patzip}
+		WHERE 
+			pat_code = #{patCode}
+	</update>
+	
+	<!-- 환자 정보 삭제(필요 없을거 같긴 한데 일단 만듦) -->
+	<delete id="deletePat" parameterType="patientVO">
+	/* deletePat */
+		DELETE 
+		FROM 
+			tb_patient
+		WHERE 
+			pat_code = #{patCode}
+	</delete>
+	
+	<!-- 환자 list 조회 -->
+	<select id="selectPats" resultType="patientVO">
+	/* selectPats */
+		SELECT 
+			pat_code
+			, pat_name
+			, pat_tel
+			, pat_ihidnum
+			, pat_brthdy
+			, pat_gen_code
+		 	, pat_addr
+		 	, pat_dtl_addr
+		 	, pat_zip
+		 	, pat_first_date
+		 	, pat_last_date
+		 	, pat_frgnr_yn
+		 	, pat_hsptlz_status
+		FROM 
+			tb_patient
+	</select>
+	
+	<!-- 환자 코드로 한명 검색 -->
+	<select id="selectByCode" resultType="patientVO">
+	/* selectByCode */
+		SELECT 
+			pat_code
+			, pat_name
+			, pat_tel
+			, pat_ihidnum
+			, pat_brthdy
+			, pat_gen_code
+			, pat_addr
+			, pat_dtl_addr
+			, pat_zip
+			, pat_first_date
+			, pat_last_date
+			, pat_frgnr_yn
+			, pat_hsptlz_status
+		FROM 
+			tb_patient
+		WHERE 
+			pat_code = #{patCode}
+	</select>
+	
+	<!-- 환자 검색창에서 환자 이름으로 해당 환자들 검색!!!List반환임 -->
+	<select id="selectByName" resultType="patientVO" parameterType="String">
+	/* selectByName */
+		SELECT 
+			pat_code
+			, pat_name
+			, pat_tel
+			, pat_ihidnum
+			, pat_brthdy
+			, pat_gen_code
+			, pat_addr
+			, pat_dtl_addr
+			, pat_zip
+			, pat_first_date
+			, pat_last_date
+			, pat_frgnr_yn
+			, pat_hsptlz_status 
+		FROM 
+			tb_patient
+		WHERE 
+			pat_name LIKE '%'|| #{patName} ||'%'
+	</select>
+	
+	<select id="selectPatNoByName" parameterType="patientVO" resultType="patientVO">
+	/*selectPatNoByName*/
+	SELECT
+		pat_code
+	FROM
+		tb_patient
+	WHERE
+		pat_name = #{patName}
+	AND
+		pat_ihidnum = #{patIhidnum}
+	</select>
+	
+	<update id="updatePatLastDate" parameterType="patientVO">
+	/*updatePatLastDate*/
+	UPDATE 
+		tb_patient
+	SET
+		pat_last_date = sysdate
+	WHERE
+		pat_code = #{patCode}
+	</update>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[3.9.15.202012132206-RELEASE]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[true]]></enableImports>
+	<configs>
+		<config>src/main/resources/config/spring/root-context.xml</config>
+		<config>src/main/resources/config/spring/servlet-context.xml</config>
+		<config>src/main/resources/config/spring/tiles-config.xml</config>
+		<config>src/main/resources/config/spring/websocket-context.xml</config>
+	</configs>
+	<autoconfigs>
+	</autoconfigs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>

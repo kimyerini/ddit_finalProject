@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- Root Context: 모든 다른 웹 컴포넌트들에게 공유되는 자원 설정 -->
+
+	<!-- 어노테이션 자바 설정 활성화 -->
+	<context:annotation-config />
+
+	<!-- 파일업로드 디렉토리 설정 -->
+	<!-- <bean id="uploadPath" class="java.lang.String"> -->
+	<!-- <constructor-arg value="c:\\upload" /> -->
+	<!-- </bean> -->
+
+	<!-- 스프링 AOP 활성화 -->
+	<aop:aspectj-autoproxy />
+
+	<!-- kr.or.ddit.aop 패키지를 컴포넌트 스캔 대상으로 등록 <context:component-scan base-package="aop패키지" 
+		/> -->
+
+
+	<import resource="database-context.xml" />
+	<import resource="security-context.xml" />
+
+	<!-- mailSender 빈 설정 (메일)-->
+	<bean id="mailSender"
+		class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.naver.com" />
+		<property name="port" value="465" />
+		<property name="username" value="hyokee5115@naver.com" /> <!-- 이메일 아이디 -->
+		<property name="password" value="ddit402!" /> <!-- 이메일 비밀번호 -->
+		<!-- 보안연결 SSL과 관련된 설정 -->
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.smtps.checkserveridentity">true</prop>
+				<prop key="mail.smtps.ssl.trust">*</prop>
+				<prop key="mail.debug">true</prop>
+				<prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 파일업로드 윈도우 물리경로 자바빈 -->
+	<bean id="uploadFolder" class="java.lang.String">
+		<constructor-arg value="D:\\mytool\\sts3WS\\202303F_Team1\\src\\main\\webapp\\resources\\upload"></constructor-arg>
+	</bean>
+
+	<!-- 파일업로드 설정 시작 -->
+	<bean id="multipartResolver" 
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="10485760" /><!-- bytes -->
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+		<!-- 파일업로드 디렉토리 설정 -->
+	<bean id="uploadPath" class="java.lang.String">
+		<constructor-arg value="c:\\upload" />
+	</bean>
+	<!-- 파일업로드 설정 끝 -->
+	
+		<!-- 트랜잭션 관리자의 빈을 정의 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>	
+	
+	<!-- 애너테이션 기반의 트랜잭션 제어를 활성화 함 -->
+	<tx:annotation-driven/>
+</beans>
+	 

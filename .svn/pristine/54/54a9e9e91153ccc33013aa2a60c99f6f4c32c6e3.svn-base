@@ -1,0 +1,24 @@
+ package kr.or.ddit.item.vo;
+
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class MediItemReqDetailVO {
+
+	private int mediItemReqNo;
+	private String mediItemCode;
+	private int mediItemReqQy;
+	private int mediItemReqTotal;
+	private int mediItemOrderNo;
+	private String mediItemConfirmYsno;
+	private Date mediItemOrderDate;
+	private String mediItemReturnWhy;
+	private String empNo;
+	
+}

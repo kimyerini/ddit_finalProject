@@ -1,0 +1,864 @@
+﻿<!DOCTYPE html>
+<html>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<head>
+<title></title>
+<meta http_quiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="orderdoc_style.css">
+</head>
+<body>
+	<div class="hpa" style="width: 210mm; height: 296.99mm;">
+		<div class="hcD" style="left: 20mm; top: 25mm;">
+			<div class="hcI">
+				<div class="hls ps0"
+					style="line-height: 247.78mm; white-space: nowrap; left: 0mm; top: 0mm; height: 247.78mm; width: 170mm;">
+					<div class="htb"
+						style="width: 170mm; height: 247.78mm; display: inline-block; position: relative; vertical-align: -15%; line-height: 247.78mm;">
+						<svg class="hs" viewBox="-2.50 -2.50 175 252.78"
+							style="left: -2.50mm; top: -2.50mm; width: 175mm; height: 252.78mm;">
+							<defs>
+							<pattern id="w_00" width="10" height="10"
+								patternUnits="userSpaceOnUse">
+							<rect width="10" height="10" fill="rgb(255,255,255)" /></pattern></defs>
+							<path fill="url(#w_00)"
+								d="M141.02,0L168.01,0L168.01,7.75L141.02,7.75L141.02,0Z "></path>
+							<path d="M0,0 L0,245.78"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M26.03,30.40 L26.03,70.07"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M33.60,70.07 L33.60,189.07"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M67.20,70.07 L67.20,198.98"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M84,40.32 L84,50.24"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M84,60.15 L84,70.07"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M100.80,70.07 L100.80,189.07"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M109.03,40.32 L109.03,50.24"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M109.03,60.15 L109.03,70.07"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M134.39,70.07 L134.39,189.07"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M141.02,0 L141.02,30.40"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M168.01,0 L168.01,245.78"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,0 L168.07,0"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M140.96,7.75 L168.07,7.75"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,30.40 L168.07,30.40"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,40.32 L168.07,40.32"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,50.23 L168.07,50.23"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,60.15 L168.07,60.15"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,70.07 L168.07,70.07"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,79.98 L168.07,79.98"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,89.90 L168.07,89.90"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,99.81 L168.07,99.81"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,109.73 L168.07,109.73"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,119.65 L168.07,119.65"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,129.56 L168.07,129.56"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,139.48 L168.07,139.48"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,149.40 L168.07,149.40"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,159.31 L168.07,159.31"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,169.23 L168.07,169.23"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,179.15 L168.07,179.15"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,189.06 L168.07,189.06"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,198.98 L168.07,198.98"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,245.78 L168.07,245.78"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M168.01,0 L168.01,245.78"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M0,0 L0,245.78"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,245.78 L168.07,245.78"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path>
+							<path d="M-0.06,0 L168.07,0"
+								style="stroke:#000000;stroke-linecap:butt;stroke-width:0.12;"></path></svg>
+						<div class="hce"
+							style="left: 0mm; top: 0mm; width: 141.02mm; height: 30.40mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.53mm;">
+									<div class="hls ps20"
+										style="line-height: 1.31mm; white-space: nowrap; left: 0mm; top: -0.09mm; height: 1.76mm; width: 137.41mm;"></div>
+									<div class="hls ps20"
+										style="line-height: 1.31mm; white-space: nowrap; left: 0mm; top: 2.73mm; height: 1.76mm; width: 137.41mm;"></div>
+									<div class="hls ps20"
+										style="line-height: 1.31mm; white-space: nowrap; left: 0mm; top: 5.56mm; height: 1.76mm; width: 137.41mm;"></div>
+									<div class="hls ps20"
+										style="line-height: 8.29mm; white-space: nowrap; left: 0mm; top: 8.03mm; height: 8.82mm; width: 137.41mm;">
+										<span class="hrt cs9">발주서</span>
+									</div>
+									<div class="hls ps20"
+										style="line-height: 1.31mm; white-space: nowrap; left: 0mm; top: 22.49mm; height: 1.76mm; width: 137.41mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 141.02mm; top: 0mm; width: 26.99mm; height: 7.75mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 1.61mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 23.38mm;">
+										<span class="hrt cs7">원부대조필 인</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 141.02mm; top: 7.75mm; width: 26.99mm; height: 22.65mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 9.94mm;">
+									<div class="hls ps20"
+										style="line-height: 1.31mm; white-space: nowrap; left: 0mm; top: -0.09mm; height: 1.76mm; width: 23.38mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 30.40mm; width: 26.03mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 22.42mm;">
+										<span class="hrt cs7">등록번호</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 26.03mm; top: 30.40mm; width: 141.98mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps21"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 138.37mm;">
+										<span class="hrt cs7">306-82-05291</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 40.32mm; width: 26.03mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 22.42mm;">
+										<span class="hrt cs7">상호</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 26.03mm; top: 40.32mm; width: 57.98mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps21"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 54.37mm;">
+										<span class="hrt cs7">대덕 아작(나)스 병원</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 84mm; top: 40.32mm; width: 25.03mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 21.42mm;">
+										<span class="hrt cs7">대표자성명</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 109.03mm; top: 40.32mm; width: 58.97mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps21"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 55.37mm;">
+										<span class="hrt cs7">윤강혁</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 50.23mm; width: 26.03mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 22.42mm;">
+										<span class="hrt cs7">주소</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 26.03mm; top: 50.23mm; width: 141.98mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps21"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 138.37mm;">
+										<span class="hrt cs7">대전광역시 중구 계룡로 846, 3-4층</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 60.15mm; width: 26.03mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 22.42mm;">
+										<span class="hrt cs7">전화번호</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 26.03mm; top: 60.15mm; width: 57.98mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps21"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 54.37mm;">
+										<span class="hrt cs7">042-222-8202</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 84mm; top: 60.15mm; width: 25.03mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 21.42mm;">
+										<span class="hrt cs7">FAX</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 109.03mm; top: 60.15mm; width: 58.97mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps21"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 55.37mm;">
+										<span class="hrt cs7">070-8768-2972</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 70.07mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;">
+										<span class="hrt cs7">No</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 70.07mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;">
+										<span class="hrt cs7">품명</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 70.07mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;">
+										<span class="hrt cs7">단가</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 70.07mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;">
+										<span class="hrt cs7">수량</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 70.07mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;">
+										<span class="hrt cs7">총액</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 79.98mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 79.98mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 79.98mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 79.98mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 79.98mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 89.90mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 89.90mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 89.90mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 89.90mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 89.90mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 99.81mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 99.81mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 99.81mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 99.81mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 99.81mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 109.73mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 109.73mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 109.73mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 109.73mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 109.73mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 119.65mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 119.65mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 119.65mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 119.65mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 119.65mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 129.56mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 129.56mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 129.56mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 129.56mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 129.56mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 139.48mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 139.48mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 139.48mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 139.48mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 139.48mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 149.40mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 149.40mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 149.40mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 149.40mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 149.40mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 159.31mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 159.31mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 159.31mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 159.31mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 159.31mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 169.23mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 169.23mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 169.23mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 169.23mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 169.23mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 179.15mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 33.60mm; top: 179.15mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 179.15mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 100.80mm; top: 179.15mm; width: 33.60mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 134.39mm; top: 179.15mm; width: 33.61mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 30.01mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 189.06mm; width: 67.20mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 63.60mm;">
+										<span class="hrt cs7">합계</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 67.20mm; top: 189.06mm; width: 100.81mm; height: 9.92mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 2.70mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 97.21mm;"></div>
+								</div>
+							</div>
+						</div>
+						<div class="hce"
+							style="left: 0mm; top: 198.98mm; width: 168.01mm; height: 46.80mm;">
+							<div class="hcD" style="left: 1.80mm; top: 0.50mm;">
+								<div class="hcI" style="top: 15.49mm;">
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: -0.18mm; height: 3.53mm; width: 164.41mm;">
+										<span class="hrt cs7">&nbsp;&nbsp;&nbsp;년
+											&nbsp;&nbsp;&nbsp;&nbsp;월 &nbsp;&nbsp;&nbsp;&nbsp;일</span>
+									</div>
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: 5.47mm; height: 3.53mm; width: 164.41mm;"></div>
+									<div class="hls ps20"
+										style="line-height: 2.79mm; white-space: nowrap; left: 0mm; top: 11.11mm; height: 3.53mm; width: 164.41mm;">
+										<span class="hrt cs7">다음과 같이 발주합니다.</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

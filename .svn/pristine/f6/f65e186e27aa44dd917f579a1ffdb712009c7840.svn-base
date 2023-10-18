@@ -1,0 +1,26 @@
+package kr.or.ddit.board.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import kr.or.ddit.board.vo.NoticeBoardVO;
+
+@Mapper
+public interface NoticeMapper {
+
+	// select List
+	public List<NoticeBoardVO> noticeList();
+	
+	// select one
+	public NoticeBoardVO oneNotice();
+	
+	// insert
+	public int insertNotice(NoticeBoardVO noticeBoardVO);
+	
+	// update
+	public int updateNotice(NoticeBoardVO noticeBoardVO);
+	
+	// delete
+	public int deleteNoticeVO(NoticeBoardVO noticeBoardVO);
+}

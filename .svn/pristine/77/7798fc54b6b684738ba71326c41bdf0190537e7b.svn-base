@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.clinic.mapper.ClinicMapper">
+
+	<!-- 환자 코드로 한명 검색 -->
+	<select id="selectPatInfo" parameterType="kr.or.ddit.patient.vo.PatientVO" resultType="kr.or.ddit.patient.vo.PatientVO">
+		SELECT 
+			PAT_CODE      , 
+			PAT_NAME      , 
+			PAT_TEL       , 
+			PAT_IHIDNUM   , 
+			TO_CHAR(TO_DATE(PAT_BRTHDY),'YYYY-MM-DD') as PAT_BRTHDY,
+		   (SELECT C1.COM_CODE_NAME FROM TB_PATIENT P1, TB_COMMON_CODE C1 
+         WHERE P1.PAT_GEN_CODE = C1.COM_CODE AND P1.PAT_CODE = #{patCode} AND C1.COM_CODE_GRP = 'GEND') AS PAT_GEN_CODE , 
+	    	PAT_ADDR      , 
+	    	PAT_DTL_ADDR, 
+	    	PAT_ZIP       , 
+	    	to_char(PAT_FIRST_DATE,'yyyy-mm-dd') AS PAT_FIRST_DATE,
+	    	to_char(PAT_LAST_DATE,'yyyy-mm-dd') AS PAT_LAST_DATE ,     
+	    	PAT_HSPTLZ_OUT_PLAN,     
+		 (SELECT C3.COM_CODE_NAME FROM TB_PATIENT P3, TB_COMMON_CODE C3
+         WHERE P3.PAT_FRGNR_YN = C3.COM_CODE AND P3.PAT_CODE = #{patCode} AND C3.COM_CODE_GRP = 'YSNO') AS PAT_FRGNR_YN ,		    
+		 (SELECT C2.COM_CODE_NAME FROM TB_PATIENT P2, TB_COMMON_CODE C2 
+         WHERE P2.PAT_HSPTLZ_STATUS = C2.COM_CODE AND P2.PAT_CODE = #{patCode} AND C2.COM_CODE_GRP = 'HSPT') AS PAT_HSPTLZ_STATUS  
+		FROM TB_PATIENT
+		WHERE PAT_CODE = #{patCode}
+	</select>
+	
+	<!-- 의사) 환자 접수 상세보기!-->
+	<!-- 나이는 코드 짤때 계산하깅 (SYSDATE-PAT_BRTHDY)-->
+	<select id="receiptDetail" parameterType="patientRecieptVO" resultType="patientRecieptVO">
+		SELECT 
+			A.PAT_CODE     ,
+		    A.PAT_NAME     ,
+		    TO_CHAR(TO_DATE(A.PAT_BRTHDY),'YYYY-MM-DD') as PAT_BRTHDY,
+            (SELECT 
+          	 	C1.COM_CODE_NAME 
+            	FROM TB_PATIENT P1
+                INNER JOIN TB_COMMON_CODE C1 ON P1.PAT_GEN_CODE = C1.COM_CODE 
+                INNER JOIN TB_RECEIPT R1 ON P1.PAT_CODE = R1.PAT_CODE
+	            WHERE R1.RCEPT_NO = #{rceptNo} AND 
+	            C1.COM_CODE_GRP = 'GEND') AS PAT_GEN_CODE,                     
+            (SELECT 
+            	C2.COM_CODE_NAME 
+	            FROM TB_PATIENT P2
+                INNER JOIN TB_COMMON_CODE C2 ON P2.PAT_HSPTLZ_STATUS = C2.COM_CODE 
+                INNER JOIN TB_RECEIPT R2 ON P2.PAT_CODE = R2.PAT_CODE
+	            WHERE R2.RCEPT_NO = #{rceptNo} AND 
+	            C2.COM_CODE_GRP = 'HSPT') AS PAT_HSPTLZ_STATUS,		  
+            (SELECT 
+            	C3.COM_CODE_NAME 
+	            FROM TB_RECEIPT R3
+	            INNER JOIN TB_COMMON_CODE C3 ON R3.RCEPT_FIRST_EXAM_CODE = C3.COM_CODE
+	            INNER JOIN TB_PATIENT P3 ON R3.PAT_CODE = P3.PAT_CODE
+	            WHERE R3.RCEPT_NO = #{rceptNo} AND
+	            C3.COM_CODE_GRP = 'FEXM') AS RCEPT_FIRST_EXAM_CODE,
+		   (SELECT 
+		   		C4.COM_CODE_NAME
+	            FROM TB_RECEIPT R4
+	            INNER JOIN TB_COMMON_CODE C4 ON R4.RCEPT_DAY_CODE = C4.COM_CODE
+	            INNER JOIN TB_PATIENT P4 ON R4.PAT_CODE = P4.PAT_CODE
+	            WHERE R4.RCEPT_NO = #{rceptNo} AND 
+	            C4.COM_CODE_GRP = 'DAYN') AS RCEPT_DAY_CODE,
+		    B.RCEPT_NO    ,
+		    to_char(B.RECEPT_TIME,'yyyy-mm-dd') AS RECEPT_TIME,
+		    B.RCEPT_MEMO
+		FROM TB_PATIENT A
+		INNER JOIN TB_RECEIPT B ON A.PAT_CODE = B.PAT_CODE
+		WHERE B.RCEPT_NO= #{rceptNo}
+    </select>
+
+<!-- 	의사) 진료내역 등록날짜별로 출력 -->
+	<select id="getRegDateList" parameterType="clinicChartRecPatVO" resultType="clinicChartRecPatVO">
+        SELECT 
+        TO_CHAR(A.DETAIL_REG_DATE, 'YYYY-MM-DD') AS DETAIL_REG_DATE,
+        A.TREAT_NO
+        FROM TB_CHART_DETAIL A
+        INNER JOIN TB_CLINIC B ON B.TREAT_NO = A.TREAT_NO
+        INNER JOIN TB_RECEIPT C ON C.RCEPT_NO = B.RCEPT_NO
+        INNER JOIN TB_PATIENT D ON D.PAT_CODE = C.PAT_CODE
+        WHERE D.PAT_CODE = #{patCode} AND B.CLNIC_STTUS_CODE NOT IN ('FAIL', 'CING')
+    </select>
+
+<!-- 의사) 대기환자 목록 조회 (사번으로 조회)-->
+	<select id="selectWaitPat" resultType="kr.or.ddit.receipt.vo.WaitPatVO" parameterType="kr.or.ddit.receipt.vo.WaitPatVO">
+	    SELECT 
+	    	c.treat_no as treat_no
+	    	, c.clnic_sttus_code as clnic_sttus_code
+	    	, r.rcept_no as rcept_no
+	        , p.pat_name  as pat_name
+	        , p.pat_code as pat_code
+	        , TO_CHAR(sysdate,'YYYY') - SUBSTR(p.pat_brthdy,0,4) as pat_age
+	        , TO_CHAR(TO_DATE(p.pat_brthdy),'YYYY-MM-DD') as pat_brthdy
+	        , c2.com_code_name as pat_gen
+	        , c1.com_code_name as pat_wait
+	        , c3.com_code_name as pat_path
+	        , c4.com_code_name as pat_first
+	        , c5.com_code_name as pat_day
+	        , c6.com_code_name as pat_hsptlz_status
+	        , e.emp_nm as emp_nm
+        	, hf.hos_fc_name as hos_fc_name
+        	, r.recept_time
+        FROM tb_clinic c
+        INNER JOIN tb_receipt r 
+            INNER JOIN tb_patient p 
+                    INNER JOIN tb_common_code c2 
+                    ON p.pat_gen_code = c2.com_code 
+                    AND c2.com_code_grp = 'GEND'
+                    INNER JOIN tb_common_code c6
+		            ON p.pat_hsptlz_status = c6.com_code 
+		            AND c6.com_code_grp = 'HSPT'
+            ON r.pat_code = p.pat_code
+            INNER JOIN tb_common_code c3
+            ON r.rcept_path_code = c3.com_code  
+            AND c3.com_code_grp = 'PVST'
+            INNER JOIN tb_common_code c4
+            ON r.rcept_first_exam_code = c4.com_code 
+            AND c4.com_code_grp = 'FEXM'
+            INNER JOIN tb_common_code c5
+            ON r.rcept_day_code = c5.com_code 
+            AND c5.com_code_grp = 'DAYN'
+         ON c.rcept_no = r.rcept_no
+         INNER JOIN tb_clinic_schedule cs
+             INNER JOIN tb_hospital_facility hf 
+             ON hf.HOS_FC_NO = cs.HOS_FC_NO
+             INNER JOIN tb_employee e
+             ON e.emp_no = cs.emp_no
+         ON r.schd_no = cs.schd_no
+         INNER JOIN tb_common_code c1 
+         ON c.clnic_sttus_code = c1.com_code 
+         AND c1.com_code_grp = 'STAT'
+         WHERE cs.emp_no=#{empNo} AND c.clnic_sttus_code IN ('INWT','IEND','IING','WAIT','CING','PHWT')
+         ORDER BY r.rcept_no
+	</select>
+    
+ <!-- 원무과) 대기환자 목록 조회 -->   
+    <select id="officeWaitPat" resultType="kr.or.ddit.receipt.vo.WaitPatVO">
+       SELECT 
+          c.treat_no as treat_no
+          , r.rcept_no as rcept_no
+           , p.pat_name  as pat_name
+           , p.pat_code as pat_code
+           , p.pat_hsptlz_status
+           , TO_CHAR(sysdate,'YYYY') - SUBSTR(p.pat_brthdy,0,4) as pat_age
+           , TO_CHAR(TO_DATE(p.pat_brthdy),'YYYY-MM-DD') as pat_brthdy
+           , c2.com_code_name as pat_gen
+           , c1.com_code_name as pat_wait
+           , c3.com_code_name as pat_path
+           , c4.com_code_name as pat_first
+           , c5.com_code_name as pat_day
+           , e.emp_nm as emp_nm
+           , hf.hos_fc_name as hos_fc_name
+           , r.recept_time
+        FROM tb_clinic c
+        INNER JOIN tb_receipt r 
+            INNER JOIN tb_patient p 
+                    INNER JOIN tb_common_code c2 
+                    ON p.pat_gen_code = c2.com_code 
+                    AND c2.com_code_grp = 'GEND'
+            ON r.pat_code = p.pat_code
+            INNER JOIN tb_common_code c3
+            ON r.rcept_path_code = c3.com_code  
+            AND c3.com_code_grp = 'PVST'
+            INNER JOIN tb_common_code c4
+            ON r.rcept_first_exam_code = c4.com_code 
+            AND c4.com_code_grp = 'FEXM'
+            INNER JOIN tb_common_code c5
+            ON r.rcept_day_code = c5.com_code 
+            AND c5.com_code_grp = 'DAYN'
+         ON c.rcept_no = r.rcept_no
+         INNER JOIN tb_clinic_schedule cs
+             INNER JOIN tb_hospital_facility hf 
+             ON hf.HOS_FC_NO = cs.HOS_FC_NO
+             INNER JOIN tb_employee e
+             ON e.emp_no = cs.emp_no
+         ON r.schd_no = cs.schd_no
+         INNER JOIN tb_common_code c1 
+         ON c.clnic_sttus_code = c1.com_code 
+         AND c1.com_code_grp = 'STAT'
+         WHERE c.clnic_sttus_code != 'FAIL'
+         ORDER BY c.treat_no
+   </select>
+   
+   
+   <!-- 의사) 환자 호출 시 환자 상태 변경 -->
+   <update id="updateCing" parameterType="clinicVO">
+	    update TB_CLINIC set CLNIC_STTUS_CODE = 'CING'
+		where TREAT_NO = #{treatNo} AND CLNIC_STTUS_CODE = 'WAIT'
+   </update>
+   
+   
+    <!-- 의사) 등록날짜로 차트 조회하기 -->
+    <select id="getChartByRegDate" parameterType="chartDetailByDateVO" resultType="chartDetailByDateVO">
+	SELECT 
+	    TO_CHAR(CD.DETAIL_REG_DATE, 'YYYY-MM-DD') AS DETAIL_REG_DATE,
+        (SELECT  CC1.COM_CODE_NAME FROM TB_COMMON_CODE CC1 WHERE CC1.COM_CODE_GRP = 'FEXM' AND  R.RCEPT_FIRST_EXAM_CODE = CC1.COM_CODE) AS RCEPT_FIRST_EXAM_CODE,	
+        (SELECT  CC1.COM_CODE_NAME FROM TB_COMMON_CODE CC1 WHERE CC1.COM_CODE_GRP = 'DAYN' AND  R.RCEPT_DAY_CODE = CC1.COM_CODE) AS RCEPT_DAY_CODE,
+        (SELECT  CC1.COM_CODE_NAME FROM TB_COMMON_CODE CC1 WHERE CC1.COM_CODE_GRP = 'HSPT' AND  P.PAT_HSPTLZ_STATUS = CC1.COM_CODE) AS PAT_HSPTLZ_STATUS,
+		CD.DETAIL_MEMO, 
+	    D.DISS_CODE_NO, 
+	    D.DISS_ENG_NAME, 
+	    D.DISS_KOR_NAME, 
+	    T.TRE_CONTENT, 
+	    P.PHYSIO_CONTENT, 
+	    I.INSPC_TYPE, 
+	    MIL.MEDI_ITEM_NAME, 
+	    RT.RCIV_PAYMENT
+	FROM TB_CHART_DETAIL CD
+	INNER JOIN TB_CLINIC C ON CD.TREAT_NO = C.TREAT_NO 
+	INNER JOIN TB_RECEIPT R ON C.RCEPT_NO = R.RCEPT_NO 
+	INNER JOIN TB_PATIENT P   ON R.PAT_CODE = P.PAT_CODE
+	LEFT JOIN TB_RECEIPTION RT ON C.TREAT_NO = RT.TREAT_NO 
+	LEFT JOIN TB_DISEASE D ON CD.DISS_CODE_NO = D.DISS_CODE_NO 
+	LEFT JOIN TB_TREATMENT_LIST TL ON CD.DETAIL_NO = TL.DETAIL_NO
+	LEFT JOIN TB_TREATMENT T ON TL.TRE_CODE = T.TRE_CODE     	  
+	LEFT JOIN TB_PHYSIOTHERAPY_LIST PL ON CD.DETAIL_NO = PL.DETAIL_NO  
+	LEFT JOIN TB_PHYSIOTHERAPY P ON PL.PHYSIO_CODE = P.PHYSIO_CODE
+	LEFT JOIN TB_INSPECTION_LIST IL ON CD.DETAIL_NO = IL.DETAIL_NO   
+	LEFT JOIN TB_INSPECTION I ON IL.INSPC_CODE = I.INSPC_CODE          
+	LEFT JOIN TB_PRESCRIPTION PR ON CD.DETAIL_NO = PR.DETAIL_NO 
+	LEFT JOIN TB_MEDI_ITEM_LIST MIL ON PR.MEDI_ITEM_CODE = MIL.MEDI_ITEM_CODE	
+	WHERE TO_CHAR(CD.DETAIL_REG_DATE,'YYYY-MM-DD') LIKE #{detailRegDate}||'%' AND P.PAT_CODE = #{patCode} AND C.TREAT_NO = #{treatNo} AND C.CLNIC_STTUS_CODE != 'FAIL'
+</select>
+
+
+<!-- 의사) 차트번호 출력 -->
+<select id="getChartDetailNo" resultType="kr.or.ddit.clinic.vo.ChartDetailVO">
+       SELECT 
+       	TO_CHAR(SYSDATE,'YYMM') || '06' || TRIM(TO_CHAR(NVL((SELECT MAX(TO_NUMBER(SUBSTR(DETAIL_NO,-3))) 
+       	FROM TB_CHART_DETAIL WHERE DETAIL_NO LIKE  TO_CHAR(SYSDATE,'YYMM')||'%'),0)+1, '000')) 
+       AS DETAIL_NO
+       FROM dual
+</select>
+
+<!-- 의사) 진료번호 출력 -->
+<!-- <select id="getTreatNo" resultType="kr.or.ddit.clinic.vo.ClinicVO"> -->
+<!--        SELECT TO_CHAR(SYSDATE,'YYMM') || '05'  -->
+<!--            || TRIM(TO_CHAR(NVL((SELECT MAX(TO_NUMBER(SUBSTR(TREAT_NO,-3)))  -->
+<!--            FROM TB_CLINIC WHERE TREAT_NO LIKE  TO_CHAR(SYSDATE,'YYMM')||'%'),0)+1, '000'))  -->
+<!--            AS TREAT_NO -->
+<!--        FROM dual -->
+<!-- </select> -->
+
+<!-- 의사) 차트 틀 입력 -->
+<insert id="insertChartBefore" parameterType="kr.or.ddit.clinic.vo.ChartDetailVO">
+	insert into TB_CHART_DETAIL
+		(
+		 DETAIL_NO, 
+		 DISS_CODE_NO,
+		 TREAT_NO, 
+		 DETAIL_REG_DATE, 
+		 P_DETAIL_NO, 
+		 DETAIL_MEMO
+	 	)   
+	values(#{detailNo},null,#{treatNo},SYSDATE,null,null)
+</insert>
+
+<!--     <selectKey resultType="String" order="BEFORE" keyProperty="treatNo"> -->
+<!--         SELECT TO_CHAR(SYSDATE,'YYMM') || '05'  -->
+<!--             || TRIM(TO_CHAR(NVL((SELECT MAX(TO_NUMBER(SUBSTR(TREAT_NO,-3)))  -->
+<!--             FROM TB_CLINIC WHERE TREAT_NO LIKE  TO_CHAR(SYSDATE,'YYMM')||'%'),0)+1, '000'))  -->
+<!--         FROM dual -->
+<!--     </selectKey> -->
+
+<!-- /////////////////////////// 오더시작  ////////////////////////// -->
+
+<!-- 의사) 검사오더 조회 -->
+<select id="getInspection" resultType="kr.or.ddit.order.vo.InspectionVO">
+	SELECT 
+		INSPC_CODE, 
+		INSPC_COST, 
+		INSPC_TYPE
+	FROM tb_inspection
+</select>
+
+
+<!-- 의사) 검사오더 검색 -->
+<select id="searchInspection" parameterType="kr.or.ddit.order.vo.InspectionVO" resultType="kr.or.ddit.order.vo.InspectionVO">
+	SELECT 
+		INSPC_CODE, 
+		INSPC_COST, 
+		INSPC_TYPE
+	FROM tb_inspection
+	WHERE INSPC_TYPE LIKE '%'|| #{searchInspc} ||'%' 
+	OR INSPC_COST LIKE '%'|| #{searchInspc} ||'%' 
+	OR INSPC_CODE LIKE '%'|| #{searchInspc} ||'%'
+</select>
+
+
+<!-- 의사) 검사오더 요청 -->
+<insert id="insertInspcOrder" parameterType="kr.or.ddit.order.vo.InspectionListVO">
+	insert into tb_inspection_list
+		(
+			DETAIL_NO, 
+			INSPC_CODE, 
+			INSPC_STATUS, 
+			EMP_NO,
+			INSPC_COST, 
+			INSPC_MEMO, 
+			COM_FILE_CODE, 
+			INSPC_DATE
+		)
+	values(#{detailNo},#{inspcCode},'STBY',null,#{inspcCost},#{inspcMemo},null,sysdate)
+</insert>
+
+<!-- 의사) 검사오더 요청하면서 상태 업데이트 -->
+    <update id="updateInspcStatus" parameterType="kr.or.ddit.clinic.vo.CliChtIspcVO">
+        UPDATE TB_CLINIC CL
+        SET CL.CLNIC_STTUS_CODE = 'INWT'
+        WHERE CL.TREAT_NO = #{treatNo}
+        AND EXISTS (
+            SELECT 1
+            FROM TB_CHART_DETAIL CD
+            INNER JOIN TB_INSPECTION_LIST IL ON CD.DETAIL_NO = IL.DETAIL_NO
+            WHERE CD.TREAT_NO = CL.TREAT_NO
+        )
+    </update>
+
+<!-- 의사) 검사완료 리스트 불러오기 -->
+<select id="getEndInspcList" resultType="kr.or.ddit.clinic.vo.CliChtIspcVO" parameterType="kr.or.ddit.clinic.vo.CliChtIspcVO">                       
+         SELECT 
+	         IL.DETAIL_NO, 
+	         IL.INSPC_CODE, 
+	         IL.INSPC_MEMO, 
+	         I.INSPC_TYPE
+         FROM TB_INSPECTION_LIST IL
+         INNER JOIN TB_INSPECTION I ON I.INSPC_CODE = IL.INSPC_CODE     
+         INNER JOIN TB_CHART_DETAIL CD ON IL.DETAIL_NO = CD.DETAIL_NO     
+         INNER JOIN TB_CLINIC C ON C.TREAT_NO = CD.TREAT_NO    
+         WHERE IL.DETAIL_NO = #{detailNo}      
+</select>
+
+<!-- 의사) 접수번호로 차트번호,진료번호  출력하기 -->
+<select id="getChtNoByRceptNo" resultType="kr.or.ddit.clinic.vo.ClinicChartRecPatVO" parameterType="kr.or.ddit.clinic.vo.ClinicChartRecPatVO">       
+		SELECT 
+			CD.TREAT_NO, 
+			CD.DETAIL_NO, 
+			R.PAT_CODE
+		FROM TB_CHART_DETAIL CD
+		INNER JOIN TB_CLINIC C ON C.TREAT_NO = CD.TREAT_NO
+		INNER JOIN TB_RECEIPT R ON C.RCEPT_NO = R.RCEPT_NO
+		WHERE R.RCEPT_NO=#{rceptNo}
+</select>
+
+<!--  의사) 조회버튼 눌렀을때 검사완료 사진 불러오기  -->
+ <select id="getInspcPhotoList" resultType="kr.or.ddit.order.vo.InspcFileVO" parameterType="kr.or.ddit.order.vo.InspcFileVO"> 
+          SELECT  
+	         IL.DETAIL_NO,  
+ 	         IL.INSPC_CODE,  
+ 	         IL.INSPC_MEMO,  
+	         AF.FILE_CODE,  
+ 	         AF.FILE_NAME,  
+ 	         AF.FILE_PHYSIC_PATH, 
+ 	         AF.FILE_WEB_PATH,
+ 	         I.INSPC_TYPE
+          FROM TB_INSPECTION_LIST IL 
+          INNER JOIN TB_INSPECTION I ON I.INSPC_CODE = IL.INSPC_CODE  
+          INNER JOIN TB_ATTACH_FILE AF ON AF.FILE_CODE = IL.DETAIL_NO || IL.INSPC_CODE         
+          WHERE AF.FILE_CODE = #{detailNo} || #{inspcCode} 
+</select> 
+
+
+<!-- 의사) 처치오더 조회 -->
+<select id="getTreat" resultType="kr.or.ddit.order.vo.TreatmentVO">
+	SELECT 
+		TRE_CODE, 
+		TRE_COSTS, 
+		TRE_CONTENT
+	FROM TB_TREATMENT
+</select>
+
+<!-- 의사) 처치오더 검색 -->
+<select id="searchTreat" parameterType="kr.or.ddit.order.vo.TreatmentVO" resultType="kr.or.ddit.order.vo.TreatmentVO">
+	SELECT 
+		TRE_CODE, 
+		TRE_COSTS, 
+		TRE_CONTENT
+	FROM TB_TREATMENT
+	WHERE TRE_CONTENT LIKE '%'|| #{searchTreat} ||'%'
+	OR TRE_COSTS LIKE '%'|| #{searchTreat} ||'%'
+	OR TRE_CODE LIKE '%'|| #{searchTreat} ||'%'
+</select>
+
+<!-- 의사) 처치오더 요청 -->
+<insert id="insertTreatOrder" parameterType="kr.or.ddit.order.vo.TreatmentListVO">
+    insert into TB_TREATMENT_LIST
+		(
+			DETAIL_NO,
+			TRE_CODE, 
+			TRE_STATUS, 
+			EMP_NO, 
+			TRE_DATE,
+			TRE_COSTS,
+			TRE_MEMO
+		)
+	values
+		(
+			#{detailNo},
+			#{treCode},
+			'STBY',
+			null,
+			sysdate,
+			#{treCosts},
+			#{treMemo}
+		)
+</insert>
+
+
+<!-- 의사) 치료오더 요청하면서 상태 업데이트 -->
+    <update id="updatePhysioStatus" parameterType="kr.or.ddit.clinic.vo.CliChtIspcVO">
+        UPDATE TB_CLINIC CL
+        SET CL.CLNIC_STTUS_CODE = 'PHWT'
+        WHERE CL.TREAT_NO = #{treatNo}
+        AND EXISTS 
+        	(
+	            SELECT 1
+	            FROM TB_CHART_DETAIL CD
+	            INNER JOIN TB_PHYSIOTHERAPY_LIST PL ON CD.DETAIL_NO = PL.DETAIL_NO
+	            WHERE CD.TREAT_NO = CL.TREAT_NO
+       		)
+    </update>
+
+<!-- 의사) 치료오더 조회 -->
+<select id="getPhysio" resultType="kr.or.ddit.order.vo.PhysiotherapyVO">
+	SELECT 
+		PHYSIO_CODE, 
+		PHYSIO_COST, 
+		PHYSIO_CONTENT
+	FROM TB_PHYSIOTHERAPY
+</select>
+
+<!-- 의사) 치료오더 검색 -->
+<select id="searchPhysio" parameterType="kr.or.ddit.order.vo.PhysiotherapyVO" resultType="kr.or.ddit.order.vo.PhysiotherapyVO">
+	SELECT 
+		PHYSIO_CODE, 
+		PHYSIO_COST, 
+		PHYSIO_CONTENT
+	FROM TB_PHYSIOTHERAPY
+	WHERE 
+	PHYSIO_CONTENT LIKE '%'|| #{searchPhysio} ||'%'
+	OR PHYSIO_COST LIKE '%'|| #{searchPhysio} ||'%'
+	OR PHYSIO_CODE LIKE '%'|| #{searchPhysio} ||'%'
+</select>
+
+<!-- 의사) 치료오더 요청 -->
+<insert id="insertPhysioOrder" parameterType="kr.or.ddit.order.vo.PhysioTherapyListVO">
+    insert into TB_PHYSIOTHERAPY_LIST
+		(
+			DETAIL_NO, 
+			PHYSIO_CODE,
+			PHYSIO_STATUS, 
+			EMP_NO, 
+			PHYSIO_COST,
+			PHYSO_DATE
+		)
+	values
+		(
+			#{detailNo},
+			#{physioCode},
+			'STBY',
+			null,
+			#{physioCost},
+			sysdate
+		)
+</insert>
+
+
+<!--  의사) 질병 조회-->
+<select id="getDisease" resultType="kr.or.ddit.clinic.vo.DiseaseVO">
+	SELECT 
+		DISS_CODE_NO, 
+		DISS_ENG_NAME, 
+		DISS_KOR_NAME
+	FROM TB_DISEASE
+</select>
+
+
+<!--  의사) 질병 검색-->
+<select id="searchDisease" parameterType="kr.or.ddit.clinic.vo.DiseaseVO" resultType="kr.or.ddit.clinic.vo.DiseaseVO">
+	SELECT 
+		DISS_CODE_NO, 
+		DISS_ENG_NAME, 
+		DISS_KOR_NAME
+	FROM TB_DISEASE
+	WHERE 
+	DISS_KOR_NAME LIKE '%'|| #{searchDiss} ||'%'
+	OR DISS_ENG_NAME LIKE '%'|| #{searchDiss} ||'%'
+	OR DISS_CODE_NO LIKE '%'|| #{searchDiss} ||'%'
+</select>
+
+<!--  의사) 처방오더 조회-->
+<select id="getMedi" resultType="kr.or.ddit.item.vo.MediItemListVO">
+	SELECT
+	    M.MEDI_ITEM_CODE,
+	    M.MEDI_ITEM_NAME,
+	    M.MEDI_ITEM_MAKR,
+	    M.MEDI_ITEM_UNIT,
+	    C.COM_CODE_NAME AS NARCOTIC_YN,
+	    M.MEDI_ITEM_USAGE,
+	    M.MEDI_ITEM_PRICE
+	FROM TB_MEDI_ITEM_LIST M
+	LEFT JOIN TB_COMMON_CODE C ON M.NARCOTIC_YN = C.COM_CODE AND C.COM_CODE_GRP = 'YSNO'
+</select>
+
+
+<!--  의사) 처방오더 검색-->
+<select id="searchMedi" parameterType="kr.or.ddit.item.vo.MediItemListVO" resultType="kr.or.ddit.item.vo.MediItemListVO">
+	SELECT
+	    M.MEDI_ITEM_CODE,
+	    M.MEDI_ITEM_NAME,
+	    M.MEDI_ITEM_MAKR,
+	    M.MEDI_ITEM_UNIT,
+	    C.COM_CODE_NAME AS NARCOTIC_YN,
+	    M.MEDI_ITEM_USAGE,
+	    M.MEDI_ITEM_PRICE
+	FROM TB_MEDI_ITEM_LIST M
+	LEFT JOIN TB_COMMON_CODE C ON M.NARCOTIC_YN = C.COM_CODE AND C.COM_CODE_GRP = 'YSNO'
+	WHERE 
+		M.MEDI_ITEM_CODE LIKE '%'|| #{searchMedi} ||'%'
+		OR M.MEDI_ITEM_NAME LIKE '%'|| #{searchMedi} ||'%'
+		OR M.MEDI_ITEM_MAKR LIKE '%'|| #{searchMedi} ||'%'
+		OR M.MEDI_ITEM_USAGE LIKE '%'|| #{searchMedi} ||'%'
+		OR M.MEDI_ITEM_PRICE LIKE '%'|| #{searchMedi} ||'%'
+</select>
+
+
+<!-- 의사) 처방오더 요청 -->
+<insert id="insertMediOrder" parameterType="kr.or.ddit.order.vo.PrescriptionVO">
+    insert into TB_PRESCRIPTION
+		(
+			DETAIL_NO, 
+			MEDI_ITEM_CODE, 
+			PRSCRPTN_AMOUNT, 
+			PRSCRPTN_COUNT, 
+			PRSCRPTN_STATUS, 
+			PRSCRPTN_DAYS, 
+			MEDI_ITEM_PRICE,
+			EMP_NO
+		)
+	values
+		(
+			#{detailNo},
+			#{mediItemCode},
+			#{prscrptnAmount},
+			#{prscrptnCount},
+			'STBY',
+			#{prscrptnDays},
+			#{mediItemPrice},
+			null
+		)
+</insert>
+
+<!--의사) 질병코드로 그룹오더 조회-->
+<select id="showGroupOrder" parameterType="kr.or.ddit.order.vo.GrpOrdrVO" resultType="kr.or.ddit.order.vo.GrpOrdrVO">
+	select 
+		ORDR_COST, 
+		ORDR_CONTENT, 
+		ORDR_CODE, 
+		DISS_CODE_NO, 
+		GRP_ORDR_NM, 
+		GRP_ORDR_NO,
+	   (SELECT CC1.COM_CODE_NAME FROM TB_COMMON_CODE CC1 WHERE CC1.COM_CODE_GRP = 'ORDR' AND  ORDR_CLASS = CC1.COM_CODE) AS ORDR_CLASS
+	from TB_GRP_ORDR
+	where DISS_CODE_NO=#{dissCodeNo}
+</select>
+
+<!-- /////////////////////////// 오더끝  ////////////////////////// -->
+
+
+<!-- 의사) 입원 결정시 환자 입원일, 퇴원예정일 update -->
+<update id="putHsptlzDate" parameterType="kr.or.ddit.clinic.vo.ClinicChartRecPatVO">
+	update TB_PATIENT
+	set 
+		PAT_HSPTLZ_IN_DATE = TO_CHAR(sysdate, 'yyyy-MM-dd'),
+		PAT_HSPTLZ_OUT_PLAN = #{patHsptlzOutPlan},
+		PAT_HSPTLZ_STATUS = #{patHsptlzStatus}
+	where PAT_CODE = #{patCode}
+</update>               
+
+
+<!-- 의사) 진료완료 버튼 클릭 시, 환자차트에 질병코드,증상메모 update -->
+<update id="putChartDetail" parameterType="kr.or.ddit.clinic.vo.ClinicChartRecPatVO">
+	update TB_CHART_DETAIL
+	set 
+		DISS_CODE_NO = #{dissCodeNo},
+		DETAIL_MEMO = #{detailMemo}
+	where DETAIL_NO = #{detailNo} 
+</update>               
+
+
+<!-- 의사) 입원 결정시 입원테이블 진료번호,입원번호,입원일자,퇴원일자 insert -->
+<insert id="insertHosp" parameterType="kr.or.ddit.clinic.vo.ClinicChartRecPatVO">
+	insert into TB_HOSPITALIZATION
+		(
+			HSPTLZ_NO, 
+			PAT_CODE, 
+			TREAT_NO
+		)
+	values 
+		( 
+			(SELECT 'H' || TO_CHAR(TO_NUMBER(SUBSTR(MAX(HSPTLZ_NO), 2)) + 1, 'FM0000')FROM TB_HOSPITALIZATION),
+			#{patCode},
+			#{treatNo}
+		)
+</insert>   
+
+<!-- 의사) 입원가능병상 count -->
+<select id="cntEmptBed" resultType="int">
+	/*cntEmptBed*/
+	select count(SCK_BD_CONDITION) 
+	from tb_sickbed
+	where SCK_BD_CONDITION = 'EMPT'
+</select>
+
+
+<!-- 수납 완료 후 tb_clinic 'REND'로 update -->
+<update id="updateClinicAfterReceiption" parameterType="String">
+	/*updateClinicAfterReceiption*/
+	update tb_clinic 
+	set 
+		clnic_sttus_code = 'REND'
+	where treat_no = #{treatNo}
+</update>
+</mapper>

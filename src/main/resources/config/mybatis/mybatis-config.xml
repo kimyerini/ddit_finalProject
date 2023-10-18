@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	<settings>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+		<setting name="jdbcTypeForNull" value="VARCHAR"/>
+	</settings>
+	<typeAliases>
+ 		<package name="kr.or.ddit.board.vo"/>
+ 		<package name="kr.or.ddit.clinic.vo"/>
+ 		<package name="kr.or.ddit.common.vo"/>
+ 		<package name="kr.or.ddit.document.vo"/>
+ 		<package name="kr.or.ddit.employee.vo"/>
+ 		<package name="kr.or.ddit.item.vo"/>
+ 		<package name="kr.or.ddit.patient.vo"/>
+ 		<package name="kr.or.ddit.receipt.vo"/>
+ 		<package name="kr.or.ddit.schedule.vo"/>
+ 		<package name="kr.or.ddit.order.vo"/>
+ 		<package name="kr.or.ddit.prescription.vo"/>
+ 		<package name="kr.or.ddit.statistics.vo" />
+ 		
+	</typeAliases>
+</configuration>

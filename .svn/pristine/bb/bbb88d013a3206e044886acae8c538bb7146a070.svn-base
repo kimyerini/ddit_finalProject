@@ -1,0 +1,26 @@
+package kr.or.ddit.order.vo;
+
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+
+public class InspectionListVO {
+	private String detailNo;
+	private String inspcCode;
+	private String inspcStatus;
+	private String empNo;
+	private String inspcMemo;
+	private String comFileCode;
+	private Date inspcDate;
+	private int inspcCost;
+	
+	//vo 에만
+	private String treatNo;
+	private String inspcType;
+}

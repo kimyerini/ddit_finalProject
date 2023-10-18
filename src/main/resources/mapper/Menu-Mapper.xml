@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.common.mapper.MenuMapper">
+<select id="getMenuList" parameterType="MenuVO" resultType="MenuVO">
+	/*getMenuListz*/
+	SELECT 
+		m.menu_id
+		, m.upper_menu_id
+		, m.menu_se
+		, m.menu_ord
+		, m.menu_name
+		, m.menu_dscrp
+		, m.menu_url
+		, m.use_yn
+		, m.switch_yn 
+		, ma.auth_grp_code
+		, ma.read_yn
+		, ma.write_yn
+	FROM 
+		tb_menu m 
+	INNER JOIN tb_menu_assign ma 
+	ON m.menu_id = ma.menu_id
+	WHERE ma.auth_grp_code = #{authGrpCode}
+	AND m.use_yn = 'Y'
+	ORDER BY m.menu_id, m.menu_ord
+</select>
+
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.common.mapper.TbAttachFileMapper">
+	
+	<!-- 단일업로드 처리(전사적코드 + 등록자 + 파일객체) -->
+	<insert id="attachFileRegist" parameterType="AttachFileVO">
+		INSERT INTO
+			tb_attach_file (
+				file_code
+				, file_no
+				, file_name
+				, file_save_name
+				, file_physic_path
+				, file_web_path
+				, file_size
+				, file_cont_type
+				, file_reg_date
+				, reg_user_id
+			)
+		VALUES (
+			#{fileCode}
+			, (SELECT NVL(MAX(FILE_NO),0)+1 FROM TB_ATTACH_FILE)
+			, #{fileName}
+			, #{fileSaveName}
+			, #{filePhysicPath}
+			, #{fileWebPath}
+			, #{fileSize}
+			, #{fileContType}
+			, SYSDATE
+			, #{regUserId}
+		)
+	</insert>
+	
+	<!-- 다중업로드 처리(전사적코드 + 등록자 +파일객체) -->
+	<!-- file_no의 최대값 + inx(0부터 시작해서 점차 커짐) -->
+	<insert id="attachFileMultiRegist" parameterType="java.util.List">
+	    <foreach collection="list" item="attachFileVO"
+	    	open="INSERT ALL" close="SELECT * FROM DUAL" separator="" index="idx">
+	        INTO
+	        tb_attach_file (
+	            file_code
+	            , file_no
+	            , file_name
+	            , file_save_name
+	            , file_physic_path
+	            , file_web_path
+	            , file_size
+	            , file_cont_type
+	            , file_reg_date
+	            , reg_user_id
+	        )
+	        VALUES (
+	            #{attachFileVO.fileCode}
+	            , (SELECT NVL(MAX(file_no), 0) + 1 FROM tb_attach_file) + #{idx}
+	            , #{attachFileVO.fileName}
+	            , #{attachFileVO.fileSaveName}
+	            , #{attachFileVO.filePhysicPath}
+	            , #{attachFileVO.fileWebPath}
+	            , #{attachFileVO.fileSize}
+	            , #{attachFileVO.fileContType}
+	            , SYSDATE
+	            , #{attachFileVO.regUserId}
+	        )
+	    </foreach>
+	</insert>
+	
+	<!-- 파일 개별 삭제 -->
+	<delete id="deleteFile" parameterType="String">
+		DELETE FROM
+			tb_attach_file
+		WHERE
+			file_no = #{file_no}
+	</delete>
+	
+	
+	
+	
+</mapper>

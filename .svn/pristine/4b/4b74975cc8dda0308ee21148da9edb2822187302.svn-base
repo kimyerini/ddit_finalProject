@@ -1,0 +1,21 @@
+package kr.or.ddit.statistics.service;
+
+import java.util.List;
+
+import kr.or.ddit.statistics.vo.ChartVO;
+
+public interface ChartService {
+
+	// 성별 환자 통계
+	public List<ChartVO> patCntByGender();
+	
+	// 연령대별 환자 통계
+	public List<ChartVO> patCntByAge();
+	
+	// 질병별 환자 통계
+	public List<ChartVO> patCntByDisease(String yearMonth);
+	
+	// 월별 매출 통계
+	public List<ChartVO> salesByMonth(String yearMonth);
+	
+}

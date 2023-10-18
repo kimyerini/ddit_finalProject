@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.order.mapper.TreatmentMapper">
+
+<select id="selectWaitTreatment" resultType="kr.or.ddit.receipt.vo.WaitPatVO">
+ SELECT 
+	    	c.treat_no as treat_no
+	    	, r.rcept_no as rcept_no
+	        , p.pat_name  as pat_name
+	        , p.pat_code as pat_code
+	        , TO_CHAR(sysdate,'YYYY') - SUBSTR(p.pat_brthdy,0,4) as pat_age
+	        , TO_CHAR(TO_DATE(p.pat_brthdy),'YYYY-MM-DD') as pat_brthdy
+	        , c2.com_code_name as pat_gen
+	        , c1.com_code_name as pat_wait
+	        , c3.com_code_name as pat_path
+	        , c4.com_code_name as pat_first
+	        , c5.com_code_name as pat_day
+	        , c6.com_code_name as pat_hsptlz_status
+	        , e.emp_nm as emp_nm
+        	, hf.hos_fc_name as hos_fc_name
+        	,d.detail_no
+        	, r.recept_time
+        FROM tb_clinic c
+        INNER JOIN tb_receipt r 
+            INNER JOIN tb_patient p 
+                    INNER JOIN tb_common_code c2 
+                    ON p.pat_gen_code = c2.com_code 
+                    AND c2.com_code_grp = 'GEND'
+                     INNER JOIN tb_common_code c6
+		            ON p.pat_hsptlz_status = c6.com_code 
+		            AND c6.com_code_grp = 'HSPT'
+            ON r.pat_code = p.pat_code
+            INNER JOIN tb_common_code c3
+            ON r.rcept_path_code = c3.com_code  
+            AND c3.com_code_grp = 'PVST'
+            INNER JOIN tb_common_code c4
+            ON r.rcept_first_exam_code = c4.com_code 
+            AND c4.com_code_grp = 'FEXM'
+            INNER JOIN tb_common_code c5
+            ON r.rcept_day_code = c5.com_code 
+            AND c5.com_code_grp = 'DAYN'
+         ON c.rcept_no = r.rcept_no
+         INNER JOIN tb_clinic_schedule cs
+             INNER JOIN tb_hospital_facility hf 
+             ON hf.HOS_FC_NO = cs.HOS_FC_NO
+             INNER JOIN tb_employee e
+             ON e.emp_no = cs.emp_no
+         ON r.schd_no = cs.schd_no
+         INNER JOIN tb_common_code c1 
+         ON c.clnic_sttus_code = c1.com_code 
+         AND c1.com_code_grp = 'STAT'
+         INNER JOIN tb_chart_detail d ON d.TREAT_NO = c.TREAT_NO
+         WHERE c.clnic_sttus_code = 'PEND'  OR  c.clnic_sttus_code = 'NING'   
+</select>
+
+<select id="selectWaitPatInfo" parameterType="kr.or.ddit.patient.vo.PatientVO" resultType="kr.or.ddit.patient.vo.PatientVO">
+SELECT 
+			P.PAT_CODE      , 
+			P.PAT_NAME      , 
+			P.PAT_TEL       , 
+			P.PAT_IHIDNUM   , 
+			to_char(to_date(PAT_BRTHDY),'yyyy-mm-dd') as  PAT_BRTHDY,
+		   (SELECT C1.COM_CODE_NAME FROM TB_PATIENT P1, TB_COMMON_CODE C1 
+         	WHERE P1.PAT_GEN_CODE = C1.COM_CODE AND P1.PAT_CODE =  #{patCode} AND C1.COM_CODE_GRP = 'GEND') AS PAT_GEN_CODE , 
+	    	P.PAT_ADDR      , 
+	    	P.PAT_DTL_ADDR, 
+	    	P.PAT_ZIP, 
+	    	to_char(PAT_FIRST_DATE,'yyyy-mm-dd') AS PAT_FIRST_DATE,
+	    	to_char(PAT_LAST_DATE,'yyyy-mm-dd') AS PAT_LAST_DATE ,     
+		 (SELECT C3.COM_CODE_NAME FROM TB_PATIENT P3, TB_COMMON_CODE C3
+         WHERE P3.PAT_FRGNR_YN = C3.COM_CODE AND P3.PAT_CODE = #{patCode} AND C3.COM_CODE_GRP = 'YSNO') AS PAT_FRGNR_YN ,		    
+		 (SELECT C2.COM_CODE_NAME FROM TB_PATIENT P2, TB_COMMON_CODE C2 
+         WHERE P2.PAT_HSPTLZ_STATUS = C2.COM_CODE AND P2.PAT_CODE =  #{patCode} AND C2.COM_CODE_GRP = 'HSPT') AS PAT_HSPTLZ_STATUS  
+		FROM TB_PATIENT P
+		WHERE PAT_CODE = #{patCode}
+</select>
+
+<select id="midePat" parameterType="kr.or.ddit.order.vo.TreatmentMediVO" resultType="kr.or.ddit.order.vo.TreatmentMediVO">
+	SELECT
+	    M.MEDI_ITEM_CODE,
+	    D.DETAIL_NO,
+	    P.PRSCRPTN_AMOUNT,
+	    P.PRSCRPTN_COUNT,
+	    P.PRSCRPTN_DAYS,
+	    P.PRSCRPTN_STATUS,
+	    P.PRSCRPTN_AMOUNT*P.PRSCRPTN_COUNT*P.PRSCRPTN_DAYS AS PRSCRPTN_TOTAL,
+	    M.MEDI_ITEM_NAME,
+	    M.NARCOTIC_YN,
+	    M.MEDI_ITEM_UNIT,
+	    L.MEDI_ITEM_INVR_QTY,
+	    L.MEDI_ITEM_LEAST_QTY
+	FROM TB_PRESCRIPTION P 
+	INNER JOIN TB_MEDI_ITEM_LIST M ON  M.MEDI_ITEM_CODE = P.MEDI_ITEM_CODE
+	INNER JOIN TB_MEDI_ITEM_INVENTORY L ON  L.MEDI_ITEM_CODE = M.MEDI_ITEM_CODE
+	INNER JOIN TB_CHART_DETAIL D ON D.DETAIL_NO = P.DETAIL_NO
+	INNER JOIN TB_CLINIC E ON E.TREAT_NO = D.TREAT_NO
+	WHERE D.TREAT_NO = #{treatNo} AND P.DETAIL_NO =#{detailNo}
+</select>
+
+
+
+<select id="treatmentPatList" parameterType="kr.or.ddit.order.vo.TreatmentListVO" resultType="kr.or.ddit.order.vo.TreatmentListVO">
+	SELECT
+	    CD.DETAIL_NO,
+	    T.TRE_CODE,
+	    T.TRE_CONTENT,
+	    TL.TRE_MEMO
+	FROM TB_TREATMENT_LIST TL
+	INNER JOIN TB_CHART_DETAIL CD ON CD.DETAIL_NO = TL.DETAIL_NO
+	INNER JOIN TB_TREATMENT T ON T.TRE_CODE = TL.TRE_CODE
+	INNER JOIN TB_CLINIC C ON C.TREAT_NO = CD.TREAT_NO
+	WHERE CD.TREAT_NO = #{treatNo} AND CD.DETAIL_NO= #{detailNo}
+</select>
+
+<update id="updateTreatSttus" parameterType="kr.or.ddit.order.vo.TreatmentListVO">
+	update TB_CLINIC cl
+		set cl.CLNIC_STTUS_CODE = 'CEND'
+		where cl.TREAT_NO =#{treatNo}
+		and EXISTS (
+		SELECT 1
+            FROM TB_CHART_DETAIL cd
+            INNER JOIN TB_TREATMENT_LIST tl on cd.DETAIL_NO = tl.DETAIL_NO
+            where  cd.TREAT_NO = cl.TREAT_NO)
+
+</update>
+
+<select id="narcoticList" parameterType="kr.or.ddit.order.vo.PrescriptionVO" resultType="kr.or.ddit.order.vo.PrescriptionVO" >
+SELECT 
+    TO_CHAR(CD.DETAIL_REG_DATE, 'YYYY-MM-DD') DETAIL_REG_DATE_STR, 
+    P.MEDI_ITEM_CODE ,
+    M.MEDI_ITEM_NAME,
+    P.PRSCRPTN_DAYS * P.PRSCRPTN_COUNT * P.PRSCRPTN_AMOUNT AS CALCULATED_VALUE
+FROM  TB_CHART_DETAIL CD
+INNER JOIN TB_PRESCRIPTION P ON CD.DETAIL_NO = P.DETAIL_NO
+INNER JOIN TB_MEDI_ITEM_LIST M ON P.MEDI_ITEM_CODE = M.MEDI_ITEM_CODE
+INNER JOIN TB_CLINIC C ON CD.TREAT_NO = C.TREAT_NO
+INNER JOIN TB_RECEIPT R ON C.RCEPT_NO = R.RCEPT_NO
+INNER JOIN TB_PATIENT PA ON R.PAT_CODE= PA.PAT_CODE
+    INNER JOIN TB_COMMON_CODE C1 ON C.CLNIC_STTUS_CODE = C1.COM_CODE  AND c1.com_code_grp = 'STAT'
+WHERE PA.PAT_CODE = #{patCode} AND C.CLNIC_STTUS_CODE ='REND'
+</select>
+
+<update id="updateTreatSttusIng" parameterType="kr.or.ddit.order.vo.TreatmentListVO">
+	update TB_CLINIC cl
+	set cl.CLNIC_STTUS_CODE = 'NING'
+	where cl.TREAT_NO =#{treatNo}
+	and EXISTS (
+	SELECT 1
+	FROM TB_CHART_DETAIL cd
+	INNER JOIN TB_TREATMENT_LIST tl on cd.DETAIL_NO = tl.DETAIL_NO
+	where cd.TREAT_NO = cl.TREAT_NO)
+</update>
+
+<update id="mediQtyUpdate" parameterType="MediItemInventoryVO">
+	UPDATE TB_MEDI_ITEM_INVENTORY 
+    SET MEDI_ITEM_INVR_QTY = MEDI_ITEM_INVR_QTY - #{prscrptnTotal}
+    WHERE MEDI_ITEM_CODE =#{mediItemCode}
+</update>
+</mapper>

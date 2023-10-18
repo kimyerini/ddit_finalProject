@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.employee.mapper.EmployeeMapper">
+   <resultMap type="EmployeeVO" id="empMap">
+      <id property="empNo" column="EMP_NO"/>
+      <result property="enabled" column="ENABLED" />
+      <result property="firstLogin" column="FIRST_LOGIN" />
+      <result property="empNo" column="EMP_NO" />
+      <result property="empPassword" column="EMP_PASSWORD" />
+      <result property="empNm" column="EMP_NM" />
+      <result property="empEmail" column="EMP_EMAIL" />
+      <result property="empTelno" column="EMP_TELNO" />
+      <result property="empBrthdy" column="EMP_BRTHDY" />
+      <result property="empAddr" column="EMP_ADDR" />
+      <result property="empDtlAddr" column="EMP_DTL_ADDR" />
+      <result property="empZip" column="EMP_ZIP" />
+      <result property="empEncpn" column="EMP_ENCPN" />
+      <result property="empRtcpn" column="EMP_RTCPN" />
+      <result property="empSignImgPath" column="EMP_SIGN_IMG_PATH" />
+      <result property="deptCode" column="DEPT_CODE" />
+      <result property="empRegDate" column="EMP_REG_DATE" />
+      <collection property="userAuthList" resultMap="authMap" />
+   </resultMap>
+
+   <resultMap type="UserAuthoritiesVO" id="authMap">
+      <result property="authGrpCode" column="AUTH_GRP_CODE" />
+      <result property="empNo" column="EMP_NO" />
+   </resultMap>
+
+
+   <select id="listEmployee" resultType="employeeVO">
+      select * from TB_Employee 
+   </select>
+   
+   <delete id="delete" parameterType="String">
+      delete from TB_Employee where emp_no = #{empNo}
+   </delete>
+   
+   <select id="selectEmployeeByNo" resultMap="empMap" parameterType="String">
+      select
+         emp.EMP_NO
+         , EMP_PASSWORD
+         , EMP_NM, EMP_EMAIL
+         , EMP_TELNO
+         , EMP_BRTHDY
+         , EMP_ADDR
+         , EMP_DTL_ADDR
+         , EMP_ZIP
+         , TO_CHAR(EMP_ENCPN, 'YYYY-MM-DD') as EMP_ENCPN
+         , EMP_RTCPN
+         , EMP_SIGN_IMG_PATH
+         , DEPT_CODE
+         , EMP_REG_DATE
+         , ENABLED
+         , FIRST_LOGIN
+         , auth.AUTH_GRP_CODE
+      from 
+      	TB_EMPLOYEE emp 
+      	, TB_USER_AUTHORITIES auth 
+      where 
+      	emp.EMP_NO = #{empNo} 
+      	and 
+      	emp.EMP_NO = auth.EMP_NO
+   </select>
+   
+   <!-- 회원가입 -->
+   <insert id="insert" parameterType="employeeVO">
+     <selectKey keyProperty="empNo" resultType="string" order="AFTER">
+        SELECT emp_no from TB_EMPLOYEE where emp_email = #{empEmail}
+     </selectKey>
+   	insert into TB_EMPLOYEE 
+   		(
+   		  emp_no
+   		, emp_password
+   		, emp_nm
+   		, emp_email
+   		, emp_telno
+   		, emp_brthdy
+   		, emp_addr
+   		, emp_dtl_addr
+   		, emp_zip
+   		, dept_code
+   		)
+   		values
+   		 (
+   		   #{empNo}||lpad(seq_empno.nextval,3,'0') 
+   		 , #{empPassword}
+   		 , #{empNm}
+   		 , #{empEmail}
+   		 , #{empTelno}
+   		 , #{empBrthdy}
+   		 , #{empAddr}
+   		 , #{empDtlAddr}
+   		 , #{empZip}
+   		 , #{deptCode}
+   		 )
+   </insert>
+
+	   
+   <!-- 회원가입 시 권한 insert -->
+	<insert id="insertAuth" parameterType="UserAuthoritiesVO">
+		INSERT INTO TB_USER_AUTHORITIES (AUTH_GRP_CODE, EMP_NO)
+		VALUES (#{authGrpCode},#{empNo})
+	</insert>  	
+   
+	<!-- 이메일 체크 -->
+	<select id="check" parameterType="String" resultType="int">
+		select count(emp_email) 
+		from tb_employee 
+		where emp_email = #{empEmail}
+	</select>
+	
+	<!-- 비밀번호 변경(비번update+최초로그인상태N으로update) -->
+	<update id="updatePwFrst" parameterType="EmployeeVO">
+		update tb_employee set first_login = 'N', emp_password = #{empPassword} where emp_no = #{empNo}
+	</update>
+	
+	<!-- 비밀번호찾기  (입력한 회원이 있는지 확인)-->
+	<select id="checkEmp" parameterType="EmployeeVO" resultType="int">
+		select count(emp_no)
+		from tb_employee
+		where 
+			emp_no = #{empNo} and 
+			emp_email = #{empEmail}
+	</select>
+	
+	<!-- (암호화된)임시비밀번호로 update하기 -->
+	<update id="updateimsiPw" parameterType="EmployeeVO">
+		update tb_employee 
+		set emp_password = #{empPassword}
+		, first_login = 'Y'
+		where emp_no = #{empNo}
+	</update>
+	
+	<!-- 정보수정 
+	12(String), null, 010-3609-4541(String), 대전 대덕구 동춘당로 151(String)
+	, 그린타운아파트(String), 34407(String), null-->
+	<update id="updatemyInfo" parameterType="EmployeeVO">
+		update TB_EMPLOYEE
+		set 
+		     EMP_PASSWORD = #{empPassword}
+		     <if test="empEmail!=null and empEmail!=''">
+		    , EMP_EMAIL =#{empEmail}
+		     </if>
+		    , EMP_TELNO =#{empTelno}
+		    , EMP_ADDR =#{empAddr}
+		    , EMP_DTL_ADDR =#{empDtlAddr}
+		    , EMP_ZIP =#{empZip}
+		where emp_no=#{empNo}
+	</update>
+	
+
+   
+   
+   
+</mapper>

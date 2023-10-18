@@ -1,0 +1,115 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
+<sec:authentication property="principal.employee" var="imsiVO" />
+<sec:authentication property="principal.employee" var="empVO" />
+<!DOCTYPE html>
+<html>
+<script type="text/javascript" src="/resources/js/jquery-3.6.0.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack-all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack.min.css"
+	rel="stylesheet" />
+<link href="/resources/css/demo.css" rel="stylesheet" />
+<head>
+<meta charset="UTF-8">
+<title>제증명</title>
+</head>
+<body>
+
+<div class="grid-stack"></div>
+
+<script type="text/javascript">
+var empNo = ${empVO.empNo};
+console.log(empNo);
+
+var gr1 = 
+	`  
+	<div class="table-responsive text-nowrap">
+	    <table class="table" style="text-align : left;">
+	      <thead>
+	        <tr>
+	          <th style="text-align : center;" id="waitTotal"><h5>제증명대기목록 : 10명</h5></th>
+	        </tr>
+	     </thead>
+	      <tbody class="table-border-bottom-0" id="waitTBody">     
+	      </tbody>
+	    </table> 
+  	</div>`;
+ 
+///////////////////////////환자정보 시작/////////////////////////
+var gr2 =
+	  ``;
+///////////////////////////환자정보 끝/////////////////////////
+
+
+//////////////////////////////////날짜로 검색한 차트 시작////////////////////////////////////////////////////      
+  
+var gr3 = ``;
+//////////////////////////////////날짜로 검색한 차트 끝////////////////////////////////////////////////////  
+  
+	var gr4 = `
+
+  	`;
+  	
+  	
+ 
+    var items = [ 
+   {w: 2, h:5, x:0, y:0, content: gr1}, 
+   {w: 4, h:2, x:2, y:0, content: gr2},
+   {w: 4, h:3, x:2, y:3, content: gr3},
+   {w: 6, h:5, x:6, y:0, content: gr4}
+];
+
+ var grid = GridStack.init(); 
+grid.load(items);
+
+// 제증명대기환자목록 불러오깅
+window.onload = getWaitPat;
+
+
+const waitTotal        =   $('#waitTotal');  //대기환자목록
+const waitTBody        =   $('#waitTBody');  //대기환자목록
+
+
+// 제증명대기 환자 목록 출력
+function getWaitPat(){
+	
+	$.ajax({
+		url : `/doctor/proof/waitList/\${empNo}`, 
+		type : 'get',
+		dataType : 'JSON',
+		success : function(result){
+			waitTotal.html("<h5>대기 : "+ result.length +"명</h5>");
+			console.log("체키라웃",result);
+			let txt = "";
+			for(let i =0; i<result.length; i++){
+				txt +=
+				`
+				<tr>
+	          		<td><strong>\${result[i].patName} (\${result[i].patBrthdy})</strong> 	    
+	          		<div>
+	    	        <button type="button" id="callPat" class="btn btn-danger me-3" onclick="patInfo('\${result[i].patCode}', '\${result[i].rceptNo}', '\${result[i].treatNo}')">호출</button>
+	    		    </div></td>
+	        	</tr>
+	        	<tr> 
+          		<td> \${result[i].reqDocumentRegDate}</td>
+         	   </tr>
+	        	<tr> 
+          		<td> \${result[i].documentType}</td>
+         	   </tr>
+	         	<tr> 
+	          		<td> 담당의 : \${result[i].empNm}<hr></td>
+	        	</tr>
+				`;
+			} 
+			waitTBody.html(txt);
+		}
+	});
+};
+
+</script>
+</body>
+</html>

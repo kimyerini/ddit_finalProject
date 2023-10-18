@@ -1,0 +1,23 @@
+package kr.or.ddit.hospitalization.service.serviceImpl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.hospitalization.mapper.HospitalizationMapper;
+import kr.or.ddit.hospitalization.service.HospitalizationService;
+import kr.or.ddit.hospitalization.vo.hosptPatVO;
+
+@Service
+public class HospitalizationServiceImpl implements HospitalizationService{
+	@Autowired
+	private HospitalizationMapper hospMapper;
+	
+	
+	@Override
+	public List<hosptPatVO> hosptPatWaitList() {
+		return hospMapper.hosptPatWaitList();
+	}
+	
+}

@@ -1,0 +1,338 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack-all.min.js"></script>
+<script type="text/javascript" src="/resources/js/jquery-3.6.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack.min.css" rel="stylesheet"/> 
+
+<link href="/resources/css/demo.css" rel="stylesheet"/> 
+
+<style>
+   .su{
+      float: left;
+      margin-bottom: 0;
+   }
+   #btn{
+      float: right;
+   }
+   #ii{
+
+	width: 100%;
+	height: 50%;
+   }
+   .form-control-sm {
+	border: none;
+}
+/* 첫번째 */
+.gs-id-0 > .grid-stack-item[gs-h="5"] {
+    height: 823px;
+}
+.gs-12>.grid-stack-item[gs-w="2"] {
+    width: 296px;
+ }
+/*두번째*/
+ .gs-id-0 > .grid-stack-item[gs-x="2"] {
+    left: 305px;
+}
+.gs-id-0 > .grid-stack-item[gs-h="3"] {
+    height: 416px;
+}
+.gs-12>.grid-stack-item[gs-w="3"] {
+    width: 422px;
+}
+.gs-12>.grid-stack-item[gs-w="7"] {
+    width: 1171px;
+}
+.gs-id-0 > .grid-stack-item[gs-y="3"] {
+    top: 407px;
+}
+.gs-id-0 > .grid-stack-item[gs-x="5"] {
+    left: 702px;
+}
+</style>
+
+<script>
+const roomData = [
+    { roomNumber: "301호", bedCount: 2 },
+    { roomNumber: "302호", bedCount: 2 },
+    { roomNumber: "303호", bedCount: 4 },
+    { roomNumber: "304호", bedCount: 4 },
+    { roomNumber: "305호", bedCount: 6 },
+    { roomNumber: "306호", bedCount: 6 },
+];
+//시작하자마자 보이기
+$(function() {
+	hospWait();
+	table3F();
+for (let i = 0; i < roomData.length; i++) {
+    const room = roomData[i];
+    console.log(`방 번호: \${room.roomNumber}, 침대 수: \${room.bedCount}`);
+}
+$("#btn3F").on("click",function(){
+	table3F();
+})
+$("#btn4F").on("click",function(){
+	table4F();
+})
+});
+function table3F(){
+let roomList = $("#hi");
+	$.ajax({
+		url : "/nurse/selectRoom",
+		type : "get",
+		dataType : 'JSON',
+		success : function(rslt){
+			console.log("방결과 (번호)" , rslt);
+			console.log("rslt[0]" , rslt[0]);
+			console.log("rslt[0].sckrmNo",rslt[0].sckrmNo);
+			textRoom = "";
+			   for (let i = 0; i < rslt.length; i++) {
+				   if (rslt[i].sckrmNo >= 300 && rslt[i].sckrmNo < 400) {
+					   console.log("rslt[i].sckrmNo",rslt[i].sckrmNo)
+			        textRoom += `
+			            <p class="card-header" style="text-align:left; padding:0px 0px 0px 10px;font-size: 11px;">
+			                \${rslt[i].sckrmNo}호(\${rslt[i].sckrmTypeOcc}인실)
+			            </p>
+			             <div class="table-responsive text-nowrap"style="height:100px;">
+			       		 <table class="table table-bordered"style="font-size: 11px;">
+			       			<thead>
+			       
+			       	         <tr>
+			       	         `;
+			  for(let j=1;j<=rslt[i].sckrmTypeOcc; j++){
+				  textRoom += `  <th>\${rslt[j].sckrmTypeOcc}번병상</th>`;
+				  }
+			  textRoom += ` </tr>
+	       	       			</thead>
+	       	     			 <tbody class="table-border-bottom-0 ptable">
+	       		      		 <tr>`;
+	       		for(let j=1;j<=rslt[i].sckrmTypeOcc; j++){
+	       		  textRoom += `
+	       		  		<td><button type="button" class="btn btn-xs btn-info choice" hidden>선택</button></td>
+	       		  `;
+	       		}
+	       		 textRoom += ` 	        
+			       	         </tr>				    		       
+			       			</tbody>
+			       	    	</table>
+			       		   </div>   
+			             `;
+			    }
+			   }
+			roomList.html(textRoom);
+			
+		},
+		error: function (xhr, status, error) {
+    	     console.log("code: " + xhr.status);
+    	     console.log("message: " + xhr.responseText);
+    	     console.log("error: " + error);
+  	    }
+	})
+}
+function table4F(){
+	let roomList = $("#hi");
+	$.ajax({
+		url : "/nurse/selectRoom",
+		type : "get",
+		dataType : 'JSON',
+		success : function(rslt){
+			console.log("방결과 (번호)" , rslt);
+			console.log("rslt[0]" , rslt[0]);
+			console.log("rslt[0].sckrmNo",rslt[0].sckrmNo);
+			textRoom = "";
+			   for (let i = 0; i < rslt.length; i++) {
+				   if (rslt[i].sckrmNo >= 400) {
+					  console.log("rslt[i].sckrmNo",rslt[i].sckrmNo)
+			        textRoom += `
+			            <p class="card-header" style="text-align:left; padding:0px 0px 0px 10px;font-size: 11px;">
+			                \${rslt[i].sckrmNo}호(\${rslt[i].sckrmTypeOcc}인실)
+			            </p>
+			             <div class="table-responsive text-nowrap"style="height:100px;">
+			       		 <table class="table table-bordered"style="font-size: 11px;">
+			       			<thead>
+			       
+			       	         <tr>
+			       	         `;
+			  for(let j=1;j<=rslt[i].sckrmTypeOcc; j++){
+				  textRoom += `  <th>\${rslt[j].sckrmTypeOcc}번병상</th>`;
+				  }
+			  textRoom += ` </tr>
+	       	       			</thead>
+	       	     			 <tbody class="table-border-bottom-0 ptable">
+	       		      		 <tr>`;
+	       		for(let j=1;j<=rslt[i].sckrmTypeOcc; j++){
+	       		  textRoom += `
+	       		  		<td><button type="button" class="btn btn-xs btn-info choice" hidden>선택</button></td>
+	       		  `;
+	       		}
+	       		 textRoom += ` 	        
+			       	         </tr>				    		       
+			       			</tbody>
+			       	    	</table>
+			       		   </div>   
+			             `;
+			    }
+			   }
+			roomList.html(textRoom);
+			
+		},
+		error: function (xhr, status, error) {
+    	     console.log("code: " + xhr.status);
+    	     console.log("message: " + xhr.responseText);
+    	     console.log("error: " + error);
+  	    }
+	})
+}
+
+
+</script>
+<div class="grid-stack"></div>
+<script type="text/javascript">
+
+
+
+
+	// 그리드 스택 아이템 정의
+	let gridStack1 = `<div id="div1" style=" height:100%; padding:0px; overflow: none;">
+						<div class="tab-content" style="height : 650px; background-color:white;" id="gr1Content">
+							</div>
+					     </div>`;
+					     
+	let gridStack2 = `<div style="background-color:white; width:100%; height:100%;">
+						<div class="card-body" style="width:100%; height:100%; padding:10px;">
+					    	<div class="card" style="height:100%;">
+					    	<div style="display:flex;">
+					    	<div class="nav-align-top mb-4" style="width:45%;">
+						      <ul class="nav nav-tabs" role="tablist">
+						        <li class="nav-item" role="presentation">
+						        <button type="button" id="btn3F" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-home" aria-controls="navs-top-home" aria-selected="true">3F</button>
+						        </li>
+						        <li class="nav-item" role="presentation">
+						        <button type="button" id="btn4F" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-profile" aria-controls="navs-top-profile" aria-selected="false" tabindex="-1">4F</button>
+						        </li>
+						      </ul>
+						 </div>						  
+							<div class="input-group" id= "searchBar"style="width:40%; height : 30px; margin-left : 27%;">
+						      <span class="input-group-text"><i class="tf-icons bx bx-search"></i></span>
+						      <input type="text" id="searchText"class="form-control" placeholder="Search...">
+						      <button id="searchButton" type="button" class="btn btn-info" style="margin-left:10px;">검색</button>
+						    </div>
+					    </div> 
+					    <div id="hi">
+					   
+					    </div>
+			         </div>
+			         
+	            	 </div>
+			            	
+			        </div>
+			      </div>
+			     </div>`;
+				
+	
+    let gridStack3 = `<div id="prescriptionList" style="width:100%; height:100%; padding:10px;background-color:white;">
+					    	<div class="card" style="height:87%;">
+							<h5 class="card-header"style="text-align:left; margin-right:120px; font-weight: bold;" >입원 환자 목록</h5>
+									 <div class="table-responsive text-nowrap"style="height:300px;">
+					 				 <table class="table table-hover"style="font-size: 11px;">
+					    				<thead>
+					    		          <tr>
+					    		            <th></th>
+					    		            <th>환자코드</th>
+					    		            <th>환자명</th>
+					    		            <th>병실</th>
+					    		            <th>병상</th>
+					    		            <th>입원일</th>
+					    		            <th>퇴원일</th>
+					    		            <th>퇴원</th>
+					    		          </tr>
+					    		        </thead>
+					    		       <tbody class="table-border-bottom-0 ptable">
+					    		       
+		             			</tbody>
+			                 	</table>
+			            	   </div>
+			            	 </div>
+					</div>`;
+						
+// 그리드 스택 아이템 배열
+var items = [
+    { w: 2, h: 5, float: false, content: gridStack1 },
+    { w: 5, h: 5, float: false, content: gridStack2 },
+    { w: 5, h: 5, float: false, content: gridStack3 }
+
+];
+
+// 그리드 스택 초기화
+var grid = GridStack.init();
+grid.load(items);
+</script>
+
+<script>
+const hospWaitList = $('#gr1Content');
+function hospWait (){
+	$.ajax({
+		url :"/nurse/hospWait",
+		type : 'get',
+		dataType : 'JSON',
+		success : function(rslt){
+			console.log("결과 나와??" , rslt);
+			var text = '';
+			
+	 		text += `<h4>대기 인원\${rslt.length}명<h4>`;
+			$.each(rslt, function(i,item){	
+				text += `
+	 						<table style="width : 100%; text-align : left; border-bottom : 1px solid black; margin-bottom : 15px;">
+							<tbody>
+						
+			 					<tr>
+			 						<td style="width : 65%;"><strong>\${item.patName}</strong><span style="font-size : 0.7rem;">(\${item.patAge}세)<span></span></span></td>
+			 						<td><span style="font-size : 0.7rem;"><span></span></span></td>  
+			 					</tr>
+			 					<tr>
+			 						<td style="width : 65%;"><span style="font-size : 0.7rem;">\${item.patBrthdy}| \${item.patGen} | \${item.patFirst}<span></span></span></td>
+			 						<td><button id="${item.patCode}" class="btn btn-xs btn-info" style="margin-bottom:10px;" onclick="waitClick(\${item.patCode},\${item.treatNo},\${item.detailNo})">
+			 						\${item.patHsptlzStatus === "3" ? "입원등록" : item.patHsptlzStatus}</button></td>
+			 					</tr>
+		 					</tbody>
+						</table>`;
+			})
+					hospWaitList.html(text);
+		},
+		error: function (xhr, status, error) {
+     	     console.log("code: " + xhr.status);
+     	     console.log("message: " + xhr.responseText);
+     	     console.log("error: " + error);
+   	    }
+	})
+}
+
+function waitClick(){
+	alert("입원등록 하시겠습니까?");
+	$(".choice").removeAttr("hidden");
+	
+	$(".choice").click(function () {
+	    // 클릭된 버튼을 찾습니다.
+	    var clickedButton = $(this);
+
+	    // 클릭된 버튼이 속한 <td> 요소를 찾습니다.
+	    var tdElement = clickedButton.parent();
+
+	    // 해당 <td> 요소의 인덱스를 가져옵니다.
+	    var tdIndex = tdElement.index();
+
+	    // 테이블의 모든 헤더 셀(TH)을 가져옵니다.
+	    var thElements = $(".table thead th");
+
+	    // 클릭된 버튼과 동일한 인덱스에 있는 헤더 셀의 내용을 가져옵니다.
+	    var thContent = thElements.eq(tdIndex).text();
+
+	    // 가져온 <th> 내용을 출력합니다.
+	    console.log(thContent);
+	  });
+	}
+
+</script>
+
+
+

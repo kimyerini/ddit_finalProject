@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
+		<property name="jdbcUrl" value="jdbc:oracle:thin:@112.220.114.130:1521:XE" />
+		<property name="username" value="team1_202303F" />
+		<property name="password" value="java" />
+		<property name="maximumPoolSize" value="3"></property>
+		<property name="maxLifetime" value="30000"></property>
+	</bean>
+
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<constructor-arg ref="hikariConfig" />
+	</bean>
+
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:config/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:mapper/*-Mapper.xml" />
+	</bean>
+
+
+	<mybatis-spring:scan base-package="kr.or.ddit.board.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.clinic.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.common.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.document.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.employee.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.item.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.order.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.patient.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.receipt.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.schedule.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.hospitalization.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.prescription.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.inspection.mapper"/>
+	<mybatis-spring:scan base-package="kr.or.ddit.statistics.mapper"/>
+		
+
+</beans>

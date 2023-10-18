@@ -1,0 +1,21 @@
+package kr.or.ddit.item.vo;
+
+import java.util.Date;
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+
+public class ItemReqVO {
+	private int itemReqNo;
+	private String itemReqSt;
+	private Date itemReqDe;
+	private String empNo;
+	
+	private List<ItemReqDetailVO> itemReqDetailVOList;
+}

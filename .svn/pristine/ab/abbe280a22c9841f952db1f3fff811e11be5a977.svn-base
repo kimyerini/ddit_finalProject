@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.order.mapper.PhysiotheraphyMapper">
+
+<!-- 물리) 대기환자 목록  -->
+<select id="physioWaitPat" resultType="WaitPatVO">
+    SELECT 
+  	c.treat_no as treat_no
+  	, c.clnic_sttus_code as clnic_sttus_code
+  	, r.rcept_no as rcept_no
+      , p.pat_name  as pat_name
+      , p.pat_code as pat_code
+      , TO_CHAR(sysdate,'YYYY') - SUBSTR(p.pat_brthdy,0,4) as pat_age
+      , TO_CHAR(TO_DATE(p.pat_brthdy),'YYYY-MM-DD') as pat_brthdy
+      , c2.com_code_name as pat_gen
+      , c1.com_code_name as pat_wait
+      , c3.com_code_name as pat_path
+      , c4.com_code_name as pat_first
+      , c5.com_code_name as pat_day
+      , c6.com_code_name as pat_hsptlz_status
+      , e.emp_nm as emp_nm
+     	, hf.hos_fc_name as hos_fc_name
+     	, r.recept_time
+     FROM tb_clinic c
+     INNER JOIN tb_receipt r 
+         INNER JOIN tb_patient p 
+                 INNER JOIN tb_common_code c2 
+                 ON p.pat_gen_code = c2.com_code 
+                 AND c2.com_code_grp = 'GEND'
+                 INNER JOIN tb_common_code c6
+           ON p.pat_hsptlz_status = c6.com_code 
+           AND c6.com_code_grp = 'HSPT'
+         ON r.pat_code = p.pat_code
+         INNER JOIN tb_common_code c3
+         ON r.rcept_path_code = c3.com_code  
+         AND c3.com_code_grp = 'PVST'
+         INNER JOIN tb_common_code c4
+         ON r.rcept_first_exam_code = c4.com_code 
+         AND c4.com_code_grp = 'FEXM'
+         INNER JOIN tb_common_code c5
+         ON r.rcept_day_code = c5.com_code 
+         AND c5.com_code_grp = 'DAYN'
+      ON c.rcept_no = r.rcept_no
+      INNER JOIN tb_clinic_schedule cs
+          INNER JOIN tb_hospital_facility hf 
+          ON hf.HOS_FC_NO = cs.HOS_FC_NO
+          INNER JOIN tb_employee e
+          ON e.emp_no = cs.emp_no
+      ON r.schd_no = cs.schd_no
+      INNER JOIN tb_common_code c1 
+      ON c.clnic_sttus_code = c1.com_code 
+      AND c1.com_code_grp = 'STAT'
+      WHERE c.clnic_sttus_code IN('PHWT','PING')
+</select>
+
+
+<!-- 환자정보 -->
+<select id="physioPatInfo" resultType="PatientVO" parameterType="PatientVO">
+	SELECT 
+		PAT_CODE      , 
+		PAT_NAME      , 
+		PAT_TEL       , 
+		PAT_IHIDNUM   , 
+		PAT_BRTHDY    , 
+	   (SELECT C1.COM_CODE_NAME FROM TB_PATIENT P1, TB_COMMON_CODE C1 
+	       WHERE P1.PAT_GEN_CODE = C1.COM_CODE AND P1.PAT_CODE = #{patCode} AND C1.COM_CODE_GRP = 'GEND') AS PAT_GEN_CODE , 
+	   	PAT_ADDR      , 
+	   	PAT_DTL_ADDR, 
+	   	PAT_ZIP       , 
+	   	to_char(PAT_FIRST_DATE,'yyyy-mm-dd') AS PAT_FIRST_DATE,
+	   	to_char(PAT_LAST_DATE,'yyyy-mm-dd') AS PAT_LAST_DATE ,     
+	 (SELECT C3.COM_CODE_NAME FROM TB_PATIENT P3, TB_COMMON_CODE C3
+	       WHERE P3.PAT_FRGNR_YN = C3.COM_CODE AND P3.PAT_CODE = #{patCode} AND C3.COM_CODE_GRP = 'YSNO') AS PAT_FRGNR_YN ,		    
+	 (SELECT C2.COM_CODE_NAME FROM TB_PATIENT P2, TB_COMMON_CODE C2 
+	       WHERE P2.PAT_HSPTLZ_STATUS = C2.COM_CODE AND P2.PAT_CODE = #{patCode} AND C2.COM_CODE_GRP = 'HSPT') AS PAT_HSPTLZ_STATUS  
+	FROM TB_PATIENT
+	WHERE PAT_CODE = #{patCode}
+</select>
+
+<!--  대기인원 목록에서 치료대기->치료중으로 변경 시 PHWT에서 PING로  update -->
+<update id="physioStatusUpdate" parameterType="String">
+	 UPDATE TB_CLINIC
+	 SET    CLNIC_STTUS_CODE = 'PING'
+	 WHERE  TREAT_NO = #{treatNo}
+</update>
+
+<!-- 침상배정 테이블에 insert 
+//BedStatusVO(physioCode=null, detailNo=null, bedNo=1, bedStatDate=null, patCode=230901012)
+-->
+<insert id="bedStatus" parameterType="BedStatusVO">
+
+	INSERT INTO TB_BED_STATUS(PHYSIO_CODE, DETAIL_NO, BED_NO, BED_STAT_DATE)
+		SELECT D.PHYSIO_CODE, D.DETAIL_NO,#{bedNo},SYSDATE FROM TB_PHYSIOTHERAPY_LIST D, 
+            (
+                SELECT C.DETAIL_NO FROM TB_CHART_DETAIL C WHERE C.TREAT_NO 
+                = (SELECT B.TREAT_NO FROM TB_CLINIC B WHERE B.RCEPT_NO = (SELECT MAX(A.RCEPT_NO) FROM TB_RECEIPT A WHERE A.PAT_CODE = #{patCode}))
+            ) E
+        WHERE D.DETAIL_NO = E.DETAIL_NO
+</insert>
+
+<!--  침상 배정 현황 목록 -->
+<select id="bedStatusList" resultType="BedVO">
+	SELECT A.BED_NO, CASE WHEN B.BED_NO IS NOT NULL THEN 'FULL' ELSE 'EMPT' END BED_STAT, A.BED_NAME     
+	FROM   TB_BED A, (SELECT DISTINCT BED_NO FROM TB_BED_STATUS) B
+	WHERE  A.BED_NO = B.BED_NO(+)
+</select>
+
+<!-- 치료 오더 내역 -->
+<select id="physioList" parameterType="String" resultType="PhysioTherapyListVO">
+	SELECT
+	    PT.PHYSIO_CODE,
+	    PT.PHYSIO_COST,
+	    PT.PHYSIO_CONTENT,
+	    PTL.DETAIL_NO,
+	    PTL.PHYSIO_STATUS,
+	    TO_CHAR(PTL.PHYSO_DATE, 'YYYY-MM-DD') AS PHYSO_DATE,
+	    CD.TREAT_NO
+	FROM
+	    TB_PHYSIOTHERAPY PT
+	LEFT JOIN
+	    TB_PHYSIOTHERAPY_LIST PTL ON PT.PHYSIO_CODE = PTL.PHYSIO_CODE
+	LEFT JOIN
+	    TB_CHART_DETAIL CD ON PTL.DETAIL_NO = CD.DETAIL_NO
+	WHERE CD.TREAT_NO = #{treatNo}
+</select>
+
+<!-- 치료 내역 -->
+<select id="physioHistory" parameterType="String" resultType="PhysioTherapyListVO">
+	SELECT
+	    C.TREAT_NO,
+	    PT.PHYSIO_CODE,
+	    PT.PHYSIO_CONTENT,
+	    TO_CHAR(PTL.PHYSO_DATE, 'YYYY-MM-DD') AS PHYSO_DATE
+	FROM
+	    TB_PHYSIOTHERAPY_LIST PTL
+	INNER JOIN TB_PHYSIOTHERAPY PT ON PT.PHYSIO_CODE = PTL.PHYSIO_CODE
+	INNER JOIN TB_CHART_DETAIL CD ON PTL.DETAIL_NO = CD.DETAIL_NO
+	INNER JOIN TB_CLINIC C ON C.TREAT_NO = CD.TREAT_NO
+	INNER JOIN TB_RECEIPT RC ON RC.RCEPT_NO = C.RCEPT_NO
+	INNER JOIN TB_PATIENT P ON P.PAT_CODE = RC.PAT_CODE
+	WHERE
+	    P.PAT_CODE = #{patCode}
+	    AND  C.CLNIC_STTUS_CODE = 'REND'
+</select>
+
+<resultMap type="ReceiptVO" id="ReceiptMap">
+	<result property="rceptNo" column="RCEPT_NO" />
+	<result property="patCode" column="PAT_CODE" />
+	<result property="rceptPathCode" column="RCEPT_PATH_CODE" />
+	<result property="rceptFirstExamCode" column="RCEPT_FIRST_EXAM_CODE" />
+	<result property="rceptDayCode" column="RCEPT_DAY_CODE" />
+	<result property="rceptMemo" column="RCEPT_MEMO" />
+	<result property="schdNo" column="SCHD_NO" />
+	<result property="receptTime" column="RECEPT_TIME" />
+	<association property="patientVO" resultMap="patientMap"></association>
+	<association property="clinicVO" resultMap="clinicMap"></association>
+	<association property="chartDetailVO" resultMap="chartDetailMap"></association>
+	<collection property="bedStatusVO" resultMap="bedStatusMap"></collection>
+</resultMap>
+
+<resultMap type="PatientVO" id="patientMap">
+	<result property="patHsptlzInDate" column="PAT_HSPTLZ_IN_DATE" />
+	<result property="patHsptlzOutPlan" column="PAT_HSPTLZ_OUT_PLAN" />
+	<result property="patCode" column="PAT_CODE" />
+	<result property="patName" column="PAT_NAME" />
+	<result property="patTel" column="PAT_TEL" />
+	<result property="patIhidnum" column="PAT_IHIDNUM" />
+	<result property="patBrthdy" column="PAT_BRTHDY" />
+	<result property="patGenCode" column="PAT_GEN_CODE" />
+	<result property="patAddr" column="PAT_ADDR" />
+	<result property="patDtlAddr" column="PAT_DTL_ADDR" />
+	<result property="patZip" column="PAT_ZIP" />
+	<result property="patFirstDate" column="PAT_FIRST_DATE" />
+	<result property="patLastDate" column="PAT_LAST_DATE" />
+	<result property="patFrgnrYn" column="PAT_FRGNR_YN" />
+	<result property="patHsptlzStatus" column="PAT_HSPTLZ_STATUS" />
+</resultMap>
+
+<resultMap type="ClinicVO" id="clinicMap">
+	<result property="treatNo" column="TREAT_NO" />
+	<result property="rceptNo" column="RCEPT_NO" />
+	<result property="clnicSttusCode" column="CLNIC_STTUS_CODE" />
+</resultMap>
+<resultMap type="ChartDetailVO" id="chartDetailMap">
+	<result property="detailNo" column="DETAIL_NO" />
+	<result property="dissCodeNo" column="DISS_CODE_NO" />
+	<result property="treatNo" column="TREAT_NO" />
+	<result property="detailRegDate" column="DETAIL_REG_DATE" />
+	<result property="pDetailNo" column="P_DETAIL_NO" />
+	<result property="detailMemo" column="DETAIL_MEMO" />
+</resultMap>
+<resultMap type="BedStatusVO" id="bedStatusMap">
+	<result property="physioCode" column="PHYSIO_CODE" />
+	<result property="physioContent" column="PHYSIO_CONTENT" />
+	<result property="detailNo" column="DETAIL_NO" />
+	<result property="bedNo" column="BED_NO" />
+	<result property="bedStatDate" column="BED_STAT_DATE" />
+	<result property="physioYn" column="PHYSIO_YN" />
+</resultMap>
+
+<!-- 침상번호를 알면 접수정보를 알 수 있음(PAT_CODE) -->
+<select id="getReceiptInfo" parameterType="hashMap" resultMap="ReceiptMap">
+	SELECT A.RCEPT_NO, A.PAT_CODE
+	     , E.PAT_NAME
+	     , E.PAT_BRTHDY
+	     , E.PAT_GEN_CODE
+	     , A.RCEPT_PATH_CODE, A.RCEPT_FIRST_EXAM_CODE, A.RCEPT_DAY_CODE, A.RCEPT_MEMO, A.SCHD_NO, A.RECEPT_TIME 
+	     , D.PHYSIO_CODE
+	     , (SELECT PHYSIO_CONTENT FROM TB_PHYSIOTHERAPY WHERE PHYSIO_CODE = D.PHYSIO_CODE) PHYSIO_CONTENT
+	     , D.DETAIL_NO, D.BED_NO, D.BED_STAT_DATE, D.PHYSIO_YN
+	     , B.TREAT_NO
+	FROM   TB_RECEIPT A, TB_PATIENT E, TB_CLINIC B, TB_CHART_DETAIL C, TB_BED_STATUS D
+	WHERE  A.PAT_CODE = E.PAT_CODE
+	AND    A.RCEPT_NO = B.RCEPT_NO
+	AND    B.TREAT_NO = C.TREAT_NO
+	AND    C.DETAIL_NO = D.DETAIL_NO
+	AND    D.BED_NO = #{bedNo}
+</select>
+
+<!-- 치료현황 -->
+<select id="physioStat" resultType="BedStatusVO">
+	SELECT BS.BED_NO,
+	       P.PAT_CODE,
+	       P.PAT_NAME,
+	       P.PAT_BRTHDY,
+	       C.CLNIC_STTUS_CODE,
+	       LISTAGG(PT.PHYSIO_CODE, ', ') WITHIN GROUP (ORDER BY PT.PHYSIO_CODE) AS PHYSIO_CODE,
+	       LISTAGG(PT.PHYSIO_CONTENT, ', ') WITHIN GROUP (ORDER BY PT.PHYSIO_CODE) AS PHYSIO_CONTENT
+	FROM   TB_CHART_DETAIL CD
+	JOIN   TB_PHYSIOTHERAPY_LIST PTL ON CD.DETAIL_NO = PTL.DETAIL_NO
+	JOIN   TB_PHYSIOTHERAPY PT ON PT.PHYSIO_CODE = PTL.PHYSIO_CODE
+	JOIN   TB_BED_STATUS BS ON PTL.PHYSIO_CODE = BS.PHYSIO_CODE AND PTL.DETAIL_NO = BS.DETAIL_NO
+	JOIN   TB_CLINIC C ON CD.TREAT_NO = C.TREAT_NO
+	JOIN   TB_RECEIPT RC ON C.RCEPT_NO = RC.RCEPT_NO
+	JOIN   TB_PATIENT P ON P.PAT_CODE = RC.PAT_CODE
+	WHERE  C.CLNIC_STTUS_CODE = 'PING'
+	GROUP BY BS.BED_NO, P.PAT_CODE, P.PAT_NAME, P.PAT_BRTHDY, C.CLNIC_STTUS_CODE
+	ORDER BY BS.BED_NO
+</select>
+
+<!-- 치료완료 버튼 (상태 업데이트 PING->PEND) -->
+<update id="updateStat" parameterType="String">
+	UPDATE TB_CLINIC
+	SET CLNIC_STTUS_CODE = 'PEND'
+	WHERE TREAT_NO = #{treatNo}
+</update>
+
+<!-- 치료완료 버튼 클릭 시 침대상태 삭제 -->
+<delete id="deleteBedStat" parameterType="String">
+	DELETE FROM TB_BED_STATUS
+	WHERE BED_NO = #{bedNo}
+</delete>
+
+<update id="bedStatusInit" parameterType="BedStatusVO">
+	UPDATE TB_BED_STATUS A
+	SET    A.PHYSIO_YN = ''
+	WHERE  A.BED_NO = #{bedNo}
+</update>
+
+<update id="bedStatusUpdate" parameterType="BedStatusVO">
+	UPDATE TB_BED_STATUS A
+	SET    A.PHYSIO_YN = 'Y'
+	WHERE  A.PHYSIO_CODE = (SELECT B.PHYSIO_CODE
+	    FROM   TB_PHYSIOTHERAPY B
+	    WHERE  B.PHYSIO_CONTENT = #{physioContent})
+	AND    A.BED_NO = #{bedNo}
+</update>
+
+<!-- 
+환자를 알면 치료중여부와 점유 침상 번호를 안다
+ -->
+<!-- <select id="getSttusBedNo" parameterType="String" resultType="hashMap"> -->
+<!-- 	SELECT distinct T.PAT_CODE, U.BED_NO  -->
+<!-- 	FROM -->
+<!-- 	( -->
+<!-- 	    SELECT A.TREAT_NO, A.RCEPT_NO, A.CLNIC_STTUS_CODE -->
+<!-- 	         , B.PAT_CODE, B.RCEPT_PATH_CODE, B.RCEPT_FIRST_EXAM_CODE, B.RCEPT_DAY_CODE, B.RCEPT_MEMO, B.SCHD_NO, B.RECEPT_TIME -->
+<!-- 	         , C.DETAIL_NO, C.DISS_CODE_NO, C.DETAIL_REG_DATE, C.P_DETAIL_NO, C.DETAIL_MEMO -->
+<!-- 	         , D.PHYSIO_CODE, D.PHYSIO_STATUS, D.EMP_NO, D.PHYSO_DATE, D.PHYSIO_COST -->
+<!-- 	    FROM   TB_CLINIC A, TB_RECEIPT B, TB_CHART_DETAIL C, TB_PHYSIOTHERAPY_LIST D -->
+<!-- 	    WHERE  A.RCEPT_NO = B.RCEPT_NO -->
+<!-- 	    AND    B.PAT_CODE = #{patCode} -->
+<!-- 	    AND    A.TREAT_NO = C.TREAT_NO -->
+<!-- 	    AND    C.DETAIL_NO = D.DETAIL_NO -->
+<!-- 	) T, -->
+<!-- 	( -->
+<!-- 	    SELECT PHYSIO_CODE, DETAIL_NO, BED_NO, BED_STAT_DATE FROM TB_BED_STATUS -->
+<!-- 	) U -->
+<!-- 	WHERE T.PHYSIO_CODE = U.PHYSIO_CODE(+) -->
+<!-- 	AND   T.DETAIL_NO = U.DETAIL_NO(+)	 -->
+<!-- 	AND T.CLNIC_STTUS_CODE = 'PING' -->
+<!-- </select> -->
+
+</mapper>
+
+
+

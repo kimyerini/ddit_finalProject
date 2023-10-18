@@ -1,0 +1,19 @@
+package kr.or.ddit.common.vo;
+
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+
+public class NotificationVO {
+	private int ntcnId;
+	private String ntcnRcverEmpNo;
+	private String ntcnContent;
+	private String ntcnUrl;
+	private Date ntcnDt;
+}

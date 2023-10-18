@@ -1,0 +1,44 @@
+package kr.or.ddit.board.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.board.service.NoticeService;
+import kr.or.ddit.board.vo.NoticeBoardVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Controller
+@RequestMapping("/board")
+public class NoticeController {
+
+	@Autowired
+	NoticeService noticeService;
+	
+	// 리스트 뷰
+	@GetMapping("/notice")
+	public String getListView() {
+		return "board/noticeList";
+	}
+	
+	// get list
+	@ResponseBody
+	@GetMapping("/list")
+	public List<NoticeBoardVO> getNoticeList() {
+		log.info("<<< 여기는 NoticeController 의 getNoticeList >>>");
+		
+		return noticeService.noticeList(); 
+	}
+	
+	// 글쓰기 뷰
+	@GetMapping("/write")
+	public String getWriteView() {
+		return "board/noticeWrite";
+	}
+	
+}

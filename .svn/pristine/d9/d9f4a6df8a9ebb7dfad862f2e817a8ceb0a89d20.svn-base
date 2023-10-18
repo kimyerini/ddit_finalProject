@@ -1,0 +1,582 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<script type="text/javascript" src="/resources/js/jquery-3.6.0.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack-all.min.js"></script>
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack.min.css"
+	rel="stylesheet" />
+
+<link href="/resources/css/demo.css" rel="stylesheet" />
+
+<style>
+.reqQy {
+	float: left;
+	margin-bottom: 0;
+}
+
+#buttons {
+	display: flex;
+	align-items: center;
+}
+
+#searchBar {
+	float: right;
+	width: 30%;
+}
+
+
+#ii {
+	width: 100%;
+	height: 48%;
+	margin-bottom: px;
+}
+
+#dd {
+	width: 100%;
+	height: 49%;
+	margin-bottom: 10px;
+}
+
+.card-header {
+	font-weight: bold;
+	text-align: left;
+}
+
+.left-align {
+	text-align: left;
+	margin: 5px;
+}
+#uptable td{
+width : 50px;
+font-size: rem;
+letter-spacing: 0px;
+}
+.updateNO{
+	width : 60px;
+	margin :  0px 20px 10px 0px ;
+}
+</style>
+<script>
+// 화면이 시작하자마자 비품 신청현황 리스트 나오게하기
+$(function() {
+
+	mediItemWaitingList();
+// 	 if ($("#mediItem").hasClass("active")) {
+// 			mediWaitingUpdata();
+// 	    } else if ($("#item").hasClass("active")) {
+// 	        itemWaitingUpdata();
+// 	    }
+    $("#delMediItem").prop("hidden", false); // 약품 탭에서 버튼 표시
+   	$("#delMediItem").prop("hidden", false);
+    $("#upItem").prop("hidden", true);
+    $("#delItem").prop("hidden", true);  // 비품 탭에서 버튼 숨김
+    
+	// 약품탭 클릭시 약품리스트 함수 호출
+	$("#mediItem").on("click",function(){
+		mediItemWaitingList();	
+		// 비품,약품 상세보기 클릭시 (span태그) 상세 내역 출력하는함수
+		$("#upMediItem").prop("hidden", false);
+       	$("#upItem").prop("hidden", true);
+       	$("#delMediItem").prop("hidden", false); // 약품 탭에서 버튼 표시
+       	$("#delItem").prop("hidden", true);  // 비품 탭에서 버튼 숨김
+		$("#applicationList").text("신청대기 목록(약품)")
+		
+	});
+	// 비품 탭 클릭시 비품 리스트 함수를 호춯
+	$("#item").on("click", function() {
+		itemWaitingList();
+		// 비품,약품 상세보기 클릭시 (span태그) 상세 내역 출력하는함수
+	     $("#upMediItem").prop("hidden", true);
+	     $("#delMediItem").prop("hidden", true);  // 약품 탭에서 버튼 숨김
+	     $("#upItem").prop("hidden", false);
+	     $("#delItem").prop("hidden", false); // 비품 탭에서 버튼 표시
+		$("#applicationList").text("신청대기 목록(비품)")
+	});
+	
+	
+	// 현재 활성화된 탭에 따라 검색 함수 호출
+    $("#searchButton").on("click", function() {
+    if ($("#mediItem").hasClass("active")) {
+        searchMediItem(); // 약품 탭이 활성화되었을 때 약품 검색 함수 호출
+    	
+    } else if ($("#item").hasClass("active")) {
+        searchItem(); // 비품 탭이 활성화되었을 때 비품 검색 함수 호출
+        
+    }
+	});
+
+        	      
+
+});
+//신청대기목록 th 함수 약품
+function mediItemWaitingTh(){
+	let row = `<thead><tr>
+		<th>신청코드</th>
+		<th>약품명</th>
+		<th>발주신청일</th>
+		<th>신청자</th>
+		<th>상세보기</th>
+		</tr></thead>`;
+	return row;
+}
+
+//신청대기목록 th 함수 비품
+function itemWaitingTh(){
+	let row = `<thead><tr>
+		<th>신청코드</th>
+		<th>비품명</th>
+		<th>발주신청일</th>
+		<th>신청자</th>
+		<th>상세보기</th>
+		</tr></thead>`;
+	return row;
+}
+//약품 리스트 함수
+function mediItemWaitingList(fmediList){
+	$.ajax({
+		method:"get",
+         url: "/item/mediItemWaitingList",
+         async:true,
+         dataType : "json",
+         success: function(rslt) {
+        	    console.log("체크", rslt);
+        	    let mediReqNo = rslt.mediItemReqNo;
+        	    let newRow = mediItemWaitingTh();
+        	    newRow += "<tbody>";
+        	    let uniqueMediItemReqNo = []; // 중복된 mediItemReqNo를 처리하기 위한 배열
+        	    $.each(rslt, function (index, item) {
+        	        if (uniqueMediItemReqNo.indexOf(item.mediItemReqNo) === -1) {
+        	          // 중복되지 않은 mediItemReqNo인 경우에만 출력
+        	          newRow += "<tr >";
+        	          newRow += "<td><a href='#'>" + item.mediItemReqNo +"</a></td>";
+        	          if (item.countMediItem > 1) { // 1 이상일 때 "외X"를 표시
+        	          newRow += "<td>" + item.mediItemName + '<p style="color:red;display:inline;">외' + (item.countMediItem -1)+ "</p></td>";
+        	        	} else { // 1 미만일 때는 표시하지 않음
+        	        	    newRow += "<td>" + item.mediItemName + "</td>";
+        	        	}
+
+        	          newRow += "<td>" + item.mediItemReqDeStr + "</td>";
+        	          newRow += "<td>" + item.empNm + "</td>";
+        	          newRow += "<td><span onclick='mediDtl("+item.mediItemReqNo+")' style='padding:5px'class='badge bg-label-info me-1 medi'>상세보기</span></td>";
+        	          newRow += "</tr>";
+        	          uniqueMediItemReqNo.push(item.mediItemReqNo); // 중복된 mediItemReqNo를 배열에 추가
+        	        }
+        	      });
+        	    newRow+="</tbody>";
+
+        	      $("#waitingList").html(newRow);
+        	    },
+        	    error: function (xhr, status, error) {
+        	      console.log("code: " + xhr.status);
+        	      console.log("message: " + xhr.responseText);
+        	      console.log("error: " + error);
+        	    }
+        	  });
+        	}
+// 비품 리스트 함수
+function itemWaitingList(fitmeList){
+	$.ajax({
+		method:"get",
+         url: "/item/ItemWaitingList",
+         async:true,
+         dataType : "json",
+         success: function(rslt) {
+        	    console.log("체크", rslt);
+        	    let itemReqNo = item.itemReqNo;
+        	    let newRow = itemWaitingTh();
+        	    newRow += "<tbody>";
+        	    let uniqueItemReqNo = []; // 중복된 itemReqNo를 처리하기 위한 배열
+        	    $.each(rslt, function (index, item) {
+        	        if (uniqueItemReqNo.indexOf(item.itemReqNo) === -1) {
+        	          // 중복되지 않은 mediItemReqNo인 경우에만 출력
+        	          newRow += "<tr >";
+        	          newRow += "<td><a href='#'>" + item.itemReqNo +"</a></td>";
+        	          if (item.countItem > 1) { 
+        	        	    newRow += "<td>" + item.itemName + '<p style="color:red;display:inline;">외' + (item.countItem -1)+ "</p></td>";
+        	        	} else { 
+        	        	    newRow += "<td>" + item.itemName + "</td>";
+        	        	}
+        	          newRow += "<td>" + item.itemReqDeStr + "</td>";
+        	          newRow += "<td>" + item.empNm + "</td>";
+        	          newRow += "<td><span onclick='itemDtl("+item.itemReqNo+")' style='padding:5px'class='badge bg-label-info me-1 item' value="+item.itemReqNo+">상세보기</span></td>";
+        	          newRow += "</tr>";
+        	          uniqueItemReqNo.push(item.itemReqNo); // 중복된 mediItemReqNo를 배열에 추가
+        	        }
+        	      });
+        	    newRow+="</tbody>";
+
+        	      $("#waitingList").html(newRow);
+        	    },
+        	    error: function (xhr, status, error) {
+        	      console.log("code: " + xhr.status);
+        	      console.log("message: " + xhr.responseText);
+        	      console.log("error: " + error);
+        	    },
+        	  });
+        	}
+//약품 비품 공통 사용
+
+var itemCodes = [];
+var itemReqQys = [];
+
+// 상세보기 클릭시  뜨고 alert 비품 수정 폼에 data뜨기
+	
+function itemDtl(param){
+	let data ={"itemReqNo" : param};
+    $.ajax({
+    	type:"post",
+    	data: JSON.stringify(data),
+    	url: "/item/selectItemWaitingUpdate",
+    	dataType : "json",
+    	contentType :"application/json;charset=utf-8",
+    	success : function(rslt){
+    		console.log("성공",rslt);
+    		var itemReqNo = rslt[0].itemReqNo;	
+    		var str = '<tr>';
+		    str += '<td>신청번호<input id="itemReqNo" type="text" value="' + rslt[0].itemReqNo + '" readonly /></td>';
+		    str += '<td>신청일시<input type="text" value="' + rslt[0].itemReqDe + '" readonly /></td>';
+		    str += '<td>신청자명<input type="text" value="' + rslt[0].empNm + '" readonly /></td>';
+		    str += '</tr><br>';
+		    str += "<tr>";
+		    str += "<td>선택</td>'";
+		    str += "<td>약품코드</td>";
+		    str += "<td>약품명</td>" ;
+		    str += "<td>신청수량</td>" ;
+		    str += "</tr>";
+		
+		$.each(rslt, function(index, item) {
+			console.log("체킁:",index);
+		    str += "<tr>";
+		    str += '<td><input type="checkbox" name="typArr" class="checkClassItem" data-item-code="'+ item.itemReqDetailVOList[0].itemCode + '" data-item-req-qy=""></td>';
+		    str += "<td><input class='itemCode' type='text' value='" + item.itemReqDetailVOList[0].itemCode + "' readonly /></td>";
+		    str += "<td><input type='text' value='" + item.itemName + "' readonly /></td>" ;
+			str += "<td><input id='"+item.itemReqDetailVOList[0].itemCode+"'class='itemReqQy' type='number' value='" + item.itemReqDetailVOList[0].itemReqQy + "' class='updateReqQy' /></td>" ;
+		    str += "</tr>";
+		    
+		    mediItemCodes.push(item.itemReqDetailVOList[0].itemCode);
+		    mediItemReqQys.push(item.itemReqDetailVOList[0].itemReqQy);
+		});
+	        $("#uptable").html(str);
+
+    	},
+    	error: function (xhr, status, error) {
+      	     console.log("code: " + xhr.status);
+      	     console.log("message: " + xhr.responseText);
+      	     console.log("error: " + error);
+    	}
+	
+    })
+}
+
+var mediItemCodes = [];
+var mediItemReqQys = [];
+// 상세보기 클릭시  뜨고 alert 약품 수정 폼에 data뜨기
+
+function mediDtl(param){
+
+	    let data = {"mediItemReqNo":param};
+	    $.ajax({
+	    	type:"post",
+	    	data : JSON.stringify(data),
+	    	url : "/item/selectMediWaitingUpdate",
+	    	dataType : "json",
+	    	contentType:"application/json;charset=utf-8",
+	    	success : function(rslt){
+	    		console.log("데이터 가져오기: ",rslt);
+	    		 var mediItemReqNo = rslt[0].mediItemReqNo;
+	    		//데이터 가져오기: {"mediItemReqNo":104,"mediItemReqDe":1694762207000,"mediItemReqSt":null,"mediItemReqQy":0,"empNo":null,"empNM":null,"mediItemName":null,
+	    		  //"mediItemReqDetailVOList":[{"mediItemReqNo":104,"mediItemCode":"640900630","mediItemReqQy":45,"mediItemReqTotal":0}]}
+	    		var str = '';
+				    str += '신청코드<input class="updateNO" id="mediItemReqNo" type="text" value="' + rslt[0].mediItemReqNo + '" style="width:60px;"readonly />';
+				    str += '신청일시<input class="updateNO" type="text" value="' + rslt[0].mediItemReqDe + '" style="width:60px;"readonly />';
+				    str += '신청자명<input class="updateNO" type="text" value="' + rslt[0].empNm + '"style="width:60px;" readonly />';
+
+	    		    str += '<table class="table table-bordered"style="width:100%; font-size:11px; white-space: nowrap;">';	    		    
+	    		    str += "<thead>";	    		    
+	    		    str += "<tr>";
+	    		    str += "<td>선택</td>'";
+	    		    str += "<td>약품코드</td>";
+	    		    str += "<td>약품명</td>" ;
+	    		    str += "<td style='width:50px;'>신청수량</td>" ;
+	    		    str += "</tr>";
+	    		    str += "</thead>";
+	    		    str += "<tbody>";
+	    		
+	    		$.each(rslt, function(index, item) {
+	    			console.log("체킁:",index);
+	    		    str += "<tr>";
+	    		    str += '<td><input type="checkbox" name="typArr" class="form-check-input checkClass" data-medi-item-code="' + item.mediItemReqDetailVOList[0].mediItemCode + '" data-medi-item-req-qy=""></td>';
+	    		    str += "<td class='mediItemCode'>" + item.mediItemReqDetailVOList[0].mediItemCode + "</td>";
+	    		    str += "<td>" + item.mediItemName + "</td>" ;
+	    		    str += "<td><input style='width:50px;' id='"+item.mediItemReqDetailVOList[0].mediItemCode+"'class='mediItemReqQy' type='number' value='" + item.mediItemReqDetailVOList[0].mediItemReqQy + "' class='updateReqQy' /></td>" ;
+	    		    str += "</tr>";
+	    		    
+	    		    mediItemCodes.push(item.mediItemReqDetailVOList[0].mediItemCode);
+	    		    mediItemReqQys.push(item.mediItemReqDetailVOList[0].mediItemReqQy);
+	    		});
+	    		    str += "</tbody>";
+	    		    str += "</table>";
+	   	        $("#uptable").html(str);
+
+	    	},
+    	    error: function (xhr, status, error) {
+      	      console.log("code: " + xhr.status);
+      	      console.log("message: " + xhr.responseText);
+      	      console.log("error: " + error);
+    	    }
+	    	
+	    })
+	}
+
+</script>
+
+<div class="grid-stack"></div>
+
+<script type="text/javascript">
+	
+	// 그리드 스택 아이템 정의
+	let gridStack1 = `<div id="div1" style=" height:100%; width:90% padding:30px; overflow: none;">
+
+						<div class="input-group" id= "searchBar" style="margin:20px 10px 0px 10px;">
+							<span class="input-group-text"><i class="tf-icons bx bx-search"></i></span>
+							<input type="text" id="searchText"class="form-control" placeholder="Search...">
+							<button type="button" id="searchButton"style="margin-left:10px;" class="btn btn-info">검색</button>
+						</div><br><br>
+						
+						<div class="nav-align-top mb-4">
+					      <ul class="nav nav-tabs" role="tablist" style="margin-left:25px;">
+					        <li class="nav-item" role="presentation">
+					          <button type="button" id="mediItem" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-home" aria-controls="navs-top-home" aria-selected="true">약품</button>
+					        </li>
+					        <li class="nav-item" role="presentation">
+					          <button type="button" id="item" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-top-profile" aria-controls="navs-top-profile" aria-selected="false" tabindex="-1">비품</button>
+					        </li>
+					      </ul>
+					      <div class="tab-content" style="margin:15px;width:1040px; border:0px;">
+					        <div class="tab-pane fade show active" id="navs-top-home" role="tabpanel">
+								<div class="card">
+									<h4 class="card-header"id="applicationList"style="margin:0px">신청 대기 목록(약품)</h4>
+									
+								 <div class="table-responsive text-nowrap" style="height:210px; width:1000px;overflow-x: auto;">
+									<table class="table table-hover"id="waitingList">
+
+									 </table>
+								  </div>
+								</div>	
+					        </div>
+					      </div>
+					    </div>
+						
+					 </div>`;
+	let gridStack2 = `<div style=" height:100%; padding:40px; overflow: none;"><h1>승인/발주현황</h1>
+				
+					</div>`;
+	
+	
+    let gridStack3 = `<div id="div2" style="width:100%; height:100%; padding:10px; position: relative;">
+					    <div id="ii" style="background-color:white;">
+					        <div class="card">
+					        <h5 class="card-header"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">수정</font></font></h5>
+					        <div class="card-body"style="heigth:100% width:600px;">
+					          <div class="table-responsive text-nowrap" style="width:680px;" id="uptable">
+
+					            </div>
+					          </div>
+					        </div>
+					        <!-- 버튼을 우측 하단에 배치 -->
+					        <div style="position: absolute; bottom: 10px; right: 10px;">
+					            <button id="upMediItem" type="button" class="btn btn-primary">수정</button>
+					            <button id="upItem" type="button" class="btn btn-primary">수정</button>
+					            <button id="delMediItem"type="button" class="btn btn-secondary">삭제</button>
+					            <button id="delItem"type="button" class="btn btn-secondary">삭제</button>
+					        </div>
+					    </div>
+					</div>`;
+						
+		let gridStack4 = `<div style="background-color:white; width:100%; height:100%;"><h1>반려사유</h1>
+		
+		</div>`;
+// 그리드 스택 아이템 배열
+var items = [
+    { w: 7, h: 3, float: false, content: gridStack1 },
+    { w: 5, h: 3, float: false, content: gridStack3 },
+    { w: 7, h: 2, float: false, content: gridStack2 },
+    { w: 5, h: 2, float: false, content: gridStack4 }
+];
+
+// 그리드 스택 초기화
+var grid = GridStack.init();
+grid.load(items);
+</script>
+<script>
+function updateMediQuantity(mediItemReqNo,mediItemCode,mediItemReqQy ) {
+	
+    let data={"mediItemReqNo" : mediItemReqNo, "mediItemCode" : mediItemCode, "mediItemReqQy": mediItemReqQy};
+    // 예시: AJAX 요청을 사용하는 경우
+    console.log("hdjklafhdskl",data);
+    $.ajax({
+        type: "post",
+        data : JSON.stringify(data),
+    	url : "/item/updateMediItemQy",
+    	dataType : "json",
+    	contentType:"application/json;charset=utf-8",
+    	success : function(rslt){
+            // 업데이트 성공 시 수행할 작업
+            console.log("약품 코드:", mediItemCode, "의 수량이 업데이트되었습니다.");
+            mediItemWaitingList();
+        },
+        error:function(request,status,error){
+            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+           }
+    });
+}
+
+ $("#upMediItem").on("click", function () {
+ 	let formData = new FormData();
+	let mediItemReqNo = $("#mediItemReqNo").val();
+	console.log("djfakl;djlsaf;jdxcksla;fjkdls;afjdksl;" ,mediItemReqNo);
+ 	alert("안녕");
+ 	$(".checkClass").each(function(idx){
+ 		if($(this).is(":checked")){
+			let mediItemCode = $(this).data("mediItemCode");
+			let mediItemReqQy=$('#'+mediItemCode).val();
+ 			console.log(mediItemCode);
+ 			console.log(mediItemReqQy);
+ 			
+ 			updateMediQuantity(mediItemReqNo,mediItemCode,mediItemReqQy);
+ 		}
+		
+ 	})
+ });
+ function updateItemQuantity(itemReqNo,itemCode,itemReqQy) {
+		
+	    let data={"itemReqNo" : itemReqNo, "itemCode" : itemCode, "itemReqQy": itemReqQy};
+	    // 예시: AJAX 요청을 사용하는 경우
+	    console.log("나와라",data);
+	    $.ajax({
+	        type: "post",
+	        data : JSON.stringify(data),
+	    	url : "/item/updateItemQy",
+	    	dataType : "json",
+	    	contentType:"application/json;charset=utf-8",
+	    	success : function(rslt){
+	            // 업데이트 성공 시 수행할 작업
+	            console.log("약품 코드:" ,itemCode, "의 수량이 업데이트되었습니다.");
+	            itemWaitingList();
+	        },
+	        error:function(request,status,error){
+	            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+	           }
+	    });
+	}
+ 
+ $("#upItem").on("click", function () {
+	 	let formData = new FormData();
+		let itemReqNo = $("#itemReqNo").val();
+	 	alert("수정하시겠습니까 ??");
+	 	$(".checkClassItem").each(function(idx){
+	 		if($(this).is(":checked")){
+				let itemCode = $(this).data("itemCode");
+				let itemReqQy=$('#'+itemCode).val();
+	 			console.log(itemCode);
+	 			console.log(itemReqQy);
+	 			
+	 			updateItemQuantity(itemReqNo,itemCode,itemReqQy);
+	 		}
+			
+	 	})
+	 });
+ function deleteMediItem(mediItemReqNo,mediItemCode) {
+		
+	    let data={"mediItemReqNo" : mediItemReqNo, "mediItemCode" : mediItemCode};
+	    // 예시: AJAX 요청을 사용하는 경우
+	    console.log("hdjklafhdskl",data);
+	    $.ajax({
+	        type: "post",
+	        data : JSON.stringify(data),
+	    	url : "/item/deleteMediItemDatail",
+	    	dataType : "json",
+	    	contentType:"application/json;charset=utf-8",
+	    	success : function(rslt){
+	            // 업데이트 성공 시 수행할 작업
+	    		if(rslt==1){
+            		alert("삭제되었습니다.");
+	                mediItemWaitingList();
+            	}else{
+            		$(".checkClass[data-mediItemCode='${mediItemCode}']").closest("tr").remove();
+            		alert("삭제되었습니다.");
+            	}
+               	mediItemWaitingList();
+            	
+	        },
+	        error:function(request,status,error){
+	            console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+	           }
+	    });
+	}
+
+ 
+ $("#delMediItem").on("click", function () {
+	    let mediItemReqNo = $("#mediItemReqNo").val();
+	    alert("삭제하시겠습니까?");
+	    $(".checkClass").each(function (idx) {
+	        if ($(this).is(":checked")) {
+	            let mediItemCode = $(this).data("mediItemCode");
+	          	
+	            console.log(mediItemCode);
+	            
+	            deleteMediItem(mediItemReqNo, mediItemCode);
+	            $(this).closest("tr").remove();
+
+	        }
+	    });
+	});
+ function deleteItem(itemReqNo,itemCode) {
+		
+	    let data={"itemReqNo" : itemReqNo, "itemCode" : itemCode};
+	    // 예시: AJAX 요청을 사용하는 경우
+	    console.log("비품 지워지는 값",data);
+	    $.ajax({
+	        type: "post",
+	        data : JSON.stringify(data),
+	    	url : "/item/deleteItemDatail",
+	    	dataType : "json",
+	    	contentType:"application/json;charset=utf-8",
+	    	success : function(rslt){
+	            // 업데이트 성공 시 수행할 작업
+	    		if(rslt==1){
+         		alert("삭제되었습니다.");
+	                itemWaitingList();
+         	}else{
+         		$(".checkClassItem[data-itemCode='${itemCode}']").closest("tr").remove();
+         		alert("삭제되었습니다.");
+         	}
+	    		itemWaitingList();
+         	
+	        },
+	        error:function(request,status,error){
+	        console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+	           }
+	    });
+	}
+
+ 
+ 
+ $("#delItem").on("click", function () {
+	    let itemReqNo = $("#itemReqNo").val();
+	    alert("삭제하시겠습니까?");
+	    $(".checkClassItem").each(function (idx) {
+	        if ($(this).is(":checked")) {
+	            let itemCode = $(this).data("itemCode");
+	          	
+	            console.log(itemCode);
+	            
+	            deleteItem(itemReqNo,itemCode);
+	            $(this).closest("tr").remove();
+
+	        }
+	    });
+	});
+</script>

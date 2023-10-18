@@ -1,0 +1,30 @@
+package kr.or.ddit.receipt.service.serviceImpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.clinic.mapper.ClinicMapper;
+import kr.or.ddit.receipt.mapper.ReceiptionMapper;
+import kr.or.ddit.receipt.service.ReceiptionService;
+import kr.or.ddit.receipt.vo.ReceiptionVO;
+@Service
+public class ReceiptionServiceImpl implements ReceiptionService{
+	@Autowired
+	ReceiptionMapper receiptionMapper;
+	
+	@Autowired
+	ClinicMapper clinicMapper;
+	
+	@Override
+	public int insertReceiption(ReceiptionVO receiptionVO) {
+		String treatNo = receiptionVO.getTreatNo();
+		int cnt = clinicMapper.updateClinicAfterReceiption(treatNo);
+		cnt += receiptionMapper.insertReceiption(receiptionVO);
+		return cnt;
+	}
+	@Override
+	public int reqDocReceiption(String reqDocumentNo) {
+		
+		return receiptionMapper.reqDocReceiption(reqDocumentNo);
+	}
+}

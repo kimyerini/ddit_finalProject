@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   xmlns:security="http://www.springframework.org/schema/security"
+   xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+   <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+   <bean id="cutomUserDetailsService" class="kr.or.ddit.security.CustomUserDetailsService"/> 
+   <bean id="customAccessDeniedHandler" class="kr.or.ddit.security.CustomAccessDeniedHandler"/>
+   <bean id="customLoginSuccessHandler" class="kr.or.ddit.security.CustomLoginSuccessHandler"/>
+   
+   <security:http>
+      <!-- 요거이 없으면 추측해야 해서 힘듦 -->
+      		
+		<security:csrf disabled="true"/> 
+
+      <security:access-denied-handler ref="customAccessDeniedHandler"/>
+<!--         <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" /> -->
+<!--         <security:intercept-url pattern="/doctor/**" access="hasRole('ROLE_DOCTOR')" /> -->
+<!--         <security:intercept-url pattern="/nurse/**" access="hasRole('ROLE_NURSE')" /> -->
+<!--         <security:intercept-url pattern="/office/**" access="hasRole('ROLE_OFFICE')" /> -->
+<!--         <security:intercept-url pattern="/hrd/**" access="hasRole('ROLE_HRD')" /> -->
+<!--         <security:intercept-url pattern="/physio/**" access="hasRole('ROLE_PHYSIO')" /> -->
+<!--         <security:intercept-url pattern="/radio/**" access="hasRole('ROLE_RADIO')" /> -->
+      <!-- 사용자가 입력한 UR로 그대로 가게 둘 때까지는 필요하진 않지만 
+      		로그인 성공후에 특정 URL로 보내고 싶을 떄는 success-handler가 필요!
+      
+  -->
+      <security:form-login authentication-success-handler-ref="customLoginSuccessHandler"   login-page="/emp/login" 
+      		authentication-failure-forward-url="/emp/loginFailed" />
+<!--       <security:form-login  login-page="/login" authentication-failure-url="/emp/login" /> -->
+      <security:logout logout-url="/logout" />
+   
+   
+  
+  <security:headers>
+  	<security:frame-options disabled="true"/>
+  </security:headers>
+  
+<!-- 
+	1. 접근 거부 처리(사용자 정의)
+	접근 거부가 발생한 상황에 단순 메시지 처리 이상의 다양한 처리를 하고 싶다면
+	AccessDeniedHandler를 직접 구현해야 함
+-->
+<security:access-denied-handler ref="customAccessDenied"/>
+  
+<!-- <security:access-denied-handler error-page="/error/myError"/> -->
+
+
+	
+   </security:http>
+
+   <security:authentication-manager id="authMgr">
+      <security:authentication-provider user-service-ref="cutomUserDetailsService">
+         <security:password-encoder ref="bCryptPasswordEncoder" />
+      </security:authentication-provider>
+   </security:authentication-manager>
+</beans>

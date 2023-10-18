@@ -1,0 +1,130 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack-all.min.js"></script>
+<script type="text/javascript" src="/resources/js/jquery-3.6.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.1.0/gridstack.min.css" rel="stylesheet"/> 
+
+<link href="/resources/css/demo.css" rel="stylesheet"/> 
+
+<style>
+   .su{
+      float: left;
+      margin-bottom: 0;
+   }
+   #btn{
+      float: right;
+   }
+   #ii{
+
+	width: 100%;
+	height: 50%;
+   }
+</style>
+
+<div class="grid-stack"></div>
+
+<script type="text/javascript">
+$(function() {
+	treatmentWait();
+});
+
+
+	// 그리드 스택 아이템 정의
+	let gridStack1 = `<div id="div1" style=" height:100%; padding:0px; overflow: none;">
+						<div class="tab-content" style="height : 650px; background-color:white;" id="gr1Content">
+							</div>
+					     </div>`;
+					     
+	let gridStack2 = `<div style="background-color:white; width:100%; height:100%;"><h4>환자정보</h4></div>`;
+	
+	
+    let gridStack3 = `<div id="div2" style="width:100%; height:100%; padding:10px;background-color:white;"><h4>처방오더 상세</h4>						
+					</div>`;
+						
+		let gridStack4 = `<div style="background-color:white; width:100%; height:100%;"><h4>처치오더 상세</h4>
+		
+		</div>`;
+		let gridStack5 = `<div style="background-color:white; width:100%; height:100%;"><h4>처치등록 </h4>
+		
+		</div>`;
+	
+// 그리드 스택 아이템 배열
+var items = [
+    { w: 2, h: 5, float: false, content: gridStack1 },
+    { w: 3, h: 3, float: false, content: gridStack2 },
+    { w: 7, h: 3, float: false, content: gridStack3 },
+    { w: 3, h: 2, float: false, content: gridStack4 },
+    { w: 7, h: 2, float: false, content: gridStack5 }
+
+];
+
+// 그리드 스택 초기화
+var grid = GridStack.init();
+grid.load(items);
+const treatWaitList = $('#gr1Content');
+
+function treatmentWait (){
+	$.ajax({
+		url :`/nurse/treatmentWait`,
+		type : 'get',
+		dataType : 'JSON',
+		success : function(rslt){
+			console.log("결과 나와??" , rslt);
+			var text = '';
+			
+	 		text += `<h4>대기 인원\${rslt.length}명<h4>`;
+			$.each(rslt, function(i,item){	
+				text += `
+	 						<table style="width : 100%; text-align : left; border-bottom : 1px solid black; margin-bottom : 15px;">
+							<tbody>
+						
+			 					<tr>
+			 						<td style="width : 65%;"><strong>\${item.patName}</strong><span style="font-size : 0.7rem;">(\${item.patAge}세)<span></span></span></td>
+			 						<td><span style="font-size : 0.7rem;"><span></span></span></td>  
+			 					</tr>
+			 					<tr>
+			 						<td style="width : 65%;"><span style="font-size : 0.7rem;">\${item.patBrthdy}| \${item.patGen} | \${item.patFirst}<span></span></span></td>
+			 						<td><button class="btn btn-xs btn-info" onclick="waitClick(\${item.patCode})">\${item.patWait}</button></td>
+			 					</tr>
+		 					</tbody>
+						</table>`;
+			})
+					treatWaitList.html(text);
+		},
+		error: function (xhr, status, error) {
+     	     console.log("code: " + xhr.status);
+     	     console.log("message: " + xhr.responseText);
+     	     console.log("error: " + error);
+   	    }
+	})
+}
+
+function waitClick(patWaitCode){
+	
+	console.log("내가선택한 환자 코드 입니다.",patWaitCode)
+	let pwc = patWaitCode;
+	Swal.fire({
+		icon: 'success',
+		title: '환자를 호출했어용',
+		text: '차트작성을 시작할게용',
+		});
+	$.ajax({
+		url :"/nurse/waitpat/"+pwc,
+		type : 'get',
+		dataType : 'JSON',
+		success : function(rslt){
+			console.log("뭐 나와 ? ",rslt);
+		},
+		error: function (xhr, status, error) {
+    	     console.log("code: " + xhr.status);
+    	     console.log("message: " + xhr.responseText);
+    	     console.log("error: " + error);
+    	 }
+	})
+	
+}
+</script>
+
+
+
